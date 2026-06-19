@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cost Calculator Pro</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{font-family:'Inter',sans-serif;box-sizing:border-box;}
+.font-mono{font-family:'JetBrains Mono',monospace;}
+body{background:#0a1628;color:#e2e8f0;min-height:100vh;margin:0;}
+.card{background:#111e35;border:1px solid #1e3a5f;border-radius:12px;}
+.input{background:rgba(30,58,95,.4);border:1px solid #1e3a5f;color:#e2e8f0;border-radius:8px;padding:8px 12px;font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:600;width:100%;transition:all .2s;}
+.input:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15);}
+.input[readonly]{background:rgba(30,58,95,.15);border-color:rgba(30,58,95,.5);cursor:default;}
+.btn{background:rgba(30,58,95,.3);border:1px solid #1e3a5f;color:#94a3b8;padding:8px 20px;border-radius:8px;cursor:pointer;transition:all .2s;font-size:.875rem;font-weight:500;display:inline-flex;align-items:center;gap:6px;}
+.btn.active{background:#3b82f6;color:#fff;border-color:#3b82f6;}
+.btn:hover:not(.active){border-color:#2a4a6f;color:#e2e8f0;}
+.btn-icon{padding:8px;}
+.btn-green{background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.3);color:#34d399;}
+.btn-green:hover{background:rgba(16,185,129,.25);}
+.btn-red{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.3);color:#f87171;}
+.btn-red:hover{background:rgba(239,68,68,.25);}
+.btn-ghost{background:transparent;border-color:transparent;color:#64748b;}
+.btn-ghost:hover{color:#e2e8f0;}
+.badge{display:inline-flex;align-items:center;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:600;}
+.badge-green{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.2);}
+.badge-blue{background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.2);}
+.badge-purple{background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.2);}
+.badge-gray{background:rgba(100,116,139,.15);color:#94a3b8;border:1px solid rgba(100,116,139,.2);}
+.row{cursor:pointer;transition:background .15s;}
+.row:hover{background:#162440;}
+.row.selected{background:rgba(59,130,246,.08);border-left:3px solid #3b82f6;}
+.bar{height:6px;background:rgba(30,58,95,.5);border-radius:3px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:3px;transition:width .6s ease-out;}
+.kpi{background:linear-gradient(135deg,rgba(59,130,246,.1) 0%,rgba(6,182,212,.05) 100%);border:1px solid rgba(59,130,246,.2);border-radius:12px;padding:20px;}
+.kpi-val{font-family:'JetBrains Mono',monospace;font-size:1.75rem;font-weight:700;color:#e2e8f0;}
+.kpi-lbl{font-size:.75rem;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+.nav{background:rgba(10,22,40,.95);backdrop-filter:blur(20px);border-bottom:1px solid #1e3a5f;position:sticky;top:0;z-index:50;}
+.avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.875rem;color:#fff;flex-shrink:0;}
+.search{background:rgba(30,58,95,.3);border:1px solid #1e3a5f;border-radius:8px;padding:10px 16px;color:#e2e8f0;width:100%;max-width:320px;transition:all .2s;}
+.search:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.1);}
+.search::placeholder{color:#64748b;}
+.concept{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #1e3a5f;}
+.concept:last-child{border-bottom:none;}
+.concept-name{font-size:.875rem;font-weight:500;color:#e2e8f0;}
+.concept-formula{font-size:.75rem;color:#64748b;margin-top:2px;}
+.concept-val{font-family:'JetBrains Mono',monospace;font-size:.9375rem;font-weight:600;color:#e2e8f0;text-align:right;min-width:120px;}
+.total{background:rgba(59,130,246,.08);border-radius:8px;padding:16px;margin-top:12px;}
+.total .concept-name{font-weight:700;font-size:1rem;}
+.total .concept-val{font-size:1.25rem;font-weight:700;color:#3b82f6;}
+.hidden{display:none !important;}
+.edit-mode .input{background:rgba(30,58,95,.6);border-color:#3b82f6;}
+
+.field-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+.field-group .input {
+  flex: 1;
+  min-width: 0;
+}
+.field-edit-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  opacity: 0;
+  transition: opacity .2s;
+  z-index: 10;
+}
+.field-group:hover .field-edit-btn {
+  opacity: 1;
+}
+.field-group .input.edit-mode ~ .field-edit-btn {
+  display: none !important;
+}
+.edit-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-track{background:#0a1628;}
+::-webkit-scrollbar-thumb{background:#1e3a5f;border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:#2a4a6f;}
+</style>
+</head>
+<body>
+
+<div id="v1">
+<div class="nav">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-6">
+      <div>
+        <h1 id="v1-titulo" class="text-2xl font-bold text-white">Colaboradores Activos</h1>
+        <p class="text-sm text-slate-400 mt-1"><span id="tc">4</span> registros · <span class="text-blue-400 font-semibold">PRIMAX</span></p>
+      </div>
+      <div class="flex bg-slate-900 p-1 rounded-lg border border-slate-700">
+        <button id="tab-colab" onclick="cambiarFiltroMaestro('colaboradores')" class="btn py-1 px-3 active">Colaboradores</button>
+        <button id="tab-geren" onclick="cambiarFiltroMaestro('gerencias')" class="btn py-1 px-3">Gerencias</button>
+      </div>
+    </div>
+    <div class="relative">
+      <svg class="w-5 h-5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <input type="text" id="buscar" class="search pl-10" placeholder="Buscar..." oninput="filtrar()">
+    </div>
+  </div>
+</div>
+<div class="max-w-7xl mx-auto px-6 py-6">
+  <div class="card overflow-hidden">
+    <table class="w-full text-sm">
+      <thead id="th-dinamico"></thead>
+      <tbody id="tb" class="divide-y divide-slate-800"></tbody>
+    </table>
+    <div class="px-5 py-3 border-t border-slate-800 text-xs text-slate-500 text-right">Mostrando <span id="mc">4</span> de <span id="tt">4</span> registros</div>
+  </div>
+</div>
+</div>
+
+<div id="v2" class="hidden">
+<div class="nav">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"></div>
+</div>
+
+<div class="max-w-7xl mx-auto px-6 py-6">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h2 id="c-tipo-analisis" class="text-2xl font-bold text-white">Costeo del Colaborador</h2>
+      <p class="text-sm text-slate-400 mt-1"><span id="c-nom" class="text-blue-400 font-medium">-</span> · PRIMAX · Colombia</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button onclick="volver()" class="btn" style="background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.3);color:#60a5fa;">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        Volver a Lista
+      </button>
+      <button id="btn-restaurar" onclick="reset()" class="btn btn-ghost" title="Restaurar valores originales">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        Restaurar
+      </button>
+      <button class="btn btn-green">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Exportar Excel
+      </button>
+    </div>
+  </div>
+
+  <div class="card p-5 mb-6 flex items-center gap-4">
+    <div id="av" class="avatar" style="background:linear-gradient(135deg,#8b5cf6,#6366f1);">YO</div>
+    <div class="flex-1 min-w-0">
+      <h3 id="p-nom" class="text-lg font-bold text-white truncate">-</h3>
+      <div class="flex items-center gap-3 mt-1 text-sm text-slate-400 flex-wrap">
+        <span id="p-meta-id" class="font-mono">-</span>
+        <span class="text-slate-600">·</span>
+        <span id="p-ger">-</span>
+        <span class="text-slate-600">·</span>
+        <span id="p-ciudad">Bogotá D.C.</span>
+      </div>
+      <p id="p-pue" class="text-sm text-slate-500 mt-0.5">-</p>
+    </div>
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <span id="bg-g" class="badge badge-blue">-</span>
+      <span id="bg-t" class="badge badge-green">-</span>
+      <span id="bg-extra" class="badge badge-gray">Término Indefinido</span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Moneda</p>
+      <div class="flex gap-2">
+        <button class="btn active" onclick="setMon(this,'COP')">COP</button>
+        <button class="btn" onclick="setMon(this,'USD')">USD</button>
+        <button class="btn" onclick="setMon(this,'PEN')">PEN</button>
+      </div>
+    </div>
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Período</p>
+      <div class="flex gap-2">
+        <button class="btn" onclick="setPer(this,6)">6M</button>
+        <button class="btn active" onclick="setPer(this,12)">12M</button>
+        <button class="btn" onclick="setPer(this,24)">24M</button>
+      </div>
+    </div>
+    <div id="ctrl-tipo-salario">
+      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Tipo Salario</p>
+      <div class="flex gap-2">
+        <button id="bt-f" class="btn active" onclick="setTipo('F')">Fijo</button>
+        <button id="bt-i" class="btn" onclick="setTipo('I')">Integral</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="seccion-parametros" class="mb-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-bold text-white">Parámetros Salariales</h3>
+      <span id="ayuda-edicion" class="text-xs text-slate-500">Pasa el cursor y haz clic en el lápiz para editar</span>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="card p-5">
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Sueldo Mensual</p>
+        <div class="field-group" id="fg-sueldo">
+          <input type="text" id="in-sueldo" class="input pr-10" value="-" readonly onfocus="activarEdicion('sueldo')">
+          <button id="btn-edit-sueldo" class="field-edit-btn" onclick="activarEdicion('sueldo')" title="Editar">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+          </button>
+          <div id="actions-sueldo" class="edit-actions hidden">
+            <button class="btn btn-green btn-icon p-2" onclick="confirmarEdicion('sueldo')" title="Confirmar">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </button>
+            <button class="btn btn-red btn-icon p-2" onclick="cancelarEdicion('sueldo')" title="Cancelar">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="card p-5">
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Bono Target Anual</p>
+        <div class="field-group" id="fg-bono">
+          <input type="text" id="in-bono-a" class="input pr-10" value="-" readonly onfocus="activarEdicion('bono')">
+          <button id="btn-edit-bono" class="field-edit-btn" onclick="activarEdicion('bono')" title="Editar">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+          </button>
+          <div id="actions-bono" class="edit-actions hidden">
+            <button class="btn btn-green btn-icon p-2" onclick="confirmarEdicion('bono')" title="Confirmar">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </button>
+            <button class="btn btn-red btn-icon p-2" onclick="cancelarEdicion('bono')" title="Cancelar">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="card p-5">
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Bono Mensual Equiv.</p>
+        <div class="field-group">
+          <input type="text" id="in-bono-m" class="input" value="-" readonly style="opacity:.7;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="kpi">
+      <p class="kpi-lbl">Proyección <span id="lbl-periodo">12M</span></p>
+      <p id="k-proy" class="kpi-val text-blue-400">$ 0</p>
+    </div>
+    <div class="card p-5">
+      <p class="kpi-lbl">Costo Mensual Total</p>
+      <p id="k-costo" class="kpi-val">$ 0</p>
+    </div>
+    <div class="card p-5">
+      <p class="kpi-lbl">Carga Prestacional/Mes</p>
+      <p id="k-carga" class="kpi-val text-amber-400">$ 0</p>
+    </div>
+    <div class="card p-5">
+      <p class="kpi-lbl">% Carga vs. Salario</p>
+      <p id="k-pct" class="kpi-val text-emerald-400">0%</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+    <div class="lg:col-span-2">
+      <div class="card p-6 h-full flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-white">Desglose Prestacional Mensual</h3>
+            <span id="t-lbl" class="text-xs text-slate-500">-</span>
+          </div>
+          <div class="flex items-center justify-between text-xs text-slate-500 uppercase tracking-wider mb-3 border-b border-slate-800 pb-2">
+            <span class="w-1/3">Concepto</span>
+            <span class="w-1/3 text-center">Proporción</span>
+            <span class="w-1/3 text-right">Valor Mensual</span>
+          </div>
+          <div id="desglose" class="space-y-1"></div>
+        </div>
+        <div class="total mt-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="concept-name">Total Carga Prestacional Mensual</p>
+              <p class="concept-formula">Factor consolidado aplicado según matriz prestacional legal</p>
+            </div>
+            <p id="t-carga" class="concept-val text-blue-400">$ 0</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lg:col-span-1">
+      <div class="card p-6 h-full flex flex-col justify-between">
+        <div>
+          <h3 class="text-lg font-bold text-white mb-6">Composición Mensual</h3>
+          <div class="relative h-44 w-44 mx-auto mb-6">
+            <canvas id="chart"></canvas>
+          </div>
+        </div>
+        <div id="legend" class="space-y-3 border-t border-slate-800 pt-4"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ============================================================
+// DATOS + ENGINE GENERALIZADO
+// ============================================================
+const data=[
+{numeroId:'1013605928',pais:'CO',moneda:'COP',nombreCompleto:'Yenssy Marley Ortiz Maldonado',gerenciaCorp:'Compras',gerencia:'Gerencia Corporativa de Compras',area:'Compras',puesto:'Coordinador Compras',grado:'G12',gradoLabel:'Profesional',tipoSalario:'F',sueldoMensual:4500000,nSueldos:14,medicinaPrepagadaAnio:3600000,bonoTargetAnual:6750000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#8b5cf6,#6366f1)',avatarIniciales:'YO'},
+{numeroId:'79597769',pais:'CO',moneda:'COP',nombreCompleto:'Diana Patricia Gómez',gerenciaCorp:'Recursos Humanos',gerencia:'Selección y Talento',area:'RRHH',puesto:'Jefe de Selección',grado:'G15',gradoLabel:'Jefe',tipoSalario:'F',sueldoMensual:6200000,nSueldos:14,medicinaPrepagadaAnio:4200000,bonoTargetAnual:9300000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#10b981,#059669)',avatarIniciales:'DG'},
+{numeroId:'9872286',pais:'CO',moneda:'COP',nombreCompleto:'Andrés Alberto Rodríguez',gerenciaCorp:'Operaciones',gerencia:'Logística y Distribución',area:'Logística',puesto:'Director de Logística',grado:'G16',gradoLabel:'Director',tipoSalario:'I',sueldoMensual:12500000,nSueldos:13,medicinaPrepagadaAnio:4800000,bonoTargetAnual:18750000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#f59e0b,#d97706)',avatarIniciales:'AR'},
+{numeroId:'10586406',pais:'CO',moneda:'COP',nombreCompleto:'Carlos Eduardo Ramírez',gerenciaCorp:'Finanzas',gerencia:'Compensación y Beneficios',area:'Compensación',puesto:'Gerente de Compensaciones',grado:'G17',gradoLabel:'Gerente',tipoSalario:'F',sueldoMensual:9800000,nSueldos:14,medicinaPrepagadaAnio:5400000,bonoTargetAnual:14700000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#3b82f6,#2563eb)',avatarIniciales:'CR'}
+];
+
+let glob={recargoFijo:.4960,recargoIntegral:.3194,moneda:'COP',tasaUSD:3950,tasaPEN:950,periodo:12};
+let vistaMaestra = 'colaboradores'; // 'colaboradores' o 'gerencias'
+let actual=null, editado={}, chart=null, tipoVistaDetalle='individual'; // 'individual' o 'gerencial'
+let cacheEdiciones = {};
+let tempValores = {};
+
+function calc(c){
+  const s=c.sueldoMensual,ba=c.bonoTargetAnual,bm=ba/12,mm=c.medicinaPrepagadaAnio/12;
+  let p=0,v=0,n=0,ce=0,ic=0,par=0,ss=0;
+  if(c.tipoSalario==='F'){p=s/12;v=s/12;n=(s*.5)/12;ce=s/12;ic=ce*.12;ss=s*.205;par=s*glob.recargoFijo;}
+  else{par=s*glob.recargoIntegral;}
+  const cp=p+v+n+ce+ic+ss+par,ct=s+bm+mm+cp,ps=s>0?((ct-s-bm-mm)/s)*100:0,py=ct*glob.periodo;
+  return{sueldo:s,bonoAnual:ba,bonoMensual:bm,medicina:mm,prima:p,vacaciones:v,navidad:n,cesantias:ce,intereses:ic,seguridad:ss,par:par,carga:cp,total:ct,pct:ps,proyeccion:py};
+}
+
+function fmt(v){
+  if(glob.moneda==='USD')return '$ '+(v/glob.tasaUSD).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(glob.moneda==='PEN')return 'S/ '+(v/glob.tasaPEN).toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return '$ '+v.toLocaleString('es-CO',{minimumFractionDigits:0,maximumFractionDigits:0});
+}
+function pct(v){return v.toFixed(1)+'%';}
+function parseInp(v){return parseFloat(v.replace(/[^0-9]/g,''))||0;}
+function fmtId(id){return id.replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
+
+// ============================================================
+// SISTEMA DE CONTROL DE MULTI-VISTAS (MAESTRO)
+// ============================================================
+function cambiarFiltroMaestro(tipo) {
+  vistaMaestra = tipo;
+  document.getElementById('tab-colab').className = tipo === 'colaboradores' ? 'btn py-1 px-3 active' : 'btn py-1 px-3';
+  document.getElementById('tab-geren').className = tipo === 'gerencias' ? 'btn py-1 px-3 active' : 'btn py-1 px-3';
+  document.getElementById('v1-titulo').textContent = tipo === 'colaboradores' ? 'Colaboradores Activos' : 'Costos por Gerencia';
+  document.getElementById('buscar').value = '';
+  renderTabla();
+}
+
+function obtenerDatosAgrupadosGerencias() {
+  const gerencias = {};
+  data.forEach(colab => {
+    // Tomamos mutaciones locales en caché si existen
+    const c = cacheEdiciones[colab.numeroId] ? {...colab, ...cacheEdiciones[colab.numeroId]} : colab;
+    if (!gerencias[c.gerenciaCorp]) {
+      gerencias[c.gerenciaCorp] = {
+        idKey: c.gerenciaCorp,
+        nombre: c.gerencia,
+        gerenciaCorp: c.gerenciaCorp,
+        empresa: c.empresa,
+        pais: c.pais,
+        numColaboradores: 0,
+        sueldoMensual: 0,
+        bonoTargetAnual: 0,
+        medicinaPrepagadaAnio: 0
+      };
+    }
+    gerencias[c.gerenciaCorp].numColaboradores++;
+    gerencias[c.gerenciaCorp].sueldoMensual += c.sueldoMensual;
+    gerencias[c.gerenciaCorp].bonoTargetAnual += c.bonoTargetAnual;
+    gerencias[c.gerenciaCorp].medicinaPrepagadaAnio += c.medicinaPrepagadaAnio;
+  });
+  return Object.values(gerencias);
+}
+
+function renderTabla(filtroData = null) {
+  const tbody = document.getElementById('tb');
+  const thead = document.getElementById('th-dinamico');
+  
+  if (vistaMaestra === 'colaboradores') {
+    thead.innerHTML = `
+      <tr class="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-700">
+        <th class="px-5 py-4 text-left font-semibold">Nombre Completo</th>
+        <th class="px-5 py-4 text-left font-semibold">Empresa</th>
+        <th class="px-5 py-4 text-left font-semibold">Puesto / Área</th>
+        <th class="px-5 py-4 text-center font-semibold">País</th>
+        <th class="px-5 py-4 text-center font-semibold">Grado</th>
+        <th class="px-5 py-4 text-right font-semibold">Acciones</th>
+      </tr>`;
+      
+    const pool = filtroData || data;
+    document.getElementById('tc').textContent = pool.length;
+    document.getElementById('mc').textContent = pool.length;
+    document.getElementById('tt').textContent = data.length;
+    
+    tbody.innerHTML = pool.map(c => `
+      <tr class="row" onclick="go('${c.numeroId}')">
+        <td class="px-5 py-4"><div class="flex items-center gap-3"><div class="avatar" style="background:${c.avatarColor};">${c.avatarIniciales}</div><div><p class="font-semibold text-white">${c.nombreCompleto}</p><p class="text-xs text-slate-500 font-mono">CC ${fmtId(c.numeroId)}</p></div></div></td>
+        <td class="px-5 py-4"><span class="text-blue-400 font-semibold">${c.empresa}</span></td>
+        <td class="px-5 py-4 text-slate-300">${c.puesto}<br><span class="text-xs text-slate-500">${c.gerenciaCorp}</span></td>
+        <td class="px-5 py-4 text-center text-slate-400 font-mono">${c.pais}</td>
+        <td class="px-5 py-4 text-center"><span class="badge badge-blue">${c.grado}</span></td>
+        <td class="px-5 py-4 text-right"><button class="btn" style="background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.3);color:#60a5fa;" onclick="event.stopPropagation();go('${c.numeroId}')">Ver Costo</button></td>
+      </tr>`).join('');
+  } else {
+    thead.innerHTML = `
+      <tr class="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-700">
+        <th class="px-5 py-4 text-left font-semibold">Gerencia Corporativa</th>
+        <th class="px-5 py-4 text-left font-semibold">Empresa</th>
+        <th class="px-5 py-4 text-center font-semibold">Dotación Activa</th>
+        <th class="px-5 py-4 text-center font-semibold">País</th>
+        <th class="px-5 py-4 text-right font-semibold">Nómina Base</th>
+        <th class="px-5 py-4 text-right font-semibold">Acciones</th>
+      </tr>`;
+      
+    const poolGerencias = filtroData || obtenerDatosAgrupadosGerencias();
+    document.getElementById('tc').textContent = poolGerencias.length;
+    document.getElementById('mc').textContent = poolGerencias.length;
+    document.getElementById('tt').textContent = obtenerDatosAgrupadosGerencias().length;
+    
+    tbody.innerHTML = poolGerencias.map(g => `
+      <tr class="row" onclick="goGerencia('${g.idKey}')">
+        <td class="px-5 py-4"><p class="font-semibold text-white">${g.nombre}</p><span class="text-xs text-blue-400 font-mono">${g.gerenciaCorp}</span></td>
+        <td class="px-5 py-4"><span class="text-blue-400 font-semibold">${g.empresa}</span></td>
+        <td class="px-5 py-4 text-center text-slate-300 font-mono">${g.numColaboradores} colab.</td>
+        <td class="px-5 py-4 text-center text-slate-400 font-mono">${g.pais}</td>
+        <td class="px-5 py-4 text-right font-mono text-emerald-400">${fmt(g.sueldoMensual)}</td>
+        <td class="px-5 py-4 text-right"><button class="btn" style="background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.3);color:#a78bfa;" onclick="event.stopPropagation();goGerencia('${g.idKey}')">Análisis Consolidado</button></td>
+      </tr>`).join('');
+  }
+}
+
+function filtrar(){
+  const q=document.getElementById('buscar').value.toLowerCase();
+  if(vistaMaestra === 'colaboradores') {
+    renderTabla(data.filter(c=>c.nombreCompleto.toLowerCase().includes(q)||c.puesto.toLowerCase().includes(q)||c.area.toLowerCase().includes(q)||c.gerenciaCorp.toLowerCase().includes(q)));
+  } else {
+    renderTabla(obtenerDatosAgrupadosGerencias().filter(g=>g.nombre.toLowerCase().includes(q)||g.gerenciaCorp.toLowerCase().includes(q)));
+  }
+}
+function ordenar(){ if(vistaMaestra === 'colaboradores'){ data.sort((a,b)=>a.grado.localeCompare(b.grado)); renderTabla(); } }
+
+// ============================================================
+// NAVEGACIÓN Y CONFIGURACIÓN DINÁMICA DE DETALLES
+// ============================================================
+function go(id){
+  tipoVistaDetalle = 'individual';
+  actual=data.find(c=>c.numeroId===id);if(!actual)return;
+  editado = cacheEdiciones[id] ? {...actual,...cacheEdiciones[id]} : {...actual};
+  
+  // Reactivar inputs y ayudas de edición
+  document.getElementById('c-tipo-analisis').textContent = "Costeo del Colaborador";
+  document.getElementById('ctrl-tipo-salario').classList.remove('hidden');
+  document.getElementById('seccion-parametros').classList.remove('hidden');
+  document.getElementById('btn-restaurar').classList.remove('hidden');
+  
+  document.getElementById('v1').classList.add('hidden');
+  document.getElementById('v2').classList.remove('hidden');
+  renderV2();
+}
+
+function goGerencia(gerenciaCorpKey) {
+  tipoVistaDetalle = 'gerencial';
+  const coleccion = data.filter(c => c.gerenciaCorp === gerenciaCorpKey);
+  if(coleccion.length === 0) return;
+  
+  // Consolidamos la gerencia en un objeto compatible temporal simulado
+  let totalSueldo = 0, totalBono = 0, totalMedicina = 0;
+  coleccion.forEach(colab => {
+    const c = cacheEdiciones[colab.numeroId] ? {...colab, ...cacheEdiciones[colab.numeroId]} : colab;
+    totalSueldo += c.sueldoMensual;
+    totalBono += c.bonoTargetAnual;
+    totalMedicina += c.medicinaPrepagadaAnio;
+  });
+
+  actual = {
+    numeroId: '0000',
+    nombreCompleto: coleccion[0].gerencia,
+    gerenciaCorp: gerenciaCorpKey,
+    puesto: `Consolidado de Área — ${coleccion.length} Colaboradores`,
+    empresa: coleccion[0].empresa,
+    pais: coleccion[0].pais,
+    avatarColor: 'linear-gradient(135deg, #3b82f6, #06b6d4)',
+    avatarIniciales: 'GC',
+    grado: 'Global',
+    gradoLabel: 'Área Corporativa',
+    tipoSalario: 'F', // Forzamos Fijo en vistas macro para mapear todo el árbol de recargos
+    sueldoMensual: totalSueldo,
+    bonoTargetAnual: totalBono,
+    medicinaPrepagadaAnio: totalMedicina
+  };
+  
+  editado = {...actual};
+  
+  // Ocultamos componentes individuales no viables para agregados globales
+  document.getElementById('c-tipo-analisis').textContent = "Análisis de Costo Consolidado";
+  document.getElementById('ctrl-tipo-salario').classList.add('hidden');
+  document.getElementById('seccion-parametros').classList.add('hidden');
+  document.getElementById('btn-restaurar').classList.add('hidden');
+  
+  document.getElementById('v1').classList.add('hidden');
+  document.getElementById('v2').classList.remove('hidden');
+  renderV2();
+}
+
+function volver(){document.getElementById('v2').classList.add('hidden');document.getElementById('v1').classList.remove('hidden');actual=null; renderTabla();}
+
+// ============================================================
+// FLUJO EDICIÓN (MANTIENE LA ALINEACIÓN HORIZONTAL FIJA)
+// ============================================================
+function activarEdicion(campo){
+  if(tipoVistaDetalle === 'gerencial') return;
+  const input = document.getElementById(campo==='sueldo'?'in-sueldo':'in-bono-a');
+  const actions = document.getElementById('actions-'+campo);
+  tempValores[campo] = input.value;
+  input.readOnly = false;
+  input.classList.add('edit-mode');
+  actions.classList.remove('hidden');
+  input.focus();
+  input.setSelectionRange(0, input.value.length);
+}
+
+function confirmarEdicion(campo){
+  const input = document.getElementById(campo==='sueldo'?'in-sueldo':'in-bono-a');
+  const actions = document.getElementById('actions-'+campo);
+  const nv = parseInp(input.value);
+  
+  if(campo==='sueldo'){
+    editado.sueldoMensual = nv;
+    const ratio = actual.bonoTargetAnual / actual.sueldoMensual;
+    editado.bonoTargetAnual = Math.round(nv * ratio);
+  } else if(campo==='bono'){
+    editado.bonoTargetAnual = nv;
+  }
+  
+  if(!cacheEdiciones[actual.numeroId]) cacheEdiciones[actual.numeroId] = {};
+  cacheEdiciones[actual.numeroId].sueldoMensual = editado.sueldoMensual;
+  cacheEdiciones[actual.numeroId].bonoTargetAnual = editado.bonoTargetAnual;
+  cacheEdiciones[actual.numeroId].tipoSalario = editado.tipoSalario;
+  
+  input.readOnly = true;
+  input.classList.remove('edit-mode');
+  actions.classList.add('hidden');
+  delete tempValores[campo];
+  renderV2();
+}
+
+function cancelarEdicion(campo){
+  const input = document.getElementById(campo==='sueldo'?'in-sueldo':'in-bono-a');
+  const actions = document.getElementById('actions-'+campo);
+  if(tempValores[campo] !== undefined) input.value = tempValores[campo];
+  input.readOnly = true;
+  input.classList.remove('edit-mode');
+  actions.classList.add('hidden');
+  delete tempValores[campo];
+}
+
+function reset(){
+  if(!actual || tipoVistaDetalle === 'gerencial') return;
+  editado = {...actual};
+  delete cacheEdiciones[actual.numeroId];
+  renderV2();
+}
+
+// ============================================================
+// VISTA 2: RENDERING & COMPOSICIÓN (2/3 Y 1/3 PERFECTOS)
+// ============================================================
+function renderV2(){
+  if(!actual)return;const c=editado,r=calc(c);
+  
+  document.getElementById('c-nom').textContent=c.nombreCompleto;
+  document.getElementById('p-nom').textContent=c.nombreCompleto;
+  document.getElementById('p-meta-id').textContent= tipoVistaDetalle === 'individual' ? 'CC ' + fmtId(c.numeroId) : 'ID ÁREA';
+  document.getElementById('p-ger').textContent=c.gerenciaCorp;
+  document.getElementById('p-pue').textContent=c.puesto;
+  document.getElementById('av').style.background=c.avatarColor;
+  document.getElementById('av').textContent=c.avatarIniciales;
+  document.getElementById('bg-g').textContent=c.grado+' — '+c.gradoLabel;
+  
+  const bt=document.getElementById('bg-t');
+  bt.textContent=c.tipoSalario==='F'?'Estructura Fija':'Estructura Integral';
+  bt.className=c.tipoSalario==='F'?'badge badge-green':'badge badge-purple';
+  
+  document.getElementById('bt-f').className=c.tipoSalario==='F'?'btn active':'btn';
+  document.getElementById('bt-i').className=c.tipoSalario==='I'?'btn active':'btn';
+  
+  document.getElementById('in-sueldo').value=fmt(c.sueldoMensual);
+  document.getElementById('in-bono-a').value=fmt(c.bonoTargetAnual);
+  document.getElementById('in-bono-m').value=fmt(r.bonoMensual);
+  document.getElementById('lbl-periodo').textContent=glob.periodo+'M';
+  document.getElementById('k-proy').textContent=fmt(r.proyeccion);
+  document.getElementById('k-costo').textContent=fmt(r.total);
+  document.getElementById('k-carga').textContent=fmt(r.carga);
+  document.getElementById('k-pct').textContent=pct(r.pct);
+  document.getElementById('t-lbl').textContent=c.tipoSalario==='F'?'Fórmula Base: Primas + Cesantías Consolidadas':'Fórmula Base: Recargo Integral de Ley';
+  
+  const d=document.getElementById('desglose');
+  const max=Math.max(r.prima,r.vacaciones,r.navidad,r.cesantias,r.intereses,r.seguridad,r.par)||1;
+  let html='';
+  if(c.tipoSalario==='F'){
+    html+=fila('Prima de Servicios Mensual','Sueldo / 12',r.prima,max);
+    html+=fila('Prima de Vacaciones Mensual','Sueldo / 12',r.vacaciones,max);
+    html+=fila('Prima de Navidad Mensual','(Sueldo × 0.5) / 12',r.navidad,max);
+    html+=fila('Cesantías Mensual','Sueldo / 12',r.cesantias,max);
+    html+=fila('Intereses de Cesantías Mensual','12% de Cesantías',r.intereses,max);
+    html+=fila('Seguridad Social Base','Sueldo × 20.5% (Aporte Patronal)',r.seguridad,max);
+  }
+  html+=fila('Provisión Costo PAR',c.tipoSalario==='F'?'((Sueldo / 12) × 49.60%)':'Sueldo × 31.94%',r.par,max,true);
+  d.innerHTML=html;
+  document.getElementById('t-carga').textContent=fmt(r.carga);
+  
+  renderChart(r);
+  renderLegend(r);
+}
+
+function fila(n,f,v,mx,dest=false){
+  const pct=mx>0?(v/mx)*100:0;
+  return `
+    <div class="concept flex items-center justify-between py-3">
+      <div class="w-1/3 pr-2">
+        <p class="concept-name truncate" title="${n}">${n}</p>
+        <p class="concept-formula text-slate-500">${f}</p>
+      </div>
+      <div class="w-1/3 px-4">
+        <div class="bar w-full">
+          <div class="bar-fill ${dest?'bg-purple-500':'bg-blue-500'}" style="width:${pct}%"></div>
+        </div>
+      </div>
+      <div class="w-1/3 text-right">
+        <p class="concept-val font-mono text-white">${fmt(v)}</p>
+      </div>
+    </div>`;
+}
+
+function renderChart(r){
+  const ctx=document.getElementById('chart').getContext('2d');
+  if(chart)chart.destroy();
+  const tot=r.total;
+  chart=new Chart(ctx,{type:'doughnut',data:{labels:['Salario Neto','Carga Prestacional','Provisión Beneficios'],datasets:[{data:[r.sueldo,r.carga,r.bonoMensual+r.medicina],backgroundColor:['#3b82f6','#f59e0b','#10b981'],borderWidth:0,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(15,29,50,.95)',titleColor:'#e2e8f0',bodyColor:'#94a3b8',borderColor:'#1e3a5f',borderWidth:1,callbacks:{label:function(ctx){return fmt(ctx.raw)+' ('+((ctx.raw/tot)*100).toFixed(0)+'%)';}}}}}});
+}
+
+function renderLegend(r){
+  const tot=r.total,items=[{c:'#3b82f6',l:'Salario Neto',v:r.sueldo},{c:'#f59e0b',l:'Carga Prestacional',v:r.carga},{c:'#10b981',l:'Provisión Beneficios',v:r.bonoMensual+r.medicina}];
+  document.getElementById('legend').innerHTML=items.map(i=>{
+    const p=((i.v/tot)*100).toFixed(0);
+    return `<div class="flex items-center gap-2 text-sm text-slate-400 mb-2"><div class="w-2.5 h-2.5 rounded-full" style="background:${i.c}"></div><span class="flex-1">${i.l}</span><span class="font-mono font-semibold text-white">${fmt(i.v)}</span><span class="text-xs text-slate-500">(${p}%)</span></div>`;
+  }).join('');
+}
+
+function setMon(btn,m){glob.moneda=m;document.querySelectorAll('.btn').forEach(b=>{if(b.textContent==='COP'||b.textContent==='USD'||b.textContent==='PEN')b.classList.remove('active');});btn.classList.add('active');renderV2();}
+function setPer(btn,p){glob.periodo=p;document.querySelectorAll('.btn').forEach(b=>{if(b.textContent.includes('M'))b.classList.remove('active');});btn.classList.add('active');renderV2();}
+function setTipo(t){if(tipoVistaDetalle === 'gerencial') return; editado.tipoSalario=t; if(!cacheEdiciones[actual.numeroId])cacheEdiciones[actual.numeroId]={}; cacheEdiciones[actual.numeroId].tipoSalario=t; renderV2();}
+
+// Eventos de click externo y atajos de teclado
+document.addEventListener('click',function(e){
+  ['sueldo','bono'].forEach(campo=>{
+    const fg=document.getElementById('fg-'+campo);
+    const actions=document.getElementById('actions-'+campo);
+    if(!fg||!actions||actions.classList.contains('hidden'))return;
+    if(!fg.contains(e.target)&&!actions.contains(e.target)) cancelarEdicion(campo);
+  });
+});
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'){
+    ['sueldo','bono'].forEach(campo=>{
+      const actions=document.getElementById('actions-'+campo);
+      if(actions&&!actions.classList.contains('hidden')) confirmarEdicion(campo);
+    });
+  }
+  if(e.key==='Escape'){
+    ['sueldo','bono'].forEach(campo=>{
+      const actions=document.getElementById('actions-'+campo);
+      if(actions&&!actions.classList.contains('hidden')) cancelarEdicion(campo);
+    });
+  }
+});
+
+document.addEventListener('DOMContentLoaded',()=>renderTabla());
+</script>
+</body>
+</html>
