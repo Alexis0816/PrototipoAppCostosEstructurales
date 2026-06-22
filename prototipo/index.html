@@ -15,8 +15,8 @@ body{background:#0a1628;color:#e2e8f0;min-height:100vh;margin:0;}
 .input{background:rgba(30,58,95,.4);border:1px solid #1e3a5f;color:#e2e8f0;border-radius:8px;padding:8px 12px;font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:600;width:100%;transition:all .2s;}
 .input:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.15);}
 .input[readonly]{background:rgba(30,58,95,.15);border-color:rgba(30,58,95,.5);cursor:default;}
-.btn{background:rgba(30,58,95,.3);border:1px solid #1e3a5f;color:#94a3b8;padding:8px 20px;border-radius:8px;cursor:pointer;transition:all .2s;font-size:.875rem;font-weight:500;display:inline-flex;align-items:center;gap:6px;}
-.btn.active{background:#3b82f6;color:#fff;border-color:#3b82f6;}
+.btn{background:rgba(30,58,95,.3);border:1px solid #1e3a5f;color:#94a3b8;padding:8px 20px;border-radius:8px;cursor:pointer;transition:all .2s;font-size:.875rem;font-weight:500;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+.btn.active{background:#3b82f6;color:#fff;border-color:#3b82f6;box-shadow:0 2px 8px rgba(59,130,246,.35);}
 .btn:hover:not(.active){border-color:#2a4a6f;color:#e2e8f0;}
 .btn-icon{padding:8px;}
 .btn-green{background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.3);color:#34d399;}
@@ -25,11 +25,12 @@ body{background:#0a1628;color:#e2e8f0;min-height:100vh;margin:0;}
 .btn-red:hover{background:rgba(239,68,68,.25);}
 .btn-ghost{background:transparent;border-color:transparent;color:#64748b;}
 .btn-ghost:hover{color:#e2e8f0;}
-.badge{display:inline-flex;align-items:center;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:600;}
+.badge{display:inline-flex;align-items:center;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:600;white-space:nowrap;}
 .badge-green{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.2);}
 .badge-blue{background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.2);}
 .badge-purple{background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.2);}
 .badge-gray{background:rgba(100,116,139,.15);color:#94a3b8;border:1px solid rgba(100,116,139,.2);}
+.badge-cyan{background:rgba(6,182,212,.15);color:#22d3ee;border:1px solid rgba(6,182,212,.2);}
 .row{cursor:pointer;transition:background .15s;}
 .row:hover{background:#162440;}
 .row.selected{background:rgba(59,130,246,.08);border-left:3px solid #3b82f6;}
@@ -95,35 +96,39 @@ body{background:#0a1628;color:#e2e8f0;min-height:100vh;margin:0;}
 ::-webkit-scrollbar-track{background:#0a1628;}
 ::-webkit-scrollbar-thumb{background:#1e3a5f;border-radius:4px;}
 ::-webkit-scrollbar-thumb:hover{background:#2a4a6f;}
+@media (max-width:480px){
+  .kpi-val{font-size:1.4rem;}
+  .concept-val{min-width:90px;}
+}
 </style>
 </head>
 <body>
 
 <div id="v1">
 <div class="nav">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-    <div class="flex items-center gap-6">
-      <div>
-        <h1 id="v1-titulo" class="text-2xl font-bold text-white">Colaboradores Activos</h1>
-        <p class="text-sm text-slate-400 mt-1"><span id="tc">4</span> registros · <span class="text-blue-400 font-semibold">PRIMAX</span></p>
-      </div>
-      <div class="flex bg-slate-900 p-1 rounded-lg border border-slate-700">
-        <button id="tab-colab" onclick="cambiarFiltroMaestro('colaboradores')" class="btn py-1 px-3 active">Colaboradores</button>
-        <button id="tab-geren" onclick="cambiarFiltroMaestro('gerencias')" class="btn py-1 px-3">Gerencias</button>
-      </div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 sm:gap-5 lg:gap-8">
+    <div class="min-w-0">
+      <h1 id="v1-titulo" class="text-xl sm:text-2xl font-bold text-white truncate">Colaboradores</h1>
+      <p class="text-sm text-slate-400 mt-1 truncate"><span id="tc">4</span> registros · <span class="text-blue-400 font-semibold">PRIMAX</span></p>
     </div>
-    <div class="relative">
+    <div class="flex bg-slate-900 p-1 rounded-lg border border-slate-700 w-full sm:w-[250px]">
+      <button id="tab-colab" onclick="cambiarFiltroMaestro('colaboradores')" class="btn flex-1 min-w-0 justify-center py-1.5 px-3 active">Colaboradores</button>
+      <button id="tab-geren" onclick="cambiarFiltroMaestro('gerencias')" class="btn flex-1 min-w-0 justify-center py-1.5 px-3">Gerencias</button>
+    </div>
+    <div class="relative w-full sm:col-span-2 lg:col-span-1 lg:w-auto">
       <svg class="w-5 h-5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-      <input type="text" id="buscar" class="search pl-10" placeholder="Buscar..." oninput="filtrar()">
+      <input type="text" id="buscar" class="search pl-10 w-full" placeholder="Buscar..." oninput="filtrar()">
     </div>
   </div>
 </div>
-<div class="max-w-7xl mx-auto px-6 py-6">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
   <div class="card overflow-hidden">
-    <table class="w-full text-sm">
-      <thead id="th-dinamico"></thead>
-      <tbody id="tb" class="divide-y divide-slate-800"></tbody>
-    </table>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead id="th-dinamico"></thead>
+        <tbody id="tb" class="divide-y divide-slate-800"></tbody>
+      </table>
+    </div>
     <div class="px-5 py-3 border-t border-slate-800 text-xs text-slate-500 text-right">Mostrando <span id="mc">4</span> de <span id="tt">4</span> registros</div>
   </div>
 </div>
@@ -131,16 +136,16 @@ body{background:#0a1628;color:#e2e8f0;min-height:100vh;margin:0;}
 
 <div id="v2" class="hidden">
 <div class="nav">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"></div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between"></div>
 </div>
 
-<div class="max-w-7xl mx-auto px-6 py-6">
-  <div class="flex items-center justify-between mb-6">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
     <div>
-      <h2 id="c-tipo-analisis" class="text-2xl font-bold text-white">Costeo del Colaborador</h2>
+      <h2 id="c-tipo-analisis" class="text-xl sm:text-2xl font-bold text-white">Costeo del Colaborador</h2>
       <p class="text-sm text-slate-400 mt-1"><span id="c-nom" class="text-blue-400 font-medium">-</span> · PRIMAX · Colombia</p>
     </div>
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 flex-wrap">
       <button onclick="volver()" class="btn" style="background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.3);color:#60a5fa;">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
         Volver a Lista
@@ -156,27 +161,25 @@ body{background:#0a1628;color:#e2e8f0;min-height:100vh;margin:0;}
     </div>
   </div>
 
-  <div class="card p-5 mb-6 flex items-center gap-4">
+  <div class="card p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
     <div id="av" class="avatar" style="background:linear-gradient(135deg,#8b5cf6,#6366f1);">YO</div>
     <div class="flex-1 min-w-0">
       <h3 id="p-nom" class="text-lg font-bold text-white truncate">-</h3>
       <div class="flex items-center gap-3 mt-1 text-sm text-slate-400 flex-wrap">
-        <span id="p-meta-id" class="font-mono">-</span>
-        <span class="text-slate-600">·</span>
         <span id="p-ger">-</span>
         <span class="text-slate-600">·</span>
-        <span id="p-ciudad">Bogotá D.C.</span>
+        <span id="p-ciudad">-</span>
       </div>
       <p id="p-pue" class="text-sm text-slate-500 mt-0.5">-</p>
     </div>
-    <div class="flex items-center gap-2 flex-shrink-0">
+    <div class="flex items-center gap-2 flex-shrink-0 flex-wrap">
       <span id="bg-g" class="badge badge-blue">-</span>
       <span id="bg-t" class="badge badge-green">-</span>
-      <span id="bg-extra" class="badge badge-gray">Término Indefinido</span>
+      <span id="bg-extra" class="badge badge-gray">-</span>
     </div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
     <div>
       <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Moneda</p>
       <div class="flex gap-2">
@@ -185,7 +188,7 @@ body{background:#0a1628;color:#e2e8f0;min-height:100vh;margin:0;}
         <button class="btn" onclick="setMon(this,'PEN')">PEN</button>
       </div>
     </div>
-    <div>
+    <div id="ctrl-periodo">
       <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Período</p>
       <div class="flex gap-2">
         <button class="btn" onclick="setPer(this,6)">6M</button>
@@ -203,11 +206,11 @@ body{background:#0a1628;color:#e2e8f0;min-height:100vh;margin:0;}
   </div>
 
   <div id="seccion-parametros" class="mb-6">
-    <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
       <h3 class="text-lg font-bold text-white">Parámetros Salariales</h3>
       <span id="ayuda-edicion" class="text-xs text-slate-500">Pasa el cursor y haz clic en el lápiz para editar</span>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <div class="card p-5">
         <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Sueldo Mensual</p>
         <div class="field-group" id="fg-sueldo">
@@ -251,8 +254,8 @@ body{background:#0a1628;color:#e2e8f0;min-height:100vh;margin:0;}
     </div>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-    <div class="kpi">
+  <div id="kpi-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div id="kpi-proyeccion" class="kpi">
       <p class="kpi-lbl">Proyección <span id="lbl-periodo">12M</span></p>
       <p id="k-proy" class="kpi-val text-blue-400">$ 0</p>
     </div>
@@ -274,7 +277,7 @@ body{background:#0a1628;color:#e2e8f0;min-height:100vh;margin:0;}
     <div class="lg:col-span-2">
       <div class="card p-6 h-full flex flex-col justify-between">
         <div>
-          <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
             <h3 class="text-lg font-bold text-white">Desglose Prestacional Mensual</h3>
             <span id="t-lbl" class="text-xs text-slate-500">-</span>
           </div>
@@ -301,12 +304,32 @@ body{background:#0a1628;color:#e2e8f0;min-height:100vh;margin:0;}
       <div class="card p-6 h-full flex flex-col justify-between">
         <div>
           <h3 class="text-lg font-bold text-white mb-6">Composición Mensual</h3>
-          <div class="relative h-44 w-44 mx-auto mb-6">
+          <div class="relative h-40 w-40 sm:h-44 sm:w-44 mx-auto mb-6">
             <canvas id="chart"></canvas>
           </div>
         </div>
         <div id="legend" class="space-y-3 border-t border-slate-800 pt-4"></div>
       </div>
+    </div>
+  </div>
+
+  <div id="seccion-colaboradores-incluidos" class="card p-6 mt-6 hidden">
+    <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+      <h3 class="text-lg font-bold text-white">Colaboradores Incluidos</h3>
+      <span id="num-colab-incluidos" class="text-xs text-slate-500">0 colaboradores</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-700">
+            <th class="px-3 py-3 text-left font-semibold">Colaborador</th>
+            <th class="px-3 py-3 text-left font-semibold max-sm:hidden">Puesto / Área</th>
+            <th class="px-3 py-3 text-center font-semibold">Tipo Salario</th>
+            <th class="px-3 py-3 text-right font-semibold">Costo Mensual</th>
+          </tr>
+        </thead>
+        <tbody id="tb-colaboradores-incluidos" class="divide-y divide-slate-800"></tbody>
+      </table>
     </div>
   </div>
 </div>
@@ -317,17 +340,30 @@ body{background:#0a1628;color:#e2e8f0;min-height:100vh;margin:0;}
 // DATOS + ENGINE GENERALIZADO
 // ============================================================
 const data=[
-{numeroId:'1013605928',pais:'CO',moneda:'COP',nombreCompleto:'Yenssy Marley Ortiz Maldonado',gerenciaCorp:'Compras',gerencia:'Gerencia Corporativa de Compras',area:'Compras',puesto:'Coordinador Compras',grado:'G12',gradoLabel:'Profesional',tipoSalario:'F',sueldoMensual:4500000,nSueldos:14,medicinaPrepagadaAnio:3600000,bonoTargetAnual:6750000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#8b5cf6,#6366f1)',avatarIniciales:'YO'},
-{numeroId:'79597769',pais:'CO',moneda:'COP',nombreCompleto:'Diana Patricia Gómez',gerenciaCorp:'Recursos Humanos',gerencia:'Selección y Talento',area:'RRHH',puesto:'Jefe de Selección',grado:'G15',gradoLabel:'Jefe',tipoSalario:'F',sueldoMensual:6200000,nSueldos:14,medicinaPrepagadaAnio:4200000,bonoTargetAnual:9300000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#10b981,#059669)',avatarIniciales:'DG'},
-{numeroId:'9872286',pais:'CO',moneda:'COP',nombreCompleto:'Andrés Alberto Rodríguez',gerenciaCorp:'Operaciones',gerencia:'Logística y Distribución',area:'Logística',puesto:'Director de Logística',grado:'G16',gradoLabel:'Director',tipoSalario:'I',sueldoMensual:12500000,nSueldos:13,medicinaPrepagadaAnio:4800000,bonoTargetAnual:18750000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#f59e0b,#d97706)',avatarIniciales:'AR'},
-{numeroId:'10586406',pais:'CO',moneda:'COP',nombreCompleto:'Carlos Eduardo Ramírez',gerenciaCorp:'Finanzas',gerencia:'Compensación y Beneficios',area:'Compensación',puesto:'Gerente de Compensaciones',grado:'G17',gradoLabel:'Gerente',tipoSalario:'F',sueldoMensual:9800000,nSueldos:14,medicinaPrepagadaAnio:5400000,bonoTargetAnual:14700000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#3b82f6,#2563eb)',avatarIniciales:'CR'}
+{numeroId:'1013605928',pais:'CO',moneda:'COP',nombreCompleto:'Yenssy Marley Ortiz Maldonado',gerenciaCorp:'Compras',gerencia:'Gerencia Corporativa de Compras',area:'Compras Nacionales',puesto:'Coordinador de Compras',grado:'G12',gradoLabel:'Coordinador',tipoSalario:'F',sueldoMensual:4500000,nSueldos:14,medicinaPrepagadaAnio:3600000,bonoTargetAnual:6750000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#8b5cf6,#6366f1)',avatarIniciales:'YO'},
+{numeroId:'1018452367',pais:'CO',moneda:'COP',nombreCompleto:'Juan Pablo Sánchez Duarte',gerenciaCorp:'Compras',gerencia:'Gerencia Corporativa de Compras',area:'Compras Nacionales',puesto:'Analista de Compras',grado:'G8',gradoLabel:'Analista',tipoSalario:'F',sueldoMensual:3200000,nSueldos:14,medicinaPrepagadaAnio:3000000,bonoTargetAnual:4800000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#14b8a6,#0d9488)',avatarIniciales:'JS'},
+{numeroId:'52741098',pais:'CO',moneda:'COP',nombreCompleto:'Mariana Torres Vélez',gerenciaCorp:'Compras',gerencia:'Gerencia Corporativa de Compras',area:'Compras Internacionales',puesto:'Coordinadora de Compras Internacionales',grado:'G12',gradoLabel:'Coordinador',tipoSalario:'F',sueldoMensual:4700000,nSueldos:14,medicinaPrepagadaAnio:3600000,bonoTargetAnual:7050000,empresa:'PRIMAX',ciudad:'Cali',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#ec4899,#db2777)',avatarIniciales:'MT'},
+{numeroId:'1015236478',pais:'CO',moneda:'COP',nombreCompleto:'Felipe Castro Lozano',gerenciaCorp:'Compras',gerencia:'Gerencia Corporativa de Compras',area:'Compras Internacionales',puesto:'Analista de Compras Internacionales',grado:'G8',gradoLabel:'Analista',tipoSalario:'F',sueldoMensual:3100000,nSueldos:14,medicinaPrepagadaAnio:3000000,bonoTargetAnual:4650000,empresa:'PRIMAX',ciudad:'Cali',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#f97316,#ea580c)',avatarIniciales:'FC'},
+{numeroId:'79597769',pais:'CO',moneda:'COP',nombreCompleto:'Diana Patricia Gómez',gerenciaCorp:'Recursos Humanos',gerencia:'Gerencia Corporativa de Recursos Humanos',area:'Selección y Talento',puesto:'Jefe de Selección',grado:'G15',gradoLabel:'Jefe',tipoSalario:'F',sueldoMensual:6200000,nSueldos:14,medicinaPrepagadaAnio:4200000,bonoTargetAnual:9300000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#10b981,#059669)',avatarIniciales:'DG'},
+{numeroId:'1019384756',pais:'CO',moneda:'COP',nombreCompleto:'Laura Camila Gómez Ríos',gerenciaCorp:'Recursos Humanos',gerencia:'Gerencia Corporativa de Recursos Humanos',area:'Selección y Talento',puesto:'Analista de Selección',grado:'G8',gradoLabel:'Analista',tipoSalario:'F',sueldoMensual:3000000,nSueldos:14,medicinaPrepagadaAnio:3000000,bonoTargetAnual:4500000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#22c55e,#16a34a)',avatarIniciales:'LG'},
+{numeroId:'10586406',pais:'CO',moneda:'COP',nombreCompleto:'Carlos Eduardo Ramírez',gerenciaCorp:'Recursos Humanos',gerencia:'Gerencia Corporativa de Recursos Humanos',area:'Compensación y Beneficios',puesto:'Gerente de Compensación y Beneficios',grado:'G17',gradoLabel:'Gerente',tipoSalario:'F',sueldoMensual:9800000,nSueldos:14,medicinaPrepagadaAnio:5400000,bonoTargetAnual:14700000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#3b82f6,#2563eb)',avatarIniciales:'CR'},
+{numeroId:'1022847391',pais:'CO',moneda:'COP',nombreCompleto:'Natalia Andrea Vargas Beltrán',gerenciaCorp:'Recursos Humanos',gerencia:'Gerencia Corporativa de Recursos Humanos',area:'Compensación y Beneficios',puesto:'Analista de Compensación',grado:'G8',gradoLabel:'Analista',tipoSalario:'F',sueldoMensual:3300000,nSueldos:14,medicinaPrepagadaAnio:3000000,bonoTargetAnual:4950000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#8b5cf6,#7c3aed)',avatarIniciales:'NV'},
+{numeroId:'9872286',pais:'CO',moneda:'COP',nombreCompleto:'Andrés Alberto Rodríguez',gerenciaCorp:'Operaciones',gerencia:'Gerencia Corporativa de Operaciones',area:'Logística y Distribución',puesto:'Director de Logística',grado:'G16',gradoLabel:'Director',tipoSalario:'I',sueldoMensual:12500000,nSueldos:13,medicinaPrepagadaAnio:4800000,bonoTargetAnual:18750000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#f59e0b,#d97706)',avatarIniciales:'AR'},
+{numeroId:'43219876',pais:'CO',moneda:'COP',nombreCompleto:'Sandra Milena Pérez Ruiz',gerenciaCorp:'Operaciones',gerencia:'Gerencia Corporativa de Operaciones',area:'Logística y Distribución',puesto:'Coordinadora de Distribución',grado:'G12',gradoLabel:'Coordinador',tipoSalario:'F',sueldoMensual:4600000,nSueldos:14,medicinaPrepagadaAnio:3600000,bonoTargetAnual:6900000,empresa:'PRIMAX',ciudad:'Medellín',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#eab308,#ca8a04)',avatarIniciales:'SP'},
+{numeroId:'71234567',pais:'CO',moneda:'COP',nombreCompleto:'Jorge Iván Mejía Castaño',gerenciaCorp:'Operaciones',gerencia:'Gerencia Corporativa de Operaciones',area:'Mantenimiento y Flota',puesto:'Jefe de Mantenimiento',grado:'G15',gradoLabel:'Jefe',tipoSalario:'F',sueldoMensual:5800000,nSueldos:14,medicinaPrepagadaAnio:4200000,bonoTargetAnual:8700000,empresa:'PRIMAX',ciudad:'Medellín',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#06b6d4,#0891b2)',avatarIniciales:'JM'},
+{numeroId:'1098765432',pais:'CO',moneda:'COP',nombreCompleto:'Camilo Andrés Rojas Patiño',gerenciaCorp:'Operaciones',gerencia:'Gerencia Corporativa de Operaciones',area:'Mantenimiento y Flota',puesto:'Técnico de Flota',grado:'G8',gradoLabel:'Técnico',tipoSalario:'F',sueldoMensual:2900000,nSueldos:14,medicinaPrepagadaAnio:3000000,bonoTargetAnual:4350000,empresa:'PRIMAX',ciudad:'Medellín',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#64748b,#475569)',avatarIniciales:'CR'},
+{numeroId:'41567890',pais:'CO',moneda:'COP',nombreCompleto:'Patricia Elena Suárez Niño',gerenciaCorp:'Finanzas',gerencia:'Gerencia Corporativa de Finanzas',area:'Contabilidad',puesto:'Jefe de Contabilidad',grado:'G15',gradoLabel:'Jefe',tipoSalario:'F',sueldoMensual:6000000,nSueldos:14,medicinaPrepagadaAnio:4200000,bonoTargetAnual:9000000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#0ea5e9,#0284c7)',avatarIniciales:'PS'},
+{numeroId:'1003456789',pais:'CO',moneda:'COP',nombreCompleto:'Daniel Esteban Londoño Zea',gerenciaCorp:'Finanzas',gerencia:'Gerencia Corporativa de Finanzas',area:'Contabilidad',puesto:'Analista Contable',grado:'G8',gradoLabel:'Analista',tipoSalario:'F',sueldoMensual:3000000,nSueldos:14,medicinaPrepagadaAnio:3000000,bonoTargetAnual:4500000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Fijo',avatarColor:'linear-gradient(135deg,#94a3b8,#64748b)',avatarIniciales:'DL'},
+{numeroId:'51234890',pais:'CO',moneda:'COP',nombreCompleto:'Ana María Restrepo Salazar',gerenciaCorp:'Finanzas',gerencia:'Gerencia Corporativa de Finanzas',area:'Tesorería',puesto:'Gerente de Tesorería',grado:'G17',gradoLabel:'Gerente',tipoSalario:'F',sueldoMensual:9500000,nSueldos:14,medicinaPrepagadaAnio:5400000,bonoTargetAnual:14250000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#ef4444,#b91c1c)',avatarIniciales:'AR'},
+{numeroId:'1011223344',pais:'CO',moneda:'COP',nombreCompleto:'Sebastián Herrera Quintero',gerenciaCorp:'Finanzas',gerencia:'Gerencia Corporativa de Finanzas',area:'Tesorería',puesto:'Analista de Tesorería',grado:'G8',gradoLabel:'Analista',tipoSalario:'F',sueldoMensual:3100000,nSueldos:14,medicinaPrepagadaAnio:3000000,bonoTargetAnual:4650000,empresa:'PRIMAX',ciudad:'Bogotá D.C.',contrato:'Término Indefinido',avatarColor:'linear-gradient(135deg,#10b981,#047857)',avatarIniciales:'SH'}
 ];
 
 let glob={recargoFijo:.4960,recargoIntegral:.3194,moneda:'COP',tasaUSD:3950,tasaPEN:950,periodo:12};
 let vistaMaestra = 'colaboradores'; // 'colaboradores' o 'gerencias'
-let actual=null, editado={}, chart=null, tipoVistaDetalle='individual'; // 'individual' o 'gerencial'
+let actual=null, editado={}, chart=null, tipoVistaDetalle='individual'; // 'individual' | 'gerencial' | 'area'
 let cacheEdiciones = {};
 let tempValores = {};
+let gerenciasExpandidas = new Set();
 
 function calc(c){
   const s=c.sueldoMensual,ba=c.bonoTargetAnual,bm=ba/12,mm=c.medicinaPrepagadaAnio/12;
@@ -345,16 +381,17 @@ function fmt(v){
 }
 function pct(v){return v.toFixed(1)+'%';}
 function parseInp(v){return parseFloat(v.replace(/[^0-9]/g,''))||0;}
-function fmtId(id){return id.replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
 
 // ============================================================
 // SISTEMA DE CONTROL DE MULTI-VISTAS (MAESTRO)
 // ============================================================
 function cambiarFiltroMaestro(tipo) {
   vistaMaestra = tipo;
-  document.getElementById('tab-colab').className = tipo === 'colaboradores' ? 'btn py-1 px-3 active' : 'btn py-1 px-3';
-  document.getElementById('tab-geren').className = tipo === 'gerencias' ? 'btn py-1 px-3 active' : 'btn py-1 px-3';
-  document.getElementById('v1-titulo').textContent = tipo === 'colaboradores' ? 'Colaboradores Activos' : 'Costos por Gerencia';
+  gerenciasExpandidas.clear();
+  const baseClaseTab = 'btn flex-1 min-w-0 justify-center py-1.5 px-3';
+  document.getElementById('tab-colab').className = tipo === 'colaboradores' ? baseClaseTab + ' active' : baseClaseTab;
+  document.getElementById('tab-geren').className = tipo === 'gerencias' ? baseClaseTab + ' active' : baseClaseTab;
+  document.getElementById('v1-titulo').textContent = tipo === 'colaboradores' ? 'Colaboradores' : 'Costos por Gerencia';
   document.getElementById('buscar').value = '';
   renderTabla();
 }
@@ -362,7 +399,6 @@ function cambiarFiltroMaestro(tipo) {
 function obtenerDatosAgrupadosGerencias() {
   const gerencias = {};
   data.forEach(colab => {
-    // Tomamos mutaciones locales en caché si existen
     const c = cacheEdiciones[colab.numeroId] ? {...colab, ...cacheEdiciones[colab.numeroId]} : colab;
     if (!gerencias[c.gerenciaCorp]) {
       gerencias[c.gerenciaCorp] = {
@@ -385,61 +421,131 @@ function obtenerDatosAgrupadosGerencias() {
   return Object.values(gerencias);
 }
 
+function obtenerDatosAgrupadosAreas(gerenciaCorpKey) {
+  const areas = {};
+  data.filter(c => c.gerenciaCorp === gerenciaCorpKey).forEach(colab => {
+    const c = cacheEdiciones[colab.numeroId] ? {...colab, ...cacheEdiciones[colab.numeroId]} : colab;
+    const key = c.gerenciaCorp + '|' + c.area;
+    if (!areas[key]) {
+      areas[key] = {
+        idKey: key,
+        area: c.area,
+        gerenciaCorp: c.gerenciaCorp,
+        gerencia: c.gerencia,
+        empresa: c.empresa,
+        pais: c.pais,
+        numColaboradores: 0,
+        sueldoMensual: 0,
+        bonoTargetAnual: 0,
+        medicinaPrepagadaAnio: 0
+      };
+    }
+    areas[key].numColaboradores++;
+    areas[key].sueldoMensual += c.sueldoMensual;
+    areas[key].bonoTargetAnual += c.bonoTargetAnual;
+    areas[key].medicinaPrepagadaAnio += c.medicinaPrepagadaAnio;
+  });
+  return Object.values(areas);
+}
+
+function toggleGerencia(idKey) {
+  if (gerenciasExpandidas.has(idKey)) gerenciasExpandidas.delete(idKey);
+  else gerenciasExpandidas.add(idKey);
+  renderTabla();
+}
+
 function renderTabla(filtroData = null) {
   const tbody = document.getElementById('tb');
   const thead = document.getElementById('th-dinamico');
-  
+
   if (vistaMaestra === 'colaboradores') {
     thead.innerHTML = `
       <tr class="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-700">
         <th class="px-5 py-4 text-left font-semibold">Nombre Completo</th>
-        <th class="px-5 py-4 text-left font-semibold">Empresa</th>
+        <th class="px-5 py-4 text-left font-semibold max-sm:hidden">Empresa</th>
         <th class="px-5 py-4 text-left font-semibold">Puesto / Área</th>
-        <th class="px-5 py-4 text-center font-semibold">País</th>
+        <th class="px-5 py-4 text-center font-semibold max-md:hidden">País</th>
         <th class="px-5 py-4 text-center font-semibold">Grado</th>
         <th class="px-5 py-4 text-right font-semibold">Acciones</th>
       </tr>`;
-      
+
     const pool = filtroData || data;
     document.getElementById('tc').textContent = pool.length;
     document.getElementById('mc').textContent = pool.length;
     document.getElementById('tt').textContent = data.length;
-    
+
     tbody.innerHTML = pool.map(c => `
       <tr class="row" onclick="go('${c.numeroId}')">
-        <td class="px-5 py-4"><div class="flex items-center gap-3"><div class="avatar" style="background:${c.avatarColor};">${c.avatarIniciales}</div><div><p class="font-semibold text-white">${c.nombreCompleto}</p><p class="text-xs text-slate-500 font-mono">CC ${fmtId(c.numeroId)}</p></div></div></td>
-        <td class="px-5 py-4"><span class="text-blue-400 font-semibold">${c.empresa}</span></td>
-        <td class="px-5 py-4 text-slate-300">${c.puesto}<br><span class="text-xs text-slate-500">${c.gerenciaCorp}</span></td>
-        <td class="px-5 py-4 text-center text-slate-400 font-mono">${c.pais}</td>
+        <td class="px-5 py-4"><div class="flex items-center gap-3"><div class="avatar" style="background:${c.avatarColor};">${c.avatarIniciales}</div><p class="font-semibold text-white">${c.nombreCompleto}</p></div></td>
+        <td class="px-5 py-4 max-sm:hidden"><span class="text-blue-400 font-semibold">${c.empresa}</span></td>
+        <td class="px-5 py-4 text-slate-300">${c.puesto}<br><span class="text-xs text-slate-500">${c.gerenciaCorp} · ${c.area}</span></td>
+        <td class="px-5 py-4 text-center text-slate-400 font-mono max-md:hidden">${c.pais}</td>
         <td class="px-5 py-4 text-center"><span class="badge badge-blue">${c.grado}</span></td>
         <td class="px-5 py-4 text-right"><button class="btn" style="background:rgba(59,130,246,.15);border-color:rgba(59,130,246,.3);color:#60a5fa;" onclick="event.stopPropagation();go('${c.numeroId}')">Ver Costo</button></td>
       </tr>`).join('');
-  } else {
-    thead.innerHTML = `
-      <tr class="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-700">
-        <th class="px-5 py-4 text-left font-semibold">Gerencia Corporativa</th>
-        <th class="px-5 py-4 text-left font-semibold">Empresa</th>
-        <th class="px-5 py-4 text-center font-semibold">Dotación Activa</th>
-        <th class="px-5 py-4 text-center font-semibold">País</th>
-        <th class="px-5 py-4 text-right font-semibold">Nómina Base</th>
-        <th class="px-5 py-4 text-right font-semibold">Acciones</th>
-      </tr>`;
-      
-    const poolGerencias = filtroData || obtenerDatosAgrupadosGerencias();
-    document.getElementById('tc').textContent = poolGerencias.length;
-    document.getElementById('mc').textContent = poolGerencias.length;
-    document.getElementById('tt').textContent = obtenerDatosAgrupadosGerencias().length;
-    
-    tbody.innerHTML = poolGerencias.map(g => `
-      <tr class="row" onclick="goGerencia('${g.idKey}')">
-        <td class="px-5 py-4"><p class="font-semibold text-white">${g.nombre}</p><span class="text-xs text-blue-400 font-mono">${g.gerenciaCorp}</span></td>
-        <td class="px-5 py-4"><span class="text-blue-400 font-semibold">${g.empresa}</span></td>
-        <td class="px-5 py-4 text-center text-slate-300 font-mono">${g.numColaboradores} colab.</td>
-        <td class="px-5 py-4 text-center text-slate-400 font-mono">${g.pais}</td>
-        <td class="px-5 py-4 text-right font-mono text-emerald-400">${fmt(g.sueldoMensual)}</td>
-        <td class="px-5 py-4 text-right"><button class="btn" style="background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.3);color:#a78bfa;" onclick="event.stopPropagation();goGerencia('${g.idKey}')">Análisis Consolidado</button></td>
-      </tr>`).join('');
+    return;
   }
+
+  thead.innerHTML = `
+    <tr class="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-700">
+      <th class="px-5 py-4 text-left font-semibold">Gerencia Corporativa / Área</th>
+      <th class="px-5 py-4 text-left font-semibold max-sm:hidden">Empresa</th>
+      <th class="px-5 py-4 text-center font-semibold">Cantidad</th>
+      <th class="px-5 py-4 text-center font-semibold max-md:hidden">País</th>
+      <th class="px-5 py-4 text-right font-semibold">Nómina</th>
+      <th class="px-5 py-4 text-right font-semibold">Acciones</th>
+    </tr>`;
+
+  const poolGerencias = filtroData || obtenerDatosAgrupadosGerencias();
+  document.getElementById('tc').textContent = poolGerencias.length;
+  document.getElementById('mc').textContent = poolGerencias.length;
+  document.getElementById('tt').textContent = obtenerDatosAgrupadosGerencias().length;
+
+  tbody.innerHTML = poolGerencias.map(g => {
+    const expandido = gerenciasExpandidas.has(g.idKey);
+    let html = filaGerencia(g, expandido);
+    if (expandido) html += obtenerDatosAgrupadosAreas(g.idKey).map(a => filaArea(a)).join('');
+    return html;
+  }).join('');
+}
+
+function filaGerencia(g, expandido) {
+  return `
+    <tr class="row" onclick="goGerencia('${g.idKey}')">
+      <td class="px-5 py-4">
+        <div class="flex items-center gap-2">
+          <button onclick="event.stopPropagation();toggleGerencia('${g.idKey}')" class="btn btn-ghost btn-icon" title="${expandido?'Contraer áreas':'Ver áreas'}">
+            <svg class="w-4 h-4 transition-transform" style="${expandido?'transform:rotate(90deg);':''}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </button>
+          <p class="font-semibold text-white">${g.nombre}</p>
+        </div>
+      </td>
+      <td class="px-5 py-4 max-sm:hidden"><span class="text-blue-400 font-semibold">${g.empresa}</span></td>
+      <td class="px-5 py-4 text-center text-slate-300 font-mono">${g.numColaboradores} colab.</td>
+      <td class="px-5 py-4 text-center text-slate-400 font-mono max-md:hidden">${g.pais}</td>
+      <td class="px-5 py-4 text-right font-mono text-emerald-400">${fmt(g.sueldoMensual)}</td>
+      <td class="px-5 py-4 text-right"><button class="btn" style="background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.3);color:#a78bfa;" onclick="event.stopPropagation();goGerencia('${g.idKey}')">Análisis Consolidado</button></td>
+    </tr>`;
+}
+
+function filaArea(a) {
+  return `
+    <tr class="row" style="background:rgba(30,58,95,.12);" onclick="goArea('${a.gerenciaCorp}','${a.area}')">
+      <td class="px-5 py-4">
+        <div class="flex items-center gap-2 pl-8">
+          <svg class="w-3.5 h-3.5 text-slate-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          <div>
+            <p class="font-medium text-slate-200">${a.area}</p>
+            <span class="text-xs text-slate-500 font-mono">${a.gerenciaCorp}</span>
+          </div>
+        </div>
+      </td>
+      <td class="px-5 py-4 max-sm:hidden"><span class="text-blue-400 font-semibold">${a.empresa}</span></td>
+      <td class="px-5 py-4 text-center text-slate-300 font-mono">${a.numColaboradores} colab.</td>
+      <td class="px-5 py-4 text-center text-slate-400 font-mono max-md:hidden">${a.pais}</td>
+      <td class="px-5 py-4 text-right font-mono text-emerald-400">${fmt(a.sueldoMensual)}</td>
+      <td class="px-5 py-4 text-right"><button class="btn" style="background:rgba(6,182,212,.15);border-color:rgba(6,182,212,.3);color:#22d3ee;" onclick="event.stopPropagation();goArea('${a.gerenciaCorp}','${a.area}')">Ver Costo de Área</button></td>
+    </tr>`;
 }
 
 function filtrar(){
@@ -459,13 +565,29 @@ function go(id){
   tipoVistaDetalle = 'individual';
   actual=data.find(c=>c.numeroId===id);if(!actual)return;
   editado = cacheEdiciones[id] ? {...actual,...cacheEdiciones[id]} : {...actual};
-  
-  // Reactivar inputs y ayudas de edición
+
   document.getElementById('c-tipo-analisis').textContent = "Costeo del Colaborador";
-  document.getElementById('ctrl-tipo-salario').classList.remove('hidden');
-  document.getElementById('seccion-parametros').classList.remove('hidden');
-  document.getElementById('btn-restaurar').classList.remove('hidden');
-  
+
+  document.getElementById('v1').classList.add('hidden');
+  document.getElementById('v2').classList.remove('hidden');
+  renderV2();
+}
+
+function consolidar(coleccion) {
+  const resueltos = coleccion.map(colab => cacheEdiciones[colab.numeroId] ? {...colab, ...cacheEdiciones[colab.numeroId]} : colab);
+  let totalSueldo=0,totalBono=0,totalMedicina=0;
+  resueltos.forEach(c=>{
+    totalSueldo+=c.sueldoMensual;totalBono+=c.bonoTargetAnual;totalMedicina+=c.medicinaPrepagadaAnio;
+  });
+  return {totalSueldo,totalBono,totalMedicina,resueltos};
+}
+
+function mostrarVistaConsolidada(actualObj, titulo) {
+  actual = actualObj;
+  editado = {...actual};
+
+  document.getElementById('c-tipo-analisis').textContent = titulo;
+
   document.getElementById('v1').classList.add('hidden');
   document.getElementById('v2').classList.remove('hidden');
   renderV2();
@@ -475,44 +597,56 @@ function goGerencia(gerenciaCorpKey) {
   tipoVistaDetalle = 'gerencial';
   const coleccion = data.filter(c => c.gerenciaCorp === gerenciaCorpKey);
   if(coleccion.length === 0) return;
-  
-  // Consolidamos la gerencia en un objeto compatible temporal simulado
-  let totalSueldo = 0, totalBono = 0, totalMedicina = 0;
-  coleccion.forEach(colab => {
-    const c = cacheEdiciones[colab.numeroId] ? {...colab, ...cacheEdiciones[colab.numeroId]} : colab;
-    totalSueldo += c.sueldoMensual;
-    totalBono += c.bonoTargetAnual;
-    totalMedicina += c.medicinaPrepagadaAnio;
-  });
+  const {totalSueldo,totalBono,totalMedicina,resueltos} = consolidar(coleccion);
 
-  actual = {
+  mostrarVistaConsolidada({
     numeroId: '0000',
     nombreCompleto: coleccion[0].gerencia,
     gerenciaCorp: gerenciaCorpKey,
-    puesto: `Consolidado de Área — ${coleccion.length} Colaboradores`,
+    gerencia: coleccion[0].gerencia,
+    puesto: `Consolidado de Gerencia — ${coleccion.length} Colaboradores`,
     empresa: coleccion[0].empresa,
     pais: coleccion[0].pais,
+    ciudad: 'Varias sedes',
+    contrato: 'Consolidado',
     avatarColor: 'linear-gradient(135deg, #3b82f6, #06b6d4)',
     avatarIniciales: 'GC',
     grado: 'Global',
-    gradoLabel: 'Área Corporativa',
-    tipoSalario: 'F', // Forzamos Fijo en vistas macro para mapear todo el árbol de recargos
+    gradoLabel: 'Costo Consolidado',
+    tipoSalario: 'F',
     sueldoMensual: totalSueldo,
     bonoTargetAnual: totalBono,
+    medicinaPrepagadaAnio: totalMedicina,
+    colaboradores: resueltos
+  }, 'Análisis de Costo Consolidado');
+}
+
+function goArea(gerenciaCorpKey, areaNombre) {
+  tipoVistaDetalle = 'area';
+  const coleccion = data.filter(c => c.gerenciaCorp === gerenciaCorpKey && c.area === areaNombre);
+  if(coleccion.length === 0) return;
+  const {totalSueldo,totalBono,totalMedicina,resueltos} = consolidar(coleccion);
+
+  mostrarVistaConsolidada({
+    numeroId: '0000',
+    nombreCompleto: areaNombre,
+    gerenciaCorp: gerenciaCorpKey,
+    gerencia: coleccion[0].gerencia,
+    puesto: `Consolidado de Área — ${coleccion.length} Colaboradores`,
+    empresa: coleccion[0].empresa,
+    pais: coleccion[0].pais,
+    ciudad: coleccion[0].ciudad,
+    contrato: 'Consolidado',
+    avatarColor: 'linear-gradient(135deg, #06b6d4, #6366f1)',
+    avatarIniciales: 'AR',
+    grado: 'Área',
+    gradoLabel: 'Costo Consolidado',
+    tipoSalario: 'F',
+    sueldoMensual: totalSueldo,
+    bonoTargetAnual: totalBono,
+    colaboradores: resueltos,
     medicinaPrepagadaAnio: totalMedicina
-  };
-  
-  editado = {...actual};
-  
-  // Ocultamos componentes individuales no viables para agregados globales
-  document.getElementById('c-tipo-analisis').textContent = "Análisis de Costo Consolidado";
-  document.getElementById('ctrl-tipo-salario').classList.add('hidden');
-  document.getElementById('seccion-parametros').classList.add('hidden');
-  document.getElementById('btn-restaurar').classList.add('hidden');
-  
-  document.getElementById('v1').classList.add('hidden');
-  document.getElementById('v2').classList.remove('hidden');
-  renderV2();
+  }, 'Análisis de Costo por Área');
 }
 
 function volver(){document.getElementById('v2').classList.add('hidden');document.getElementById('v1').classList.remove('hidden');actual=null; renderTabla();}
@@ -521,7 +655,7 @@ function volver(){document.getElementById('v2').classList.add('hidden');document
 // FLUJO EDICIÓN (MANTIENE LA ALINEACIÓN HORIZONTAL FIJA)
 // ============================================================
 function activarEdicion(campo){
-  if(tipoVistaDetalle === 'gerencial') return;
+  if(tipoVistaDetalle !== 'individual') return;
   const input = document.getElementById(campo==='sueldo'?'in-sueldo':'in-bono-a');
   const actions = document.getElementById('actions-'+campo);
   tempValores[campo] = input.value;
@@ -536,7 +670,7 @@ function confirmarEdicion(campo){
   const input = document.getElementById(campo==='sueldo'?'in-sueldo':'in-bono-a');
   const actions = document.getElementById('actions-'+campo);
   const nv = parseInp(input.value);
-  
+
   if(campo==='sueldo'){
     editado.sueldoMensual = nv;
     const ratio = actual.bonoTargetAnual / actual.sueldoMensual;
@@ -544,12 +678,12 @@ function confirmarEdicion(campo){
   } else if(campo==='bono'){
     editado.bonoTargetAnual = nv;
   }
-  
+
   if(!cacheEdiciones[actual.numeroId]) cacheEdiciones[actual.numeroId] = {};
   cacheEdiciones[actual.numeroId].sueldoMensual = editado.sueldoMensual;
   cacheEdiciones[actual.numeroId].bonoTargetAnual = editado.bonoTargetAnual;
   cacheEdiciones[actual.numeroId].tipoSalario = editado.tipoSalario;
-  
+
   input.readOnly = true;
   input.classList.remove('edit-mode');
   actions.classList.add('hidden');
@@ -568,7 +702,7 @@ function cancelarEdicion(campo){
 }
 
 function reset(){
-  if(!actual || tipoVistaDetalle === 'gerencial') return;
+  if(!actual || tipoVistaDetalle !== 'individual') return;
   editado = {...actual};
   delete cacheEdiciones[actual.numeroId];
   renderV2();
@@ -579,23 +713,35 @@ function reset(){
 // ============================================================
 function renderV2(){
   if(!actual)return;const c=editado,r=calc(c);
-  
+
+  const esIndividual = tipoVistaDetalle === 'individual';
+  document.getElementById('ctrl-tipo-salario').classList.toggle('hidden', !esIndividual);
+  document.getElementById('seccion-parametros').classList.toggle('hidden', !esIndividual);
+  document.getElementById('btn-restaurar').classList.toggle('hidden', !esIndividual);
+  document.getElementById('ctrl-periodo').classList.toggle('hidden', !esIndividual);
+  document.getElementById('kpi-proyeccion').classList.toggle('hidden', !esIndividual);
+  document.getElementById('kpi-grid').classList.toggle('md:grid-cols-4', esIndividual);
+  document.getElementById('kpi-grid').classList.toggle('md:grid-cols-3', !esIndividual);
+  document.getElementById('seccion-colaboradores-incluidos').classList.toggle('hidden', esIndividual);
+  if(!esIndividual) renderColaboradoresIncluidos();
+
   document.getElementById('c-nom').textContent=c.nombreCompleto;
   document.getElementById('p-nom').textContent=c.nombreCompleto;
-  document.getElementById('p-meta-id').textContent= tipoVistaDetalle === 'individual' ? 'CC ' + fmtId(c.numeroId) : 'ID ÁREA';
-  document.getElementById('p-ger').textContent=c.gerenciaCorp;
+  document.getElementById('p-ger').textContent= tipoVistaDetalle === 'individual' ? c.gerenciaCorp : c.gerencia;
   document.getElementById('p-pue').textContent=c.puesto;
+  document.getElementById('p-ciudad').textContent=c.ciudad||'-';
   document.getElementById('av').style.background=c.avatarColor;
   document.getElementById('av').textContent=c.avatarIniciales;
   document.getElementById('bg-g').textContent=c.grado+' — '+c.gradoLabel;
-  
+  document.getElementById('bg-extra').textContent=c.contrato||'-';
+
   const bt=document.getElementById('bg-t');
   bt.textContent=c.tipoSalario==='F'?'Estructura Fija':'Estructura Integral';
   bt.className=c.tipoSalario==='F'?'badge badge-green':'badge badge-purple';
-  
+
   document.getElementById('bt-f').className=c.tipoSalario==='F'?'btn active':'btn';
   document.getElementById('bt-i').className=c.tipoSalario==='I'?'btn active':'btn';
-  
+
   document.getElementById('in-sueldo').value=fmt(c.sueldoMensual);
   document.getElementById('in-bono-a').value=fmt(c.bonoTargetAnual);
   document.getElementById('in-bono-m').value=fmt(r.bonoMensual);
@@ -605,7 +751,7 @@ function renderV2(){
   document.getElementById('k-carga').textContent=fmt(r.carga);
   document.getElementById('k-pct').textContent=pct(r.pct);
   document.getElementById('t-lbl').textContent=c.tipoSalario==='F'?'Fórmula Base: Primas + Cesantías Consolidadas':'Fórmula Base: Recargo Integral de Ley';
-  
+
   const d=document.getElementById('desglose');
   const max=Math.max(r.prima,r.vacaciones,r.navidad,r.cesantias,r.intereses,r.seguridad,r.par)||1;
   let html='';
@@ -620,7 +766,7 @@ function renderV2(){
   html+=fila('Provisión Costo PAR',c.tipoSalario==='F'?'((Sueldo / 12) × 49.60%)':'Sueldo × 31.94%',r.par,max,true);
   d.innerHTML=html;
   document.getElementById('t-carga').textContent=fmt(r.carga);
-  
+
   renderChart(r);
   renderLegend(r);
 }
@@ -644,6 +790,21 @@ function fila(n,f,v,mx,dest=false){
     </div>`;
 }
 
+function renderColaboradoresIncluidos(){
+  const lista = actual.colaboradores || [];
+  document.getElementById('num-colab-incluidos').textContent = lista.length + (lista.length===1?' colaborador':' colaboradores');
+  document.getElementById('tb-colaboradores-incluidos').innerHTML = lista.map(p=>{
+    const r=calc(p);
+    return `
+    <tr class="row" onclick="go('${p.numeroId}')">
+      <td class="px-3 py-3"><div class="flex items-center gap-2"><div class="avatar" style="width:28px;height:28px;font-size:.65rem;background:${p.avatarColor};">${p.avatarIniciales}</div><span class="font-medium text-white">${p.nombreCompleto}</span></div></td>
+      <td class="px-3 py-3 text-slate-400 max-sm:hidden">${p.puesto}<br><span class="text-xs text-slate-500">${p.gerenciaCorp} · ${p.area}</span></td>
+      <td class="px-3 py-3 text-center"><span class="badge ${p.tipoSalario==='F'?'badge-green':'badge-purple'}">${p.tipoSalario==='F'?'Fijo':'Integral'}</span></td>
+      <td class="px-3 py-3 text-right font-mono text-white">${fmt(r.total)}</td>
+    </tr>`;
+  }).join('');
+}
+
 function renderChart(r){
   const ctx=document.getElementById('chart').getContext('2d');
   if(chart)chart.destroy();
@@ -661,7 +822,7 @@ function renderLegend(r){
 
 function setMon(btn,m){glob.moneda=m;document.querySelectorAll('.btn').forEach(b=>{if(b.textContent==='COP'||b.textContent==='USD'||b.textContent==='PEN')b.classList.remove('active');});btn.classList.add('active');renderV2();}
 function setPer(btn,p){glob.periodo=p;document.querySelectorAll('.btn').forEach(b=>{if(b.textContent.includes('M'))b.classList.remove('active');});btn.classList.add('active');renderV2();}
-function setTipo(t){if(tipoVistaDetalle === 'gerencial') return; editado.tipoSalario=t; if(!cacheEdiciones[actual.numeroId])cacheEdiciones[actual.numeroId]={}; cacheEdiciones[actual.numeroId].tipoSalario=t; renderV2();}
+function setTipo(t){if(tipoVistaDetalle !== 'individual') return; editado.tipoSalario=t; if(!cacheEdiciones[actual.numeroId])cacheEdiciones[actual.numeroId]={}; cacheEdiciones[actual.numeroId].tipoSalario=t; renderV2();}
 
 // Eventos de click externo y atajos de teclado
 document.addEventListener('click',function(e){
