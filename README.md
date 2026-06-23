@@ -27,7 +27,12 @@ npm run preview  # sirve el build de producción localmente
 
 ## Despliegue en GitHub Pages
 
-El workflow `.github/workflows/deploy.yml` compila `prototipo/` y publica `prototipo/dist` en GitHub Pages en cada push a `main`. Requiere activar una sola vez, en Settings → Pages del repo, "Source: GitHub Actions". Queda disponible en `https://alexis0816.github.io/PrototipoAppCostosEstructurales/`.
+```
+cd prototipo
+npm run deploy   # build + push de dist/ a la rama gh-pages
+```
+
+Requiere, una sola vez, en Settings → Pages del repo: Source = "Deploy from a branch", branch `gh-pages` / `(root)`. Queda disponible en `https://alexis0816.github.io/PrototipoAppCostosEstructurales/`.
 
 ## Estado del proyecto
 
