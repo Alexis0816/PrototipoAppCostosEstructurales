@@ -1,0 +1,16 @@
+export function SearchInput({ value, onChange, placeholder, className = '' }) {
+  return (
+    <div className={`relative w-full max-w-xs ${className}`}>
+      <svg className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full bg-navy-800/30 border border-navy-800 rounded-lg pl-9 pr-4 py-2.5 text-slate-200 placeholder-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15 transition-colors"
+      />
+    </div>
+  );
+}

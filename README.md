@@ -11,21 +11,38 @@
 - **Edición en línea**: el sueldo y el bono target de cada colaborador se pueden ajustar desde su vista individual; los cambios se recalculan en cascada en Área y Gerencia.
 - **Multi-moneda** (COP / USD / PEN) y soporte para estructura salarial Fija o Integral.
 
+## Stack
+
+React 18 + Vite + Tailwind CSS (build real con PostCSS) + Chart.js. Sin backend ni base de datos: los datos viven en memoria del navegador y se reinician al recargar.
+
 ## Cómo ejecutarlo
 
-No requiere instalación, build ni dependencias. Es un único archivo HTML que usa Tailwind CSS y Chart.js vía CDN:
-
 ```
-abrir prototipo/index.html en el navegador
+cd prototipo
+npm install
+npm run dev      # entorno de desarrollo, http://localhost:5173
+npm run build    # build de producción en prototipo/dist
+npm run preview  # sirve el build de producción localmente
 ```
 
 ## Estado del proyecto
 
-Esta es una **prueba de concepto frontend**: todos los datos (colaboradores, ediciones de sueldo/bono) viven en memoria del navegador y se reinician al recargar la página. No hay backend, base de datos ni autenticación todavía — el objetivo actual es validar la experiencia y las reglas de cálculo antes de conectar una API real.
+Esta es una **prueba de concepto frontend**: no hay backend, base de datos ni autenticación todavía — el objetivo actual es validar la experiencia y las reglas de cálculo antes de conectar una API real.
 
 ## Estructura
 
 ```
 prototipo/
-  index.html   # aplicación completa (HTML + CSS + JS)
+  package.json, vite.config.js, tailwind.config.js, postcss.config.js
+  index.html              # shell de Vite
+  src/
+    main.jsx, App.jsx, index.css
+    data/                 # colaboradores (array en memoria)
+    context/              # AppContext + reducer (navegación, ediciones, moneda/período)
+    lib/                  # funciones puras de cálculo, formato y agrupación
+    hooks/                # useResolvedColaborador, useCalculo, useClickOutside
+    components/
+      shared/              # Boton, Badge, Avatar, CampoEditable, DropdownAreas, etc.
+      list/                 # vista de lista (Colaboradores / Gerencias)
+      detail/               # vista de detalle (individual / área / gerencia)
 ```

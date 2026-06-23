@@ -1,0 +1,49 @@
+import { Fragment, useState } from 'react';
+import { useAppContext } from '../../context/AppContext.jsx';
+import { obtenerDatosAgrupadosAreas } from '../../lib/agrupacion.js';
+import { GerenciaRow } from './GerenciaRow.jsx';
+import { AreaSubRow } from './AreaSubRow.jsx';
+
+export function TablaGerencias({ gerencias }) {
+  const { data, cacheEdiciones } = useAppContext();
+  const [expandidas, setExpandidas] = useState(() => new Set());
+
+  function toggleExpand(idKey) {
+    setExpandidas((prev) => {
+      const next = new Set(prev);
+      if (next.has(idKey)) next.delete(idKey);
+      else next.add(idKey);
+      return next;
+    });
+  }
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-700">
+            <th className="px-5 py-4 text-left font-semibold">Gerencia Corporativa / Área</th>
+            <th className="px-5 py-4 text-left font-semibold max-sm:hidden">Empresa</th>
+            <th className="px-5 py-4 text-center font-semibold">Cantidad</th>
+            <th className="px-5 py-4 text-center font-semibold max-md:hidden">País</th>
+            <th className="px-5 py-4 text-right font-semibold">Nómina</th>
+            <th className="px-5 py-4 text-right font-semibold">Acciones</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-slate-800">
+          {gerencias.map((g) => {
+            const expandido = expandidas.has(g.idKey);
+            return (
+              <Fragment key={g.idKey}>
+                <GerenciaRow gerencia={g} expandido={expandido} onToggleExpand={() => toggleExpand(g.idKey)} />
+                {expandido && obtenerDatosAgrupadosAreas(data, cacheEdiciones, g.idKey).map((a) => (
+                  <AreaSubRow key={a.idKey} area={a} />
+                ))}
+              </Fragment>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
