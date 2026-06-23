@@ -25,6 +25,10 @@ npm run build    # build de producción en prototipo/dist
 npm run preview  # sirve el build de producción localmente
 ```
 
+## Despliegue en GitHub Pages
+
+El workflow `.github/workflows/deploy.yml` compila `prototipo/` y publica `prototipo/dist` en GitHub Pages en cada push a `main`. Requiere activar una sola vez, en Settings → Pages del repo, "Source: GitHub Actions". Queda disponible en `https://alexis0816.github.io/PrototipoAppCostosEstructurales/`.
+
 ## Estado del proyecto
 
 Esta es una **prueba de concepto frontend**: no hay backend, base de datos ni autenticación todavía — el objetivo actual es validar la experiencia y las reglas de cálculo antes de conectar una API real.
