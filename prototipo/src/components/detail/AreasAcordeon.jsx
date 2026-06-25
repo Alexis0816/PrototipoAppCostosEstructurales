@@ -40,7 +40,7 @@ export function AreasAcordeon({ colaboradores, gerenciaCorpKey }) {
                   persona={p}
                   periodo={glob.periodo}
                   moneda={glob.moneda}
-                  onClick={() => go(p.numeroId)}
+                  onClick={() => go(p)}
                 />
               ))}
             </tbody>

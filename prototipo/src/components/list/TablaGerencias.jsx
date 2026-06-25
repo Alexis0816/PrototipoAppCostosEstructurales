@@ -5,7 +5,7 @@ import { GerenciaRow } from './GerenciaRow.jsx';
 import { AreaSubRow } from './AreaSubRow.jsx';
 
 export function TablaGerencias({ gerencias }) {
-  const { data, cacheEdiciones } = useAppContext();
+  const { data, cacheEdiciones, paisActual } = useAppContext();
   const [expandidas, setExpandidas] = useState(() => new Set());
 
   function toggleExpand(idKey) {
@@ -36,7 +36,7 @@ export function TablaGerencias({ gerencias }) {
             return (
               <Fragment key={g.idKey}>
                 <GerenciaRow gerencia={g} expandido={expandido} onToggleExpand={() => toggleExpand(g.idKey)} />
-                {expandido && obtenerDatosAgrupadosAreas(data, cacheEdiciones, g.idKey).map((a) => (
+                {expandido && obtenerDatosAgrupadosAreas(data, cacheEdiciones, paisActual.camposSumables, g.idKey).map((a) => (
                   <AreaSubRow key={a.idKey} area={a} />
                 ))}
               </Fragment>

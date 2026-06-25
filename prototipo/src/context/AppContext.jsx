@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, useReducer } from 'react';
 import { appReducer, initialState } from './appReducer.js';
-import { colaboradores } from '../data/colaboradores.js';
+import { getPais } from '../paises/registry.js';
 
 const AppContext = createContext(null);
 
@@ -14,6 +14,7 @@ export function AppProvider({ children }) {
       goArea: (gerenciaCorpKey, areaNombre) => dispatch({ type: 'GO_AREA', gerenciaCorpKey, areaNombre }),
       volver: () => dispatch({ type: 'VOLVER' }),
       cambiarFiltroMaestro: (tipo) => dispatch({ type: 'CAMBIAR_FILTRO_MAESTRO', tipo }),
+      setPais: (pais) => dispatch({ type: 'SET_PAIS', pais }),
       setMoneda: (moneda) => dispatch({ type: 'SET_MONEDA', moneda }),
       setPeriodo: (periodo) => dispatch({ type: 'SET_PERIODO', periodo }),
       setTipoSalario: (tipoSalario) => dispatch({ type: 'SET_TIPO_SALARIO', tipoSalario }),
@@ -23,9 +24,11 @@ export function AppProvider({ children }) {
     [],
   );
 
+  const paisActual = getPais(state.pais);
+
   const value = useMemo(
-    () => ({ ...state, ...actions, data: colaboradores }),
-    [state, actions],
+    () => ({ ...state, ...actions, paisActual, data: paisActual.datos }),
+    [state, actions, paisActual],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

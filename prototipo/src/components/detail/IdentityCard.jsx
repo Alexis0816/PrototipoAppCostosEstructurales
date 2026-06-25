@@ -1,9 +1,12 @@
+import { useAppContext } from '../../context/AppContext.jsx';
 import { Avatar } from '../shared/Avatar.jsx';
 import { Badge } from '../shared/Badge.jsx';
 
 export function IdentityCard({ persona, tipoVistaDetalle }) {
+  const { paisActual } = useAppContext();
   const ocultarSubtituloGerencia = tipoVistaDetalle === 'gerencial';
   const mostrarBadges = tipoVistaDetalle === 'individual';
+  const tipoBadge = paisActual.getLabelTipo(persona);
 
   return (
     <div className="bg-navy-900 border border-navy-800 rounded-xl p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
@@ -21,9 +24,7 @@ export function IdentityCard({ persona, tipoVistaDetalle }) {
       {mostrarBadges && (
         <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
           <Badge variant="blue">{persona.grado} — {persona.gradoLabel}</Badge>
-          <Badge variant={persona.tipoSalario === 'F' ? 'green' : 'purple'}>
-            {persona.tipoSalario === 'F' ? 'Estructura Fija' : 'Estructura Integral'}
-          </Badge>
+          <Badge variant={tipoBadge.variante}>{tipoBadge.texto}</Badge>
           <Badge variant="gray">{persona.contrato || '-'}</Badge>
         </div>
       )}

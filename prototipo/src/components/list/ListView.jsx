@@ -1,19 +1,22 @@
 import { useMemo, useState } from 'react';
 import { useAppContext } from '../../context/AppContext.jsx';
 import { obtenerDatosAgrupadosGerencias } from '../../lib/agrupacion.js';
+import { listarPaises } from '../../paises/registry.js';
 import { NavBar } from '../layout/NavBar.jsx';
 import { Boton } from '../shared/Boton.jsx';
 import { SearchInput } from '../shared/SearchInput.jsx';
 import { TablaColaboradores } from './TablaColaboradores.jsx';
 import { TablaGerencias } from './TablaGerencias.jsx';
 
+const PAISES = listarPaises();
+
 export function ListView() {
-  const { data, cacheEdiciones, vistaMaestra, cambiarFiltroMaestro } = useAppContext();
+  const { data, cacheEdiciones, vistaMaestra, cambiarFiltroMaestro, pais, setPais, paisActual } = useAppContext();
   const [busqueda, setBusqueda] = useState('');
 
   const gerenciasAgrupadas = useMemo(
-    () => obtenerDatosAgrupadosGerencias(data, cacheEdiciones),
-    [data, cacheEdiciones],
+    () => obtenerDatosAgrupadosGerencias(data, cacheEdiciones, paisActual.camposSumables),
+    [data, cacheEdiciones, paisActual],
   );
 
   const pool = useMemo(() => {
@@ -41,11 +44,25 @@ export function ListView() {
       <NavBar>
         <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 sm:gap-5 lg:gap-8">
           <div className="min-w-0">
+            {PAISES.length > 1 && (
+              <div className="flex gap-1.5 mb-2">
+                {PAISES.map((p) => (
+                  <Boton
+                    key={p.codigo}
+                    size="sm"
+                    variant={pais === p.codigo ? 'active' : 'default'}
+                    onClick={() => setPais(p.codigo)}
+                  >
+                    {p.nombre}
+                  </Boton>
+                ))}
+              </div>
+            )}
             <h1 className="text-xl sm:text-2xl font-bold text-white truncate">
               {vistaMaestra === 'colaboradores' ? 'Colaboradores' : 'Costos por Gerencia'}
             </h1>
             <p className="text-sm text-slate-400 mt-1 truncate">
-              {pool.length} registros · <span className="text-blue-400 font-semibold">PRIMAX</span>
+              {pool.length} registros · <span className="text-blue-400 font-semibold">PRIMAX</span> · {paisActual.nombre}
             </p>
           </div>
           <div className="flex bg-slate-900 p-1 rounded-lg border border-slate-700 w-full sm:w-[250px]">

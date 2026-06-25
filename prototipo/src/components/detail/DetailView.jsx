@@ -14,9 +14,10 @@ import { ComposicionChart } from './ComposicionChart.jsx';
 export function DetailView() {
   const { actual, tipoVistaDetalle, cacheEdiciones, glob } = useAppContext();
   const resuelto = useResolvedColaborador(actual, cacheEdiciones);
-  const r = useCalculo(resuelto ?? actual, glob.periodo);
+  const persona = resuelto ?? actual;
+  const r = useCalculo(persona, glob.periodo);
 
-  if (!actual || !resuelto) return null;
+  if (!actual || !persona) return null;
 
   const esIndividual = tipoVistaDetalle === 'individual';
 
@@ -26,23 +27,23 @@ export function DetailView() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         <DetailHeader
           tipoVistaDetalle={tipoVistaDetalle}
-          nombre={resuelto.nombreCompleto}
+          nombre={persona.nombreCompleto}
           esIndividual={esIndividual}
-          numeroId={resuelto.numeroId}
+          numeroId={persona.numeroId}
         />
-        <IdentityCard persona={resuelto} tipoVistaDetalle={tipoVistaDetalle} />
-        <SelectoresControl esIndividual={esIndividual} tipoSalarioActual={resuelto.tipoSalario} />
+        <IdentityCard persona={persona} tipoVistaDetalle={tipoVistaDetalle} />
+        <SelectoresControl esIndividual={esIndividual} tipoSalarioActual={persona.tipoSalario} />
 
-        {!esIndividual && <ColaboradoresIncluidos actual={resuelto} tipoVistaDetalle={tipoVistaDetalle} />}
+        {!esIndividual && <ColaboradoresIncluidos actual={persona} tipoVistaDetalle={tipoVistaDetalle} />}
         {esIndividual && (
-          <ParametrosSalariales persona={resuelto} base={actual} r={r} moneda={glob.moneda} />
+          <ParametrosSalariales persona={persona} base={actual} r={r} moneda={glob.moneda} />
         )}
 
         <KpiRow r={r} periodo={glob.periodo} moneda={glob.moneda} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
           <div className="lg:col-span-2">
-            <DesglosePrestacional persona={resuelto} r={r} moneda={glob.moneda} />
+            <DesglosePrestacional persona={persona} r={r} moneda={glob.moneda} />
           </div>
           <div className="lg:col-span-1">
             <ComposicionChart r={r} moneda={glob.moneda} />

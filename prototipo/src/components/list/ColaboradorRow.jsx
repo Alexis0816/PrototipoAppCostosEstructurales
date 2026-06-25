@@ -6,7 +6,7 @@ import { Boton } from '../shared/Boton.jsx';
 export function ColaboradorRow({ colaborador }) {
   const { go } = useAppContext();
   return (
-    <tr className="row cursor-pointer transition-colors hover:bg-navy-800/40" onClick={() => go(colaborador.numeroId)}>
+    <tr className="row cursor-pointer transition-colors hover:bg-navy-800/40" onClick={() => go(colaborador)}>
       <td className="px-5 py-4">
         <div className="flex items-center gap-3">
           <Avatar color={colaborador.avatarColor} iniciales={colaborador.avatarIniciales} />
@@ -24,7 +24,7 @@ export function ColaboradorRow({ colaborador }) {
       <td className="px-5 py-4 text-center text-slate-400 font-mono max-md:hidden">{colaborador.pais}</td>
       <td className="px-5 py-4 text-center"><Badge variant="blue">{colaborador.grado}</Badge></td>
       <td className="px-5 py-4 text-right">
-        <Boton variant="blue" size="sm" onClick={(e) => { e.stopPropagation(); go(colaborador.numeroId); }}>
+        <Boton variant="blue" size="sm" onClick={(e) => { e.stopPropagation(); go(colaborador); }}>
           Ver Costo
         </Boton>
       </td>

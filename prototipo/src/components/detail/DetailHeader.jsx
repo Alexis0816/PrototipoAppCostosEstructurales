@@ -8,13 +8,13 @@ const TITULOS = {
 };
 
 export function DetailHeader({ tipoVistaDetalle, nombre, esIndividual, numeroId }) {
-  const { volver, resetEdicion } = useAppContext();
+  const { volver, resetEdicion, paisActual } = useAppContext();
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
       <div>
         <h2 className="text-xl sm:text-2xl font-bold text-white">{TITULOS[tipoVistaDetalle]}</h2>
         <p className="text-sm text-slate-400 mt-1">
-          <span className="text-blue-400 font-medium">{nombre}</span> · PRIMAX · Colombia
+          <span className="text-blue-400 font-medium">{nombre}</span> · PRIMAX · {paisActual.nombre}
         </p>
       </div>
       <div className="flex items-center gap-3 flex-wrap">

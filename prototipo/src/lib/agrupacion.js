@@ -1,44 +1,47 @@
 import { resolverColaborador } from './resolverColaborador.js';
 
-export function obtenerDatosAgrupadosGerencias(data, cacheEdiciones) {
+// Suma los campos declarados por el país activo en el acumulador del grupo.
+function acumular(grupo, c, camposSumables) {
+  grupo.numColaboradores++;
+  camposSumables.forEach((campo) => { grupo[campo] += c[campo] || 0; });
+}
+
+function nuevoAcumulador(camposSumables, base) {
+  const g = { ...base, numColaboradores: 0 };
+  camposSumables.forEach((campo) => { g[campo] = 0; });
+  return g;
+}
+
+export function obtenerDatosAgrupadosGerencias(data, cacheEdiciones, camposSumables) {
   const gerencias = {};
   data.forEach((colab) => {
     const c = resolverColaborador(colab, cacheEdiciones);
-    if (!gerencias[c.gerenciaCorp]) {
-      gerencias[c.gerenciaCorp] = {
+    const key = c.pais + '|' + c.gerenciaCorp;
+    if (!gerencias[key]) {
+      gerencias[key] = nuevoAcumulador(camposSumables, {
         idKey: c.gerenciaCorp, nombre: c.gerencia, gerenciaCorp: c.gerenciaCorp,
         empresa: c.empresa, pais: c.pais,
-        numColaboradores: 0, sueldoMensual: 0, bonoTargetAnual: 0, medicinaPrepagadaAnio: 0,
-      };
+      });
     }
-    const g = gerencias[c.gerenciaCorp];
-    g.numColaboradores++;
-    g.sueldoMensual += c.sueldoMensual;
-    g.bonoTargetAnual += c.bonoTargetAnual;
-    g.medicinaPrepagadaAnio += c.medicinaPrepagadaAnio;
+    acumular(gerencias[key], c, camposSumables);
   });
   return Object.values(gerencias);
 }
 
-export function obtenerDatosAgrupadosAreas(data, cacheEdiciones, gerenciaCorpKey) {
+export function obtenerDatosAgrupadosAreas(data, cacheEdiciones, camposSumables, gerenciaCorpKey) {
   const areas = {};
   data
     .filter((c) => c.gerenciaCorp === gerenciaCorpKey)
     .forEach((colab) => {
       const c = resolverColaborador(colab, cacheEdiciones);
-      const key = c.gerenciaCorp + '|' + c.area;
+      const key = c.pais + '|' + c.gerenciaCorp + '|' + c.area;
       if (!areas[key]) {
-        areas[key] = {
+        areas[key] = nuevoAcumulador(camposSumables, {
           idKey: key, area: c.area, gerenciaCorp: c.gerenciaCorp, gerencia: c.gerencia,
           empresa: c.empresa, pais: c.pais,
-          numColaboradores: 0, sueldoMensual: 0, bonoTargetAnual: 0, medicinaPrepagadaAnio: 0,
-        };
+        });
       }
-      const a = areas[key];
-      a.numColaboradores++;
-      a.sueldoMensual += c.sueldoMensual;
-      a.bonoTargetAnual += c.bonoTargetAnual;
-      a.medicinaPrepagadaAnio += c.medicinaPrepagadaAnio;
+      acumular(areas[key], c, camposSumables);
     });
   return Object.values(areas);
 }

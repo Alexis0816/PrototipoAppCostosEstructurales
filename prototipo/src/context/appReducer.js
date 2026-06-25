@@ -1,7 +1,8 @@
-import { colaboradores } from '../data/colaboradores.js';
+import { getPais } from '../paises/registry.js';
 import { consolidar } from '../lib/calculos.js';
 
 export const initialState = {
+  pais: 'CO', // país activo (clave del registro). Determina dataset y módulo de cálculo.
   vista: 'lista', // 'lista' | 'detalle'
   vistaMaestra: 'colaboradores', // 'colaboradores' | 'gerencias'
   tipoVistaDetalle: 'individual', // 'individual' | 'gerencial' | 'area'
@@ -11,24 +12,40 @@ export const initialState = {
   cacheEdiciones: {},
 };
 
-function clampPeriodo(periodo) {
-  return periodo === 24 ? 12 : periodo;
+// Si el período actual no está permitido para vistas agregadas del país, cae al primero permitido.
+function clampPeriodo(periodo, periodosPermitidos) {
+  return periodosPermitidos.includes(periodo) ? periodo : periodosPermitidos[0];
+}
+
+// Construye el registro sintético común para Gerencia/Área a partir de los totales sumados.
+function construirAgregado(modPais, totales, resueltos, meta) {
+  return {
+    numeroId: '0000',
+    ...totales,
+    ...modPais.defaultsAgregado,
+    ...(modPais.getCamposAgregados ? modPais.getCamposAgregados(resueltos) : {}),
+    colaboradores: resueltos,
+    ...meta,
+  };
 }
 
 export function appReducer(state, action) {
   switch (action.type) {
     case 'GO_INDIVIDUAL': {
-      const base = colaboradores.find((c) => c.numeroId === action.id);
+      const modPais = getPais(state.pais);
+      const base = typeof action.id === 'object'
+        ? action.id
+        : modPais.datos.find((c) => c.numeroId === action.id);
       if (!base) return state;
       return { ...state, vista: 'detalle', tipoVistaDetalle: 'individual', actual: base, navId: state.navId + 1 };
     }
 
     case 'GO_GERENCIA': {
-      const coleccion = colaboradores.filter((c) => c.gerenciaCorp === action.gerenciaCorpKey);
+      const modPais = getPais(state.pais);
+      const coleccion = modPais.datos.filter((c) => c.gerenciaCorp === action.gerenciaCorpKey);
       if (coleccion.length === 0) return state;
-      const { totalSueldo, totalBono, totalMedicina, resueltos } = consolidar(coleccion, state.cacheEdiciones);
-      const actual = {
-        numeroId: '0000',
+      const { totales, resueltos } = consolidar(coleccion, state.cacheEdiciones, modPais.camposSumables);
+      const actual = construirAgregado(modPais, totales, resueltos, {
         nombreCompleto: coleccion[0].gerencia,
         gerenciaCorp: action.gerenciaCorpKey,
         gerencia: coleccion[0].gerencia,
@@ -41,30 +58,25 @@ export function appReducer(state, action) {
         avatarIniciales: 'GC',
         grado: 'Global',
         gradoLabel: 'Costo Consolidado',
-        tipoSalario: 'F',
-        sueldoMensual: totalSueldo,
-        bonoTargetAnual: totalBono,
-        medicinaPrepagadaAnio: totalMedicina,
-        colaboradores: resueltos,
-      };
+      });
       return {
         ...state,
         vista: 'detalle',
         tipoVistaDetalle: 'gerencial',
         actual,
         navId: state.navId + 1,
-        glob: { ...state.glob, periodo: clampPeriodo(state.glob.periodo) },
+        glob: { ...state.glob, periodo: clampPeriodo(state.glob.periodo, modPais.periodosAgregado) },
       };
     }
 
     case 'GO_AREA': {
-      const coleccion = colaboradores.filter(
+      const modPais = getPais(state.pais);
+      const coleccion = modPais.datos.filter(
         (c) => c.gerenciaCorp === action.gerenciaCorpKey && c.area === action.areaNombre,
       );
       if (coleccion.length === 0) return state;
-      const { totalSueldo, totalBono, totalMedicina, resueltos } = consolidar(coleccion, state.cacheEdiciones);
-      const actual = {
-        numeroId: '0000',
+      const { totales, resueltos } = consolidar(coleccion, state.cacheEdiciones, modPais.camposSumables);
+      const actual = construirAgregado(modPais, totales, resueltos, {
         nombreCompleto: action.areaNombre,
         gerenciaCorp: action.gerenciaCorpKey,
         gerencia: coleccion[0].gerencia,
@@ -77,19 +89,28 @@ export function appReducer(state, action) {
         avatarIniciales: 'AR',
         grado: 'Área',
         gradoLabel: 'Costo Consolidado',
-        tipoSalario: 'F',
-        sueldoMensual: totalSueldo,
-        bonoTargetAnual: totalBono,
-        medicinaPrepagadaAnio: totalMedicina,
-        colaboradores: resueltos,
-      };
+      });
       return {
         ...state,
         vista: 'detalle',
         tipoVistaDetalle: 'area',
         actual,
         navId: state.navId + 1,
-        glob: { ...state.glob, periodo: clampPeriodo(state.glob.periodo) },
+        glob: { ...state.glob, periodo: clampPeriodo(state.glob.periodo, modPais.periodosAgregado) },
+      };
+    }
+
+    case 'SET_PAIS': {
+      if (action.pais === state.pais) return state;
+      // Al cambiar de país, la moneda de visualización por defecto pasa a la nativa del país.
+      const monedaPais = getPais(action.pais).moneda;
+      return {
+        ...state,
+        pais: action.pais,
+        vista: 'lista',
+        vistaMaestra: 'colaboradores',
+        actual: null,
+        glob: { ...state.glob, moneda: monedaPais },
       };
     }
 

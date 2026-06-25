@@ -1,15 +1,21 @@
 import { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
+import { useAppContext } from '../../context/AppContext.jsx';
 import { fmt } from '../../lib/formato.js';
 
-const COLORES = ['#3b82f6', '#f59e0b', '#10b981'];
-const ETIQUETAS = ['Salario Neto', 'Carga Prestacional', 'Provisión Beneficios'];
+const COLORES = ['#3b82f6', '#f59e0b', '#10b981', '#06b6d4', '#a855f7'];
 
 export function ComposicionChart({ r, moneda }) {
+  const { paisActual } = useAppContext();
+  const monedaOrigen = paisActual.moneda;
+  const slices = paisActual.getSlicesComposicion(r);
+  const etiquetas = slices.map((s) => s.label);
+  const valores = slices.map((s) => s.valor);
+  const colores = COLORES.slice(0, slices.length);
+  const total = r.total;
+
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
-  const valores = [r.sueldo, r.carga, r.bonoMensual + r.medicina];
-  const total = r.total;
 
   useEffect(() => {
     if (chartRef.current) {
@@ -20,8 +26,8 @@ export function ComposicionChart({ r, moneda }) {
     chartRef.current = new Chart(canvasRef.current.getContext('2d'), {
       type: 'doughnut',
       data: {
-        labels: ETIQUETAS,
-        datasets: [{ data: valores, backgroundColor: COLORES, borderWidth: 0, hoverOffset: 4 }],
+        labels: etiquetas,
+        datasets: [{ data: valores, backgroundColor: colores, borderWidth: 0, hoverOffset: 4 }],
       },
       options: {
         responsive: true,
@@ -36,7 +42,7 @@ export function ComposicionChart({ r, moneda }) {
             borderColor: '#1e3a5f',
             borderWidth: 1,
             callbacks: {
-              label: (ctx) => `${fmt(ctx.raw, moneda)} (${((ctx.raw / total) * 100).toFixed(0)}%)`,
+              label: (ctx) => `${fmt(ctx.raw, moneda, monedaOrigen)} (${((ctx.raw / total) * 100).toFixed(0)}%)`,
             },
           },
         },
@@ -49,25 +55,25 @@ export function ComposicionChart({ r, moneda }) {
         chartRef.current = null;
       }
     };
-  }, [r.sueldo, r.carga, r.bonoMensual, r.medicina, r.total, moneda]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(valores), total, moneda, monedaOrigen]);
 
   return (
     <div className="bg-navy-900 border border-navy-800 rounded-xl p-6 h-full flex flex-col justify-between">
       <div>
-        <h3 className="text-lg font-bold text-white mb-6">Composición Mensual</h3>
+        <h3 className="text-lg font-bold text-white mb-6">{paisActual.textos.tituloComposicion}</h3>
         <div className="relative h-40 w-40 sm:h-44 sm:w-44 mx-auto mb-6">
           <canvas ref={canvasRef} />
         </div>
       </div>
       <div className="space-y-3 border-t border-navy-800 pt-4">
-        {ETIQUETAS.map((etiqueta, i) => {
-          const valor = valores[i];
-          const porcentaje = ((valor / total) * 100).toFixed(0);
+        {slices.map((slice, i) => {
+          const porcentaje = ((slice.valor / total) * 100).toFixed(0);
           return (
-            <div key={etiqueta} className="flex items-center gap-2 text-sm text-slate-400">
-              <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: COLORES[i] }} />
-              <span className="flex-1">{etiqueta}</span>
-              <span className="font-mono font-semibold text-white">{fmt(valor, moneda)}</span>
+            <div key={slice.label} className="flex items-center gap-2 text-sm text-slate-400">
+              <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: colores[i] }} />
+              <span className="flex-1">{slice.label}</span>
+              <span className="font-mono font-semibold text-white">{fmt(slice.valor, moneda, monedaOrigen)}</span>
               <span className="text-xs text-slate-500">({porcentaje}%)</span>
             </div>
           );

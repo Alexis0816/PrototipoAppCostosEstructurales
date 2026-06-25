@@ -1,2 +1,8 @@
 node_modules/
 dist/
+
+# Datos reales/confidenciales — solo existen localmente, nunca se commitean.
+# Ver README para configurarlos. El deploy público siempre usa src/data/*.demo.js.
+src/data/local/
+.env.local
+.env.*.local
