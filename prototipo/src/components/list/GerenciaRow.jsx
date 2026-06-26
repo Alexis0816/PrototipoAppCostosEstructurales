@@ -1,7 +1,6 @@
-import { useAppContext } from '../../context/AppContext.jsx';
-import { FilaAccionDual } from '../shared/FilaAccionDual.jsx';
-import { Boton } from '../shared/Boton.jsx';
-import { fmt } from '../../lib/formato.js';
+import { useAppContext } from '../../context';
+import { FilaAccionDual, Boton } from '../shared';
+import { fmt } from '../../utils';
 
 export function GerenciaRow({ gerencia, expandido, onToggleExpand }) {
   const { goGerencia, glob, paisActual } = useAppContext();

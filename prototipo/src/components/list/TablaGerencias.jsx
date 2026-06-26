@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react';
-import { useAppContext } from '../../context/AppContext.jsx';
-import { obtenerDatosAgrupadosAreas } from '../../lib/agrupacion.js';
+import { useAppContext } from '../../context';
+import { obtenerDatosAgrupadosAreas } from '../../utils';
 import { GerenciaRow } from './GerenciaRow.jsx';
 import { AreaSubRow } from './AreaSubRow.jsx';
 

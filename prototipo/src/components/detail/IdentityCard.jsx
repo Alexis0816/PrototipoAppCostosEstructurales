@@ -1,6 +1,5 @@
-import { useAppContext } from '../../context/AppContext.jsx';
-import { Avatar } from '../shared/Avatar.jsx';
-import { Badge } from '../shared/Badge.jsx';
+import { useAppContext } from '../../context';
+import { Avatar, Badge } from '../shared';
 
 export function IdentityCard({ persona, tipoVistaDetalle }) {
   const { paisActual } = useAppContext();

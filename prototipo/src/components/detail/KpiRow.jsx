@@ -1,5 +1,5 @@
-import { useAppContext } from '../../context/AppContext.jsx';
-import { fmt, pct } from '../../lib/formato.js';
+import { useAppContext } from '../../context';
+import { fmt, pct } from '../../utils';
 
 export function KpiRow({ r, periodo, moneda }) {
   const { paisActual } = useAppContext();

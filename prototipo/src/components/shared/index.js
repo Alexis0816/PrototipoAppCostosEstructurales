@@ -1,0 +1,9 @@
+export { Boton } from './Boton.jsx';
+export { Badge } from './Badge.jsx';
+export { Avatar } from './Avatar.jsx';
+export { BarraProporcional } from './BarraProporcional.jsx';
+export { SearchInput } from './SearchInput.jsx';
+export { FilaAccionDual } from './FilaAccionDual.jsx';
+export { FilaColaboradorIncluido } from './FilaColaboradorIncluido.jsx';
+export { CampoEditable } from './CampoEditable.jsx';
+export { DropdownAreas } from './DropdownAreas.jsx';

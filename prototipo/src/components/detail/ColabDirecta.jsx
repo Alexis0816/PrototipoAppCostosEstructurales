@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
-import { useAppContext } from '../../context/AppContext.jsx';
-import { SearchInput } from '../shared/SearchInput.jsx';
-import { FilaColaboradorIncluido } from '../shared/FilaColaboradorIncluido.jsx';
+import { useAppContext } from '../../context';
+import { SearchInput, FilaColaboradorIncluido } from '../shared';
 
 export function ColabDirecta({ colaboradores }) {
   const { go, glob } = useAppContext();

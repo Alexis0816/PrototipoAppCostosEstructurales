@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useAppContext } from '../context/AppContext.jsx';
+import { useAppContext } from '../context';
 
 // Calcula el costo de `persona` usando el motor del país activo. La firma se mantiene
 // (persona, periodo) para no tocar los call-sites. Deps en [persona, periodo, paisActual]:

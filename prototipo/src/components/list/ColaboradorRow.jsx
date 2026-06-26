@@ -1,7 +1,5 @@
-import { useAppContext } from '../../context/AppContext.jsx';
-import { Avatar } from '../shared/Avatar.jsx';
-import { Badge } from '../shared/Badge.jsx';
-import { Boton } from '../shared/Boton.jsx';
+import { useAppContext } from '../../context';
+import { Avatar, Badge, Boton } from '../shared';
 
 export function ColaboradorRow({ colaborador }) {
   const { go } = useAppContext();

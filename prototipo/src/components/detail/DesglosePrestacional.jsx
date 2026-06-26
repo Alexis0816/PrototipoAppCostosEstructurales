@@ -1,6 +1,6 @@
-import { useAppContext } from '../../context/AppContext.jsx';
-import { BarraProporcional } from '../shared/BarraProporcional.jsx';
-import { fmt } from '../../lib/formato.js';
+import { useAppContext } from '../../context';
+import { BarraProporcional } from '../shared';
+import { fmt } from '../../utils';
 
 function FilaConcepto({ nombre, formula, valor, max, destacado = false, moneda, monedaOrigen }) {
   const porcentaje = max > 0 ? (valor / max) * 100 : 0;

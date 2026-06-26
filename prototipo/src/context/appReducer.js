@@ -1,5 +1,5 @@
 import { getPais } from '../paises/registry.js';
-import { consolidar } from '../lib/calculos.js';
+import { consolidar } from '../utils';
 
 export const initialState = {
   pais: 'CO', // país activo (clave del registro). Determina dataset y módulo de cálculo.

@@ -1,6 +1,6 @@
-import { useAppContext } from '../../context/AppContext.jsx';
-import { useCalculo } from '../../hooks/useCalculo.js';
-import { fmt } from '../../lib/formato.js';
+import { useAppContext } from '../../context';
+import { useCalculo } from '../../hooks';
+import { fmt } from '../../utils';
 import { Avatar } from './Avatar.jsx';
 import { Badge } from './Badge.jsx';
 

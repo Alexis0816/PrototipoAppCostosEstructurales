@@ -1,4 +1,4 @@
-import { useAppContext } from './context/AppContext.jsx';
+import { useAppContext } from './context';
 import { ListView } from './components/list/ListView.jsx';
 import { DetailView } from './components/detail/DetailView.jsx';
 

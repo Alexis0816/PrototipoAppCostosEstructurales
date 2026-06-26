@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
-import { useAppContext } from '../../context/AppContext.jsx';
-import { fmt } from '../../lib/formato.js';
+import { useAppContext } from '../../context';
+import { fmt } from '../../utils';
 
 const COLORES = ['#3b82f6', '#f59e0b', '#10b981', '#06b6d4', '#a855f7'];
 

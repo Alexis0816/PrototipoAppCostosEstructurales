@@ -1,5 +1,5 @@
-import { useAppContext } from '../../context/AppContext.jsx';
-import { Boton } from '../shared/Boton.jsx';
+import { useAppContext } from '../../context';
+import { Boton } from '../shared';
 
 const TITULOS = {
   individual: 'Costeo del Colaborador',

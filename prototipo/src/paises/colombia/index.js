@@ -7,7 +7,7 @@ import {
   getLabelTipo,
   getBadgeTipoCorto,
 } from './desglose.js';
-import { colaboradores } from '../../data/colaboradoresCO.js';
+import { colaboradoresCO as colaboradores } from '../../data';
 
 export const colombia = {
   ...config,

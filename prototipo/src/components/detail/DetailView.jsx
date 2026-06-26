@@ -1,6 +1,5 @@
-import { useAppContext } from '../../context/AppContext.jsx';
-import { useResolvedColaborador } from '../../hooks/useResolvedColaborador.js';
-import { useCalculo } from '../../hooks/useCalculo.js';
+import { useAppContext } from '../../context';
+import { useResolvedColaborador, useCalculo } from '../../hooks';
 import { NavBar } from '../layout/NavBar.jsx';
 import { DetailHeader } from './DetailHeader.jsx';
 import { IdentityCard } from './IdentityCard.jsx';

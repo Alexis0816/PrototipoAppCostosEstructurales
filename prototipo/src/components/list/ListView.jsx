@@ -1,10 +1,9 @@
 import { useMemo, useState } from 'react';
-import { useAppContext } from '../../context/AppContext.jsx';
-import { obtenerDatosAgrupadosGerencias } from '../../lib/agrupacion.js';
+import { useAppContext } from '../../context';
+import { obtenerDatosAgrupadosGerencias } from '../../utils';
 import { listarPaises } from '../../paises/registry.js';
 import { NavBar } from '../layout/NavBar.jsx';
-import { Boton } from '../shared/Boton.jsx';
-import { SearchInput } from '../shared/SearchInput.jsx';
+import { Boton, SearchInput } from '../shared';
 import { TablaColaboradores } from './TablaColaboradores.jsx';
 import { TablaGerencias } from './TablaGerencias.jsx';
 

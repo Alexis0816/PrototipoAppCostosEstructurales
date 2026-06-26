@@ -1,6 +1,6 @@
-import { useAppContext } from '../../context/AppContext.jsx';
-import { CampoEditable } from '../shared/CampoEditable.jsx';
-import { fmt } from '../../lib/formato.js';
+import { useAppContext } from '../../context';
+import { CampoEditable } from '../shared';
+import { fmt } from '../../utils';
 
 export function ParametrosSalariales({ persona, base, r, moneda }) {
   const { paisActual, confirmarEdicion } = useAppContext();
@@ -24,7 +24,9 @@ export function ParametrosSalariales({ persona, base, r, moneda }) {
 
   function valorReadonly(entry) {
     const fuente = entry.source === 'persona' ? persona : r;
-    return fuente[entry.campo];
+    const valor = fuente[entry.campo];
+    // `formato:'numero'` ⇒ no es un monto (ej. multiplicadorBono = cantidad de sueldos), no pasa por fmt().
+    return entry.formato === 'numero' ? String(valor) : fmt(valor, moneda, monedaOrigen);
   }
 
   return (
@@ -46,7 +48,7 @@ export function ParametrosSalariales({ persona, base, r, moneda }) {
           <div key={entry.campo} className="bg-navy-900 border border-navy-800 rounded-xl p-5">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">{entry.label}</p>
             <div className="font-mono text-lg font-semibold rounded-lg px-3 py-2 bg-navy-800/15 border border-navy-800/50 text-slate-200 opacity-70">
-              {fmt(valorReadonly(entry), moneda, monedaOrigen)}
+              {valorReadonly(entry)}
             </div>
           </div>
         ))}

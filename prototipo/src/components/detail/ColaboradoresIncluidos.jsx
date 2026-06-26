@@ -1,4 +1,4 @@
-import { useAppContext } from '../../context/AppContext.jsx';
+import { useAppContext } from '../../context';
 import { AreasAcordeon } from './AreasAcordeon.jsx';
 import { ColabDirecta } from './ColabDirecta.jsx';
 

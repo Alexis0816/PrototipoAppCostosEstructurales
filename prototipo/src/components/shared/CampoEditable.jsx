@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { useClickOutside } from '../../hooks/useClickOutside.js';
-import { parseInp } from '../../lib/formato.js';
+import { useClickOutside } from '../../hooks';
+import { parseInp } from '../../utils';
 
 export function CampoEditable({ label, valorFormateado, onConfirm }) {
   const [editando, setEditando] = useState(false);

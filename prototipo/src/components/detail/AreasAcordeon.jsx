@@ -1,9 +1,7 @@
 import { useMemo, useState } from 'react';
-import { useAppContext } from '../../context/AppContext.jsx';
-import { agruparPorArea } from '../../lib/agrupacion.js';
-import { DropdownAreas } from '../shared/DropdownAreas.jsx';
-import { FilaColaboradorIncluido } from '../shared/FilaColaboradorIncluido.jsx';
-import { Boton } from '../shared/Boton.jsx';
+import { useAppContext } from '../../context';
+import { agruparPorArea } from '../../utils';
+import { DropdownAreas, FilaColaboradorIncluido, Boton } from '../shared';
 
 export function AreasAcordeon({ colaboradores, gerenciaCorpKey }) {
   const { go, goArea, glob } = useAppContext();

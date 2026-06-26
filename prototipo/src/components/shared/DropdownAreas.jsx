@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { useClickOutside } from '../../hooks/useClickOutside.js';
+import { useClickOutside } from '../../hooks';
 
 export function DropdownAreas({ areas, seleccionado, onSeleccionar }) {
   const [abierto, setAbierto] = useState(false);
