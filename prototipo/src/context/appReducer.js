@@ -103,12 +103,12 @@ export function appReducer(state, action) {
     case 'SET_PAIS': {
       if (action.pais === state.pais) return state;
       // Al cambiar de país, la moneda de visualización por defecto pasa a la nativa del país.
+      // vistaMaestra se preserva: si estaba en Gerencias, se sigue viendo Gerencias del nuevo país.
       const monedaPais = getPais(action.pais).moneda;
       return {
         ...state,
         pais: action.pais,
         vista: 'lista',
-        vistaMaestra: 'colaboradores',
         actual: null,
         glob: { ...state.glob, moneda: monedaPais },
       };
