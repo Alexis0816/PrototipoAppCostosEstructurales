@@ -1,6 +1,10 @@
-// Tasas de cargas sociales de Perú (suman 37.08% sobre la remuneración base).
+// Tasas de cargas sociales de Perú.
+// GRATIFICACIONES: incluye la bonificación extraordinaria del 9% (Ley 29351).
+//   = 2 sueldos × 1.09 / 12 meses ≈ 18.17% de la Rem. Base.
+// CTS: NO usa una tasa fija — se calcula como (Rem.Base + SueldoBase/6) / 12
+//   porque la parte proporcional de gratificación que entra a CTS se mide solo
+//   sobre SueldoBase (sin Asignación Familiar). Ver calculos.js.
 export const GRATIFICACIONES = 0.1817;
-export const CTS = 0.0972;
 export const ES_SALUD = 0.09;
 export const SEGURO_VIDA_LEY = 0.0019;
 

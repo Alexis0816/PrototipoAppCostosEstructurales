@@ -1,5 +1,5 @@
 import {
-  GRATIFICACIONES, CTS, ES_SALUD, SEGURO_VIDA_LEY,
+  GRATIFICACIONES, ES_SALUD, SEGURO_VIDA_LEY,
   BONO_CP_FACTOR, TIPO_CAMBIO_PEN, TIPOS_SIN_BONO, MULTIPLICADOR_BONO,
 } from './constants.js';
 
@@ -26,29 +26,45 @@ export function calc(c, periodo) {
   const asignacionFamiliar = c.asignacionFamiliar || 0;
 
   const remuneracionBase = sueldoBase + comisionesMensuales + asignacionFamiliar;
-  const gratificaciones = remuneracionBase * GRATIFICACIONES;
-  const cts = remuneracionBase * CTS;
-  const esSalud = remuneracionBase * ES_SALUD;
-  const seguroVidaLey = remuneracionBase * SEGURO_VIDA_LEY;
+
+  // Cada concepto se redondea al sol entero para que el desglose muestre enteros
+  // y la suma de las filas coincida exactamente con el total mostrado.
+  const gratificaciones   = Math.round(remuneracionBase * GRATIFICACIONES);
+  // CTS: remBase × 7/72 (DL 650). Se trunca al entero inferior — igual que Excel con INT().
+  const cts               = Math.trunc(remuneracionBase * 7 / 72);
+  const esSalud           = Math.round(remuneracionBase * ES_SALUD);
+  const seguroVidaLey     = Math.round(remuneracionBase * SEGURO_VIDA_LEY);
+  const costoDeVales      = Math.round(vales * 0.01);
+
   const ingresosTotales = sueldoBase + vales + comisionesMensuales + asignacionFamiliar;
-  const costoDeVales = vales * 0.01;
-  const carga = gratificaciones + cts + esSalud + seguroVidaLey;
-  const costoTotalMensual = ingresosTotales + carga + costoDeVales;
+  const carga           = gratificaciones + cts + esSalud + seguroVidaLey;
+
+  // El total mensual para mostrar en KPI se calcula como Math.trunc del float exacto,
+  // igual que Excel muestra la celda con 0 decimales usando el valor interno de cada fórmula.
+  // Esto replica el comportamiento del Excel: el float interno da 28,919.6445 → trunc = 28,919.
+  const cargaFloat           = remuneracionBase * GRATIFICACIONES
+                             + remuneracionBase * 7 / 72
+                             + remuneracionBase * ES_SALUD
+                             + remuneracionBase * SEGURO_VIDA_LEY;
+  const costoTotalMensualFloat = ingresosTotales + cargaFloat + vales * 0.01;
+  const costoTotalMensual      = Math.trunc(costoTotalMensualFloat);
 
   // En vistas agregadas el bono llega pre-sumado por persona (override); en individual se deriva del grado.
-  const bonoCPTarget = c.bonoCPTargetOverride !== undefined ? c.bonoCPTargetOverride : bonoCPTargetDe(c);
-  const costoLaboralBonoCP = bonoCPTarget * BONO_CP_FACTOR;
+  const bonoCPTarget       = c.bonoCPTargetOverride !== undefined ? c.bonoCPTargetOverride : bonoCPTargetDe(c);
+  const costoLaboralBonoCP = Math.round(bonoCPTarget * BONO_CP_FACTOR);
+  const bonoCPMensual      = Math.round((bonoCPTarget + costoLaboralBonoCP) / 12);
 
-  const costoAnualML = costoTotalMensual * 12 + bonoCPTarget * (1 + BONO_CP_FACTOR);
-  const costoAnualUSD = costoAnualML / TIPO_CAMBIO_PEN;
-  // Proyección incluye el bono prorrateado: a 12M es exactamente el costo anual en moneda local.
-  const proyeccion = costoTotalMensual * periodo + bonoCPTarget * (1 + BONO_CP_FACTOR) * (periodo / 12);
+  // Proyección usa el float exacto (igual que Excel usa el valor de celda, no el display).
+  // (bonoCPMensual + costoTotalMensualFloat) × periodo → Math.trunc al final.
+  const proyeccion   = Math.trunc((bonoCPMensual + costoTotalMensualFloat) * periodo);
+  const costoAnualML = Math.trunc((bonoCPMensual + costoTotalMensualFloat) * 12);
+  const costoAnualUSD = Math.round(costoAnualML / TIPO_CAMBIO_PEN);
   const pct = sueldoBase > 0 ? (carga / sueldoBase) * 100 : 0;
 
   return {
     sueldo: sueldoBase, vales, remuneracionBase, ingresosTotales, costoDeVales,
     gratificaciones, cts, esSalud, seguroVidaLey,
-    multiplicadorBono: multiplicadorBono(c.grado || 0), bonoCPTarget, bonoMensual: bonoCPTarget / 12, costoLaboralBonoCP,
+    multiplicadorBono: multiplicadorBono(c.grado || 0), bonoCPTarget, bonoCPMensual, costoLaboralBonoCP,
     carga, total: costoTotalMensual, pct, proyeccion, costoAnualML, costoAnualUSD,
   };
 }

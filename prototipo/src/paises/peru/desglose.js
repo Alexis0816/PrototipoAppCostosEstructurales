@@ -2,7 +2,7 @@ export function getFilasDesglose(r) {
   return [
     { nombre: 'Vales', formula: 'Vales', valor: r.vales ?? 0 },
     { nombre: 'Gratificaciones', formula: 'Rem. Base × 18.17%', valor: r.gratificaciones },
-    { nombre: 'CTS', formula: 'Rem. Base × 9.72%', valor: r.cts },
+    { nombre: 'CTS', formula: 'Rem. Base × 7/72', valor: r.cts },
     { nombre: 'EsSalud', formula: 'Rem. Base × 9.00%', valor: r.esSalud },
     { nombre: 'Seguro Vida Ley', formula: 'Rem. Base × 0.19%', valor: r.seguroVidaLey },
     { nombre: 'Costo de Vales', formula: 'Vales × 1.00%', valor: r.costoDeVales ?? 0, destacado: true },

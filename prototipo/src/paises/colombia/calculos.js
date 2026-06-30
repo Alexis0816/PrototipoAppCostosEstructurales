@@ -1,4 +1,5 @@
 import { RECARGO_FIJO, RECARGO_INTEGRAL } from './constants.js';
+import { RATE_PER_USD } from '../../utils/fx.js';
 
 // Cálculo de costo estructural de Colombia. Portado byte-a-byte del lib/calculos.js original.
 export function calc(c, periodo) {
@@ -24,10 +25,12 @@ export function calc(c, periodo) {
   const ct = s + bm + mm + cp;
   const ps = s > 0 ? ((ct - s - bm - mm) / s) * 100 : 0;
   const py = ct * periodo;
+  const costoAnualML  = ct * 12;
+  const costoAnualUSD = Math.round(costoAnualML / RATE_PER_USD.COP);
 
   return {
     sueldo: s, bonoAnual: ba, bonoMensual: bm, medicina: mm,
     prima: p, vacaciones: v, navidad: n, cesantias: ce, intereses: ic, seguridad: ss,
-    par, carga: cp, total: ct, pct: ps, proyeccion: py,
+    par, carga: cp, total: ct, pct: ps, proyeccion: py, costoAnualML, costoAnualUSD,
   };
 }
