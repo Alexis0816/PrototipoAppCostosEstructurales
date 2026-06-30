@@ -14,10 +14,10 @@ const FLAG_URL = {
   PE: 'https://flagcdn.com/w80/pe.jpg',
   EC: 'https://flagcdn.com/w80/ec.jpg',
 };
-const FLAG_RING = {
-  CO: 'ring-[3px] ring-amber-400 shadow-[0_0_14px_rgba(245,158,11,.55)]',
-  PE: 'ring-[3px] ring-red-400   shadow-[0_0_14px_rgba(239,68,68,.55)]',
-  EC: 'ring-[3px] ring-yellow-300 shadow-[0_0_14px_rgba(253,224,71,.55)]',
+const FLAG_ACTIVE = {
+  CO: 'shadow-[0_0_14px_rgba(245,158,11,.55)]',
+  PE: 'shadow-[0_0_14px_rgba(239,68,68,.55)]',
+  EC: 'shadow-[0_0_14px_rgba(253,224,71,.55)]',
 };
 
 export function ListView() {
@@ -63,9 +63,8 @@ export function ListView() {
                     onClick={() => setPais(p.codigo)}
                     title={p.nombre}
                     className={`w-12 h-12 rounded-full overflow-hidden transition-all duration-200 outline-none
-                      ring-offset-2 ring-offset-[#0a1628]
                       ${pais === p.codigo
-                        ? `${FLAG_RING[p.codigo] ?? 'ring-[3px] ring-blue-400'} scale-110`
+                        ? `${FLAG_ACTIVE[p.codigo] ?? ''} scale-110`
                         : 'opacity-45 hover:opacity-80 hover:scale-105'
                       }`}
                   >
