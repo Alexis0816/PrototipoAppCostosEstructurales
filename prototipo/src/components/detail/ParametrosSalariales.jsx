@@ -11,9 +11,14 @@ export function ParametrosSalariales({ persona, base, r, moneda }) {
   // Construye el handler de confirmación de un campo editable. Si declara `rescale` de tipo
   // 'ratio', recalcula el campo dependiente por el ratio del registro BASE original (regla de
   // Colombia: bono se reescala desde el ratio bono/sueldo original, no desde el valor editado).
+  // Si `tipo: 'grado'`, parseInp devuelve el número (parseó "G18" → 18); se re-prefija a "G18".
   function makeConfirm(entry) {
     return (nuevoValor) => {
-      const patch = { [entry.campo]: nuevoValor };
+      let valorFinal = nuevoValor;
+      if (entry.tipo === 'grado') {
+        valorFinal = 'G' + Math.round(nuevoValor);
+      }
+      const patch = { [entry.campo]: valorFinal };
       if (entry.rescale && entry.rescale.tipo === 'ratio') {
         const ratio = base[entry.rescale.campoDependiente] / base[entry.campo];
         patch[entry.rescale.campoDependiente] = Math.round(nuevoValor * ratio);
@@ -40,7 +45,11 @@ export function ParametrosSalariales({ persona, base, r, moneda }) {
           <CampoEditable
             key={entry.campo}
             label={entry.label}
-            valorFormateado={fmt(persona[entry.campo], moneda, monedaOrigen)}
+            valorFormateado={
+              entry.tipo === 'grado'   ? String(persona[entry.campo] ?? '') :
+              entry.tipo === 'decimal' ? String(persona[entry.campo] ?? 0) :
+              fmt(persona[entry.campo] ?? 0, moneda, monedaOrigen)
+            }
             onConfirm={makeConfirm(entry)}
           />
         ))}

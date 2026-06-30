@@ -2,19 +2,19 @@ import { useAppContext } from '../../context';
 import { BarraProporcional } from '../shared';
 import { fmt } from '../../utils';
 
-function FilaConcepto({ nombre, formula, valor, max, destacado = false, moneda, monedaOrigen }) {
+function FilaConcepto({ nombre, formula, valor, max, destacado = false, informativo = false, moneda, monedaOrigen }) {
   const porcentaje = max > 0 ? (valor / max) * 100 : 0;
   return (
-    <div className="flex items-center justify-between py-3 border-b border-navy-800 last:border-b-0">
+    <div className={`flex items-center justify-between py-3 border-b border-navy-800 last:border-b-0 ${informativo ? 'opacity-50' : ''}`}>
       <div className="w-1/3 pr-2">
-        <p className="text-sm font-medium text-slate-200 truncate" title={nombre}>{nombre}</p>
+        <p className={`text-sm font-medium truncate ${informativo ? 'text-slate-400 italic' : 'text-slate-200'}`} title={nombre}>{nombre}</p>
         <p className="text-xs text-slate-500 mt-0.5">{formula}</p>
       </div>
       <div className="w-1/3 px-4">
-        <BarraProporcional porcentaje={porcentaje} destacado={destacado} />
+        <BarraProporcional porcentaje={informativo ? 0 : porcentaje} destacado={destacado} />
       </div>
       <div className="w-1/3 text-right">
-        <p className="font-mono text-[0.9375rem] font-semibold text-white">{fmt(valor, moneda, monedaOrigen)}</p>
+        <p className={`font-mono text-[0.9375rem] font-semibold ${informativo ? 'text-slate-400' : 'text-white'}`}>{fmt(valor, moneda, monedaOrigen)}</p>
       </div>
     </div>
   );
@@ -25,7 +25,10 @@ export function DesglosePrestacional({ persona, r, moneda }) {
   const monedaOrigen = paisActual.moneda;
   const { textos } = paisActual;
   const filas = paisActual.getFilasDesglose(r, persona);
-  const max = Math.max(...filas.map((f) => f.valor), 0) || 1;
+  // Las filas informativas (Vales, Bono CP Mensual) se muestran en gris pero no
+  // influyen en la escala de las barras ni en el total de cargas.
+  const filasReales = filas.filter((f) => !f.informativo);
+  const max = Math.max(...filasReales.map((f) => f.valor), 0) || 1;
   const subtitulo = paisActual.getSubtituloFormula ? paisActual.getSubtituloFormula(persona) : '';
 
   return (
@@ -48,6 +51,7 @@ export function DesglosePrestacional({ persona, r, moneda }) {
               formula={fila.formula}
               valor={fila.valor}
               destacado={fila.destacado}
+              informativo={fila.informativo}
               max={max}
               moneda={moneda}
               monedaOrigen={monedaOrigen}

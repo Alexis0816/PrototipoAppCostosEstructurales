@@ -3,10 +3,12 @@ export const config = {
   nombre: 'Ecuador',
   moneda: 'USD',
   // seguro: valor anual fijo por empleado que se suma para el agregado.
-  camposSumables: ['sueldoMensual', 'seguro'],
+  gradoEditable: true,
+  camposSumables: ['sueldoMensual', 'seguro', 'comisionesMensuales'],
   campoNomina: 'sueldoMensual',
   camposEditables: [
     { campo: 'sueldoMensual', label: 'Sueldo Mensual' },
+    { campo: 'comisionesMensuales', label: 'Comisiones Mensuales' },
   ],
   camposReadonly: [
     { campo: 'multiplicadorBono', label: 'N° Sueldos (Bono)',    source: 'r', formato: 'numero' },

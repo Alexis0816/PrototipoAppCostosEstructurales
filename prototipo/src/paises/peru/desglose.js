@@ -1,6 +1,6 @@
 export function getFilasDesglose(r) {
   return [
-    { nombre: 'Vales', formula: 'Vales', valor: r.vales ?? 0 },
+    { nombre: 'Bono CP Mensual', formula: '(BonoCPTarget + CargaBono) ÷ 12', valor: r.bonoCPMensual ?? 0, informativo: true },
     { nombre: 'Gratificaciones', formula: 'Rem. Base × 18.17%', valor: r.gratificaciones },
     { nombre: 'CTS', formula: 'Rem. Base × 7/72', valor: r.cts },
     { nombre: 'EsSalud', formula: 'Rem. Base × 9.00%', valor: r.esSalud },

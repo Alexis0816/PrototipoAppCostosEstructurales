@@ -1,36 +1,74 @@
 import { RECARGO_FIJO, RECARGO_INTEGRAL } from './constants.js';
 import { RATE_PER_USD } from '../../utils/fx.js';
 
-// Cálculo de costo estructural de Colombia. Portado byte-a-byte del lib/calculos.js original.
+export function bonoTargetDe(c) {
+  return (c.nSueldos || 0) * (c.sueldoMensual || 0);
+}
+
 export function calc(c, periodo) {
-  const s = c.sueldoMensual;
-  const ba = c.bonoTargetAnual;
-  const bm = ba / 12;
-  const mm = c.medicinaPrepagadaAnio / 12;
-  let p = 0, v = 0, n = 0, ce = 0, ic = 0, par = 0, ss = 0;
+  const s    = c.sueldoMensual        || 0;
+  const ns   = c.nSueldos             || 0;
+  const med  = c.medicinaPrepagadaAnio || 0;
+  const tipo = c.tipoSalario           || 'F';
 
-  if (c.tipoSalario === 'F') {
-    p = s / 12;
-    v = s / 12;
-    n = (s * 0.5) / 12;
-    ce = s / 12;
-    ic = ce * 0.12;
-    ss = s * 0.205;
-    par = s * RECARGO_FIJO;
-  } else {
-    par = s * RECARGO_INTEGRAL;
-  }
+  // ── Componentes anuales ──────────────────────────────────────────────────
+  const salarioAnual    = s * 12;
+  const primaVacaciones = s * 1;       // 1 sueldo mensual, pagado anualmente
+  const primaNavidad    = s * 0.5;     // 0.5 sueldos, pagado en diciembre
+  // Para vistas agregadas (Gerencia/Área), el bono se inyecta ya sumado por persona.
+  const bonoTarget = c.bonoTargetOverride !== undefined
+    ? c.bonoTargetOverride
+    : ns * s;
 
-  const cp = p + v + n + ce + ic + ss + par;
-  const ct = s + bm + mm + cp;
-  const ps = s > 0 ? ((ct - s - bm - mm) / s) * 100 : 0;
-  const py = ct * periodo;
-  const costoAnualML  = ct * 12;
-  const costoAnualUSD = Math.round(costoAnualML / RATE_PER_USD.COP);
+  // Base compartida: Primas, Cesantías y Aportes usan la misma base
+  const base = salarioAnual + primaVacaciones + primaNavidad + bonoTarget;
+
+  const primaServicios = base / 12;
+  const cesantias      = base / 12;    // igual que Prima de Servicios
+  const iCesantias     = cesantias * 0.12;
+
+  // F = 49.60%, I = 31.936% — única diferencia entre Fijo e Integral
+  const parRate       = tipo === 'F' ? RECARGO_FIJO : RECARGO_INTEGRAL;
+  const aportesPrimas = base * parRate;
+
+  // ── Costo Anual ─────────────────────────────────────────────────────────
+  // Mismo componentes para F e I; solo cambia el parRate.
+  const costoAnualML =
+    salarioAnual + primaVacaciones + primaNavidad + primaServicios
+    + cesantias + iCesantias + med + bonoTarget + aportesPrimas;
+
+  const costoAnualUSD     = Math.round(costoAnualML / RATE_PER_USD.COP);
+  const costoTotalMensual = costoAnualML / 12;
+
+  // ── Carga mensual (para KPI y % vs sueldo) ──────────────────────────────
+  const cargaAnual =
+    primaVacaciones + primaNavidad + primaServicios + cesantias + iCesantias + aportesPrimas;
+  const carga = cargaAnual / 12;
+
+  const pct        = s > 0 ? (carga / s) * 100 : 0;
+  const proyeccion = costoTotalMensual * periodo;
 
   return {
-    sueldo: s, bonoAnual: ba, bonoMensual: bm, medicina: mm,
-    prima: p, vacaciones: v, navidad: n, cesantias: ce, intereses: ic, seguridad: ss,
-    par, carga: cp, total: ct, pct: ps, proyeccion: py, costoAnualML, costoAnualUSD,
+    sueldo: s, salarioAnual,
+    primaVacaciones, primaNavidad,
+    primaServicios, cesantias, iCesantias,
+    medicinaPrepagadaAnio: med,
+    nSueldos: ns, bonoTarget,
+    aportesPrimas, parRate,
+    // Provisiones mensuales para el desglose (cada componente anual ÷ 12)
+    primaVacacionesMensual: primaVacaciones / 12,
+    primaNavidadMensual:    primaNavidad    / 12,
+    primaServiciosMensual:  primaServicios  / 12,
+    cesantiasMensual:       cesantias       / 12,
+    iCesantiasMensual:      iCesantias      / 12,
+    medicinaMensual:        med             / 12,
+    bonoMensual:            bonoTarget      / 12,
+    aportesPrimasMensual:   aportesPrimas   / 12,
+    carga,
+    total: costoTotalMensual,
+    pct,
+    proyeccion,
+    costoAnualML,
+    costoAnualUSD,
   };
 }

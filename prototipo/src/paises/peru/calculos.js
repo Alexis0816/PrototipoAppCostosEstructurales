@@ -37,7 +37,7 @@ export function calc(c, periodo) {
   const costoDeVales      = Math.round(vales * 0.01);
 
   const ingresosTotales = sueldoBase + vales + comisionesMensuales + asignacionFamiliar;
-  const carga           = gratificaciones + cts + esSalud + seguroVidaLey;
+  const carga           = gratificaciones + cts + esSalud + seguroVidaLey + costoDeVales;
 
   // El total mensual para mostrar en KPI se calcula como Math.trunc del float exacto,
   // igual que Excel muestra la celda con 0 decimales usando el valor interno de cada fórmula.
