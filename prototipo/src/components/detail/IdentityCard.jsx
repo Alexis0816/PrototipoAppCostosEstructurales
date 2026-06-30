@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAppContext } from '../../context';
-import { Avatar, Badge } from '../shared';
+import { Badge } from '../shared';
 
 function GradoBadgeEditable({ persona }) {
   const { confirmarEdicion } = useAppContext();
@@ -71,7 +71,6 @@ export function IdentityCard({ persona, tipoVistaDetalle }) {
 
   return (
     <div className="bg-navy-900 border border-navy-800 rounded-xl p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-      <Avatar color={persona.avatarColor} iniciales={persona.avatarIniciales} />
       <div className="flex-1 min-w-0">
         <h3 className="text-lg font-bold text-white truncate">{persona.nombreCompleto}</h3>
         {!ocultarSubtituloGerencia && (

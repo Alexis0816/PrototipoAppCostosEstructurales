@@ -17,8 +17,8 @@ export const config = {
   ],
   // Perú no tiene toggle Fijo/Integral: el `tipo` (Operario/Administrativo) es fijo por persona.
   opcionesTipoSalario: null,
-  periodosIndividual: [6, 12, 24],
-  periodosAgregado: [6, 12],
+  periodosIndividual: [1, 12],
+  periodosAgregado: [1, 12],
   defaultsAgregado: {},
   textos: {
     tituloDesglose: 'Desglose de Cargas Sociales Mensual',

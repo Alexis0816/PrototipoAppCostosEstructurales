@@ -10,7 +10,7 @@ export function ColaboradoresIncluidos({ actual, tipoVistaDetalle }) {
     <div className="bg-navy-900 border border-navy-800 rounded-xl p-6 mb-6">
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <h3 className="text-lg font-bold text-white">{titulo}</h3>
-        <span className="text-xs text-slate-500">
+        <span className="text-sm font-semibold text-slate-200 bg-navy-800 px-3 py-1 rounded-lg">
           {actual.colaboradores.length} {actual.colaboradores.length === 1 ? 'colaborador' : 'colaboradores'}
         </span>
       </div>

@@ -3,7 +3,7 @@ import { useAppContext } from '../../context';
 import { obtenerDatosAgrupadosGerencias } from '../../utils';
 import { listarPaises } from '../../paises/registry.js';
 import { NavBar } from '../layout/NavBar.jsx';
-import { Boton, SearchInput } from '../shared';
+import { SearchInput } from '../shared';
 import { TablaColaboradores } from './TablaColaboradores.jsx';
 import { TablaGerencias } from './TablaGerencias.jsx';
 
@@ -20,9 +20,15 @@ const FLAG_ACTIVE = {
   EC: 'shadow-[0_0_14px_rgba(253,224,71,.55)]',
 };
 
+const OPCIONES_VISTA = [
+  { tipo: 'colaboradores', label: 'Colaboradores' },
+  { tipo: 'gerencias', label: 'Gerencias' },
+];
+
 export function ListView() {
   const { data, cacheEdiciones, vistaMaestra, cambiarFiltroMaestro, pais, setPais, paisActual } = useAppContext();
   const [busqueda, setBusqueda] = useState('');
+  const [waveKey, setWaveKey] = useState(0);
 
   const gerenciasAgrupadas = useMemo(
     () => obtenerDatosAgrupadosGerencias(data, cacheEdiciones, paisActual.camposSumables),
@@ -45,24 +51,34 @@ export function ListView() {
   const totalRegistros = vistaMaestra === 'colaboradores' ? data.length : gerenciasAgrupadas.length;
 
   function cambiarVista(tipo) {
+    if (tipo === vistaMaestra) return;
     setBusqueda('');
+    setWaveKey((k) => k + 1);
     cambiarFiltroMaestro(tipo);
   }
 
   return (
     <div>
       <NavBar>
-        <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 sm:gap-5 lg:gap-8">
-          <div className="min-w-0">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-5 lg:gap-8">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-5 lg:gap-8">
+            <div className="w-full sm:w-[260px] min-w-0 flex-shrink-0">
+              <h1 className="text-xl sm:text-2xl font-bold text-white truncate">
+                {vistaMaestra === 'colaboradores' ? 'Costos por Colaborador' : 'Costos por Gerencia'}
+              </h1>
+              <p className="text-sm text-slate-400 mt-1 truncate">
+                {pool.length} registros · {paisActual.nombre}
+              </p>
+            </div>
             {PAISES.length > 1 && (
-              <div className="flex gap-3 mb-3">
+              <div className="w-full sm:w-auto flex items-center gap-3">
                 {PAISES.map((p) => (
                   <button
                     key={p.codigo}
                     type="button"
                     onClick={() => setPais(p.codigo)}
                     title={p.nombre}
-                    className={`w-12 h-12 rounded-full overflow-hidden transition-all duration-200 outline-none
+                    className={`w-[43px] h-[43px] rounded-full overflow-hidden transition-all duration-200 outline-none
                       ${pais === p.codigo
                         ? `${FLAG_ACTIVE[p.codigo] ?? ''} scale-110`
                         : 'opacity-45 hover:opacity-80 hover:scale-105'
@@ -77,32 +93,37 @@ export function ListView() {
                 ))}
               </div>
             )}
-            <h1 className="text-xl sm:text-2xl font-bold text-white truncate">
-              {vistaMaestra === 'colaboradores' ? 'Colaboradores' : 'Costos por Gerencia'}
-            </h1>
-            <p className="text-sm text-slate-400 mt-1 truncate">
-              {pool.length} registros · {paisActual.nombre}
-            </p>
+            <div className="relative flex items-stretch h-[43px] bg-slate-900 p-1 rounded-lg border border-slate-700 w-full sm:w-[260px] overflow-hidden">
+              <div
+                className="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] transition-transform duration-[650ms] ease-[cubic-bezier(.34,1.56,.64,1)]"
+                style={{ transform: `translateX(${vistaMaestra === 'gerencias' ? '100%' : '0'})` }}
+              >
+                <div
+                  key={waveKey}
+                  className="relative w-full h-full rounded-md bg-blue-500 shadow-[0_2px_8px_rgba(59,130,246,.35)] overflow-hidden origin-bottom animate-wave-bob"
+                  style={{ clipPath: 'polygon(7% 0%, 100% 0%, 93% 100%, 0% 100%)' }}
+                >
+                  <span className="absolute inset-y-0 -left-1/2 w-1/2 bg-white/50 blur-[2px] animate-diagonal-wave" />
+                  <span className="absolute inset-y-0 -left-1/2 w-1/3 bg-white/30 blur-[3px] animate-diagonal-wave-2" />
+                </div>
+              </div>
+              {OPCIONES_VISTA.map((o) => (
+                <button
+                  key={o.tipo}
+                  type="button"
+                  onClick={() => cambiarVista(o.tipo)}
+                  className={`relative z-10 flex flex-1 min-w-0 items-center justify-center px-3 py-1.5 rounded-lg text-sm font-medium leading-none whitespace-nowrap transition-colors duration-300 cursor-pointer ${
+                    vistaMaestra === o.tipo ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  {o.label}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="flex bg-slate-900 p-1 rounded-lg border border-slate-700 w-full sm:w-[250px]">
-            <Boton
-              variant={vistaMaestra === 'colaboradores' ? 'active' : 'default'}
-              size="sm"
-              className="flex-1 min-w-0 justify-center"
-              onClick={() => cambiarVista('colaboradores')}
-            >
-              Colaboradores
-            </Boton>
-            <Boton
-              variant={vistaMaestra === 'gerencias' ? 'active' : 'default'}
-              size="sm"
-              className="flex-1 min-w-0 justify-center"
-              onClick={() => cambiarVista('gerencias')}
-            >
-              Gerencias
-            </Boton>
+          <div className="w-full sm:w-[240px] flex-shrink-0 lg:pl-8 lg:border-l lg:border-navy-800">
+            <SearchInput value={busqueda} onChange={setBusqueda} placeholder="Buscar..." />
           </div>
-          <SearchInput value={busqueda} onChange={setBusqueda} placeholder="Buscar..." className="sm:col-span-2 lg:col-span-1" />
         </div>
       </NavBar>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">

@@ -1,6 +1,5 @@
 export { Boton } from './Boton.jsx';
 export { Badge } from './Badge.jsx';
-export { Avatar } from './Avatar.jsx';
 export { BarraProporcional } from './BarraProporcional.jsx';
 export { SearchInput } from './SearchInput.jsx';
 export { FilaAccionDual } from './FilaAccionDual.jsx';

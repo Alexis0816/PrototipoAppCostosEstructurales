@@ -8,7 +8,7 @@ export const initialState = {
   tipoVistaDetalle: 'individual', // 'individual' | 'gerencial' | 'area'
   actual: null,
   navId: 0, // se incrementa en cada navegación a detalle, para forzar el reset de estado local (ej. dropdown de áreas) aunque se reingrese a la misma gerencia/área
-  glob: { moneda: 'COP', periodo: 12 },
+  glob: { moneda: 'COP', periodo: 1 },
   cacheEdiciones: {},
 };
 

@@ -13,20 +13,21 @@ export function ColabDirecta({ colaboradores }) {
 
   return (
     <div>
-      <SearchInput value={busqueda} onChange={setBusqueda} placeholder="Buscar colaborador..." className="mb-3" />
+      <SearchInput value={busqueda} onChange={setBusqueda} placeholder="Buscar colaborador..." className="mb-3 max-w-xs" />
       <div className="overflow-x-auto max-h-[480px] overflow-y-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-700">
+              <th className="px-3 py-3 text-left font-semibold max-sm:hidden">Empresa</th>
               <th className="px-3 py-3 text-left font-semibold">Colaborador</th>
               <th className="px-3 py-3 text-left font-semibold max-sm:hidden">Puesto</th>
-              <th className="px-3 py-3 text-center font-semibold">Tipo Salario</th>
               <th className="px-3 py-3 text-right font-semibold">Costo Mensual</th>
+              <th className="px-3 py-3 text-right font-semibold">Costo Anual</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-800">
             {filtradas.length === 0 ? (
-              <tr><td colSpan={4} className="text-xs text-slate-500 py-3 text-center">Sin resultados</td></tr>
+              <tr><td colSpan={5} className="text-xs text-slate-500 py-3 text-center">Sin resultados</td></tr>
             ) : (
               filtradas.map((p) => (
                 <FilaColaboradorIncluido

@@ -18,8 +18,8 @@ export const config = {
     { value: 'F', label: 'Fijo'     },
     { value: 'I', label: 'Integral' },
   ],
-  periodosIndividual: [6, 12, 24],
-  periodosAgregado:   [6, 12],
+  periodosIndividual: [1, 12],
+  periodosAgregado:   [1, 12],
   defaultsAgregado:   { tipoSalario: 'F' },
   textos: {
     tituloDesglose:         'Desglose Prestacional Mensual',
