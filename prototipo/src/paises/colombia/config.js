@@ -14,13 +14,10 @@ export const config = {
     { campo: 'bonoTarget',  label: 'Bono Target', source: 'r' },
     { campo: 'bonoMensual', label: 'Bono Mensual', source: 'r' },
   ],
-  opcionesTipoSalario: [
-    { value: 'F', label: 'Fijo'     },
-    { value: 'I', label: 'Integral' },
-  ],
+  opcionesTipoSalario: null,
   periodosIndividual: [1, 12],
   periodosAgregado:   [1, 12],
-  defaultsAgregado:   { tipoSalario: 'F' },
+  defaultsAgregado:   {},
   textos: {
     tituloDesglose:         'Desglose Prestacional Mensual',
     tituloTotalDesglose:    'Total Carga Prestacional Mensual',

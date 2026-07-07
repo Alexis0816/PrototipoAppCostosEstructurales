@@ -126,17 +126,6 @@ export function appReducer(state, action) {
     case 'SET_PERIODO':
       return { ...state, glob: { ...state.glob, periodo: action.periodo } };
 
-    case 'SET_TIPO_SALARIO': {
-      if (state.tipoVistaDetalle !== 'individual' || !state.actual) return state;
-      return {
-        ...state,
-        cacheEdiciones: {
-          ...state.cacheEdiciones,
-          [state.actual.numeroId]: { ...state.cacheEdiciones[state.actual.numeroId], tipoSalario: action.tipoSalario },
-        },
-      };
-    }
-
     case 'CONFIRMAR_EDICION':
       return {
         ...state,

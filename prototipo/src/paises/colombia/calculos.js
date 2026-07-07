@@ -1,4 +1,4 @@
-import { RECARGO_FIJO, RECARGO_INTEGRAL } from './constants.js';
+import { RECARGO_PAR } from './constants.js';
 import { RATE_PER_USD } from '../../utils/fx.js';
 
 export function bonoTargetDe(c) {
@@ -6,33 +6,36 @@ export function bonoTargetDe(c) {
 }
 
 export function calc(c, periodo) {
-  const s    = c.sueldoMensual        || 0;
-  const ns   = c.nSueldos             || 0;
-  const med  = c.medicinaPrepagadaAnio || 0;
-  const tipo = c.tipoSalario           || 'F';
+  const s   = c.sueldoMensual         || 0;
+  const ns  = c.nSueldos              || 0;
+  const med = c.medicinaPrepagadaAnio || 0;
+  const esIntegral = (c.tipo === 'Integral' || c.tipoSueldo === 'Integral');
 
   // ── Componentes anuales ──────────────────────────────────────────────────
   const salarioAnual    = s * 12;
-  const primaVacaciones = s * 1;       // 1 sueldo mensual, pagado anualmente
-  const primaNavidad    = s * 0.5;     // 0.5 sueldos, pagado en diciembre
+  // Integral: PrimaVac y PrimaNav = 0 (absorbidas en el sueldo integral)
+  const primaVacaciones = esIntegral ? 0 : s * 1;
+  const primaNavidad    = esIntegral ? 0 : s * 0.5;
   // Para vistas agregadas (Gerencia/Área), el bono se inyecta ya sumado por persona.
   const bonoTarget = c.bonoTargetOverride !== undefined
     ? c.bonoTargetOverride
     : ns * s;
 
-  // Base compartida: Primas, Cesantías y Aportes usan la misma base
+  // Base Fijo = SalAnual + PrimaVac + PrimaNav + Bono
+  // Base Integral = SalAnual + Bono  (sin primas, son parte del sueldo)
   const base = salarioAnual + primaVacaciones + primaNavidad + bonoTarget;
 
-  const primaServicios = base / 12;
-  const cesantias      = base / 12;    // igual que Prima de Servicios
-  const iCesantias     = cesantias * 0.12;
+  // Integral: PrimaServ, Cesantías, ICesantías = 0 (incluidas en el salario integral)
+  const primaServicios = esIntegral ? 0 : base / 12;
+  const cesantias      = esIntegral ? 0 : base / 12;
+  const iCesantias     = esIntegral ? 0 : cesantias * 0.12;
 
-  // F = 49.60%, I = 31.936% — única diferencia entre Fijo e Integral
-  const parRate       = tipo === 'F' ? RECARGO_FIJO : RECARGO_INTEGRAL;
+  const parRate       = RECARGO_PAR;
   const aportesPrimas = base * parRate;
 
   // ── Costo Anual ─────────────────────────────────────────────────────────
-  // Mismo componentes para F e I; solo cambia el parRate.
+  // Fijo:     SalAnual + PrimaVac + PrimaNav + PrimaServ + Ces + ICes + Med + Bono + Aportes
+  // Integral: SalAnual + Med + Bono + (SalAnual + Bono) × PAR
   const costoAnualML =
     salarioAnual + primaVacaciones + primaNavidad + primaServicios
     + cesantias + iCesantias + med + bonoTarget + aportesPrimas;

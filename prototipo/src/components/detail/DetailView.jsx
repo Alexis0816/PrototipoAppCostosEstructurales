@@ -31,7 +31,7 @@ export function DetailView() {
           numeroId={persona.numeroId}
         />
         <IdentityCard persona={persona} tipoVistaDetalle={tipoVistaDetalle} />
-        <SelectoresControl esIndividual={esIndividual} tipoSalarioActual={persona.tipoSalario} />
+        <SelectoresControl esIndividual={esIndividual} />
 
         {!esIndividual && <ColaboradoresIncluidos actual={persona} tipoVistaDetalle={tipoVistaDetalle} />}
         {esIndividual && (

@@ -17,7 +17,6 @@ export function AppProvider({ children }) {
       setPais: (pais) => dispatch({ type: 'SET_PAIS', pais }),
       setMoneda: (moneda) => dispatch({ type: 'SET_MONEDA', moneda }),
       setPeriodo: (periodo) => dispatch({ type: 'SET_PERIODO', periodo }),
-      setTipoSalario: (tipoSalario) => dispatch({ type: 'SET_TIPO_SALARIO', tipoSalario }),
       confirmarEdicion: (numeroId, patch) => dispatch({ type: 'CONFIRMAR_EDICION', numeroId, patch }),
       resetEdicion: (numeroId) => dispatch({ type: 'RESET_EDICION', numeroId }),
     }),

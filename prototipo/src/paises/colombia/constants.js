@@ -1,2 +1,1 @@
-export const RECARGO_FIJO = 0.496;
-export const RECARGO_INTEGRAL = 0.31936;
+export const RECARGO_PAR = 0.31936;

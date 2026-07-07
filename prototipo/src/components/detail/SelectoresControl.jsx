@@ -1,8 +1,8 @@
 import { useAppContext } from '../../context';
 import { Boton } from '../shared';
 
-export function SelectoresControl({ esIndividual, tipoSalarioActual }) {
-  const { glob, paisActual, setMoneda, setPeriodo, setTipoSalario } = useAppContext();
+export function SelectoresControl({ esIndividual }) {
+  const { glob, paisActual, setMoneda, setPeriodo } = useAppContext();
   const periodos = esIndividual ? paisActual.periodosIndividual : paisActual.periodosAgregado;
   const opcionesTipo = paisActual.opcionesTipoSalario;
 
@@ -38,8 +38,7 @@ export function SelectoresControl({ esIndividual, tipoSalarioActual }) {
             {opcionesTipo.map((opt) => (
               <Boton
                 key={opt.value}
-                variant={tipoSalarioActual === opt.value ? 'active' : 'default'}
-                onClick={() => setTipoSalario(opt.value)}
+                variant="default"
               >
                 {opt.label}
               </Boton>
