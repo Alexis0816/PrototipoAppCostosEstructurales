@@ -4,9 +4,6 @@
 -- Une ColaboradoresCostos (campos de entrada) con Resultados_Calculo (campos calculados).
 -- ============================================================================
 
-USE [PeopleAnalytics];
-GO
-
 IF OBJECT_ID('PeopleAnalytics.vw_Calculadora_Costos', 'V') IS NOT NULL
     DROP VIEW PeopleAnalytics.vw_Calculadora_Costos;
 GO
@@ -27,10 +24,9 @@ SELECT
     c.Tipo,
 
     -- ── Campos de entrada por país ────────────────────────────────────────────
-    c.SueldoMensual,             -- CO y EC [SETEADO]
+    c.SueldoMensual,             -- todos los países [SETEADO]
     c.NSueldos,                  -- CO: n° sueldos del bono [SETEADO]
     c.MedicinaPrepagadaAnio,     -- CO [FIJO]
-    c.SueldoBase,                -- PE [SETEADO]
     c.Vales,                     -- PE [SETEADO]
     c.ComisionesMensuales,       -- PE/EC [SETEADO]
     c.AsignacionFamiliar,        -- PE: S/113 [FIJO]

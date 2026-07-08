@@ -38,7 +38,7 @@ CREATE TABLE PeopleAnalytics.ColaboradoresCostos (
     MedicinaPrepagadaAnio DECIMAL(18,2) NULL DEFAULT 0,  -- Costo anual COP [FIJO]
 
     -- ── Perú (PE) — todos los campos se cargan manualmente ────────────────────
-    SueldoBase            DECIMAL(18,0) NULL,              -- Sueldo básico mensual PEN [SETEADO]
+    -- SueldoMensual reutilizado (campo compartido CO/PE/EC)
     Vales                 DECIMAL(18,0) NULL DEFAULT 0,    -- Vales mensuales PEN [SETEADO]
     ComisionesMensuales   DECIMAL(18,0) NULL DEFAULT 0,    -- Comisiones mensuales (PE y EC) [SETEADO]
     AsignacionFamiliar    DECIMAL(18,0) NULL DEFAULT 113,  -- S/113 legal; por persona [FIJO]

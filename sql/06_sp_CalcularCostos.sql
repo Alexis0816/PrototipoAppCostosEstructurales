@@ -14,9 +14,9 @@
 --   CostoAnualUSD = ROUND(CostoAnualML / TIPO_CAMBIO_USD)
 --
 -- PERÚ
---   RemBase     = SueldoBase + Comisiones + AsignacionFamiliar
+--   RemBase     = SueldoMensual + Comisiones + AsignacionFamiliar
 --   CTS         = FLOOR(RemBase × 7/72)   ← TRUNC, nunca ROUND
---   BonoTarget  = SueldoBase × Factor(Grado)  [0 si Operario/Operario PT]
+--   BonoTarget  = SueldoMensual × Factor(Grado)  [0 si Operario/Operario PT]
 --   BonoCPMensual = ROUND((BonoTarget + ROUND(BonoTarget × 13.86%)) / 12)
 --   CostoAnualML  = FLOOR((BonoCPMensual + costoTotalMensualFloat) × 12)
 --   CostoAnualUSD = ROUND(CostoAnualML / TIPO_CAMBIO_USD)
@@ -30,9 +30,6 @@
 --   CostoAnualML = SalAnual + Bono + XIII + SBU + Fondo + Aporte + Vac + Seguro
 --   CostoAnualUSD = CostoAnualML  (Ecuador es USD nativo)
 -- ============================================================================
-
-USE [PeopleAnalytics];
-GO
 
 IF OBJECT_ID('PeopleAnalytics.sp_CalcularCostos', 'P') IS NOT NULL
     DROP PROCEDURE PeopleAnalytics.sp_CalcularCostos;
@@ -74,8 +71,7 @@ BEGIN
             c.Grado,            -- INT puro; la UI añade el prefijo 'G'
             c.Tipo,
 
-            ISNULL(c.SueldoMensual,        0) AS SM,      -- CO y EC [SETEADO]
-            ISNULL(c.SueldoBase,           0) AS SB,      -- PE [SETEADO]
+            ISNULL(c.SueldoMensual,        0) AS SM,      -- todos los países [SETEADO]
             ISNULL(c.NSueldos,             0) AS NS,      -- CO: n° sueldos del bono [SETEADO]
             ISNULL(c.MedicinaPrepagadaAnio, 0) AS Med,    -- CO [FIJO]
             ISNULL(c.Vales,                0) AS Vales,   -- PE [SETEADO]
@@ -156,11 +152,11 @@ BEGIN
     CalcPE AS (
         SELECT
             b.NumeroID,
-            b.SB, b.Vales, b.Coms, b.AsigFam,
-            b.SB + b.Coms + b.AsigFam            AS PE_RemBase,
-            b.SB + b.Vales + b.Coms + b.AsigFam  AS PE_Ingresos,
+            b.SM, b.Vales, b.Coms, b.AsigFam,
+            b.SM + b.Coms + b.AsigFam            AS PE_RemBase,
+            b.SM + b.Vales + b.Coms + b.AsigFam  AS PE_Ingresos,
             CASE WHEN b.TieneBono = 1
-                 THEN b.SB * b.MultBono ELSE 0 END  AS PE_BonoCPTarget
+                 THEN b.SM * b.MultBono ELSE 0 END  AS PE_BonoCPTarget
         FROM Base b
         WHERE b.Pais = 'PE'
     ),
@@ -296,7 +292,7 @@ BEGIN
             pa.PE_CostoAnualML,
             ROUND(pa.PE_CostoAnualML / @PE_TC_USD, 0),
             pa.PE_Carga,
-            CASE WHEN pa.SB > 0 THEN (pa.PE_Carga / pa.SB) * 100.0 ELSE 0 END,
+            CASE WHEN pa.SM > 0 THEN (pa.PE_Carga / pa.SM) * 100.0 ELSE 0 END,
             -- CO (NULL)
             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
             NULL, NULL, NULL, NULL, NULL, NULL, NULL,

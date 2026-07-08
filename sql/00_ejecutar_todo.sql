@@ -1,35 +1,52 @@
 -- ============================================================================
 -- 00_ejecutar_todo.sql  |  PeopleAnalytics
--- Script maestro — ejecuta todos los archivos en orden.
--- Usar solo en instalación inicial o reinstalación completa.
+-- Script maestro — documenta el orden de ejecución de todos los scripts.
+-- NOTA: Seleccionar la base PeopleAnalytics en el dropdown de SSMS antes de
+--       ejecutar cualquier script (USE no es compatible con Azure SQL).
+-- ============================================================================
 --
--- Orden obligatorio:
---   01 → 02 → 03 → 04  (schema + tablas; 03 depende de que exista el schema)
---   05                  (datos de parámetros; depende de 02)
---   06                  (stored procedure; depende de 02, 03, 04)
---   07                  (vista; depende de 03, 04)
---   08                  (plantilla de carga; ejecutar aparte con datos reales)
+-- ── FASE 1: Instalación inicial (solo una vez) ────────────────────────────────
+--
+--   01_schema.sql               → Crea el schema PeopleAnalytics
+--   02_tablas_parametros.sql    → Tablas Parametros_Tasas y Parametros_MultiplicadorBono
+--   03_tabla_colaboradores.sql  → Tabla ColaboradoresCostos (campo único SueldoMensual)
+--   04_tabla_resultados.sql     → Tabla Resultados_Calculo
+--   05_datos_parametros.sql     → Tasas CO/PE/EC y multiplicadores de bono por grado
+--   06_sp_CalcularCostos.sql    → Stored Procedure principal (MERGE)
+--   07_vw_Calculadora_Costos.sql→ Vista de consumo para Power Automate / PowerApps
+--
+-- ── FASE 2: Migración (aplicada sobre instalación existente) ──────────────────
+--
+--   11_consolidar_sueldo.sql    → Migra SueldoBase → SueldoMensual y elimina columna
+--                                 (ejecutado el 2026-07-07; no volver a ejecutar)
+--
+-- ── FASE 3: Carga de datos reales ─────────────────────────────────────────────
+--
+--   09_fix_tipo_co.sql          → Setea Tipo='Integral'/'Fijo' en 16 registros CO
+--   10_insert_pe_colaboradores.sql → INSERT + correcciones colaborador PE inicial
+--   12_insert_ec_colaboradores.sql → INSERT colaborador EC inicial
+--
+-- ── FASE 4: Calcular y verificar ─────────────────────────────────────────────
+--
+--   EXEC PeopleAnalytics.sp_CalcularCostos;
+--   SELECT * FROM PeopleAnalytics.vw_Calculadora_Costos ORDER BY Pais, CostoAnualML DESC;
+--
+-- ── FASE 5: Nuevas cargas (recurrente) ────────────────────────────────────────
+--
+--   Usar 08_plantilla_carga.sql como referencia para nuevos colaboradores.
+--   Después de cada INSERT: EXEC PeopleAnalytics.sp_CalcularCostos;
+--
+-- ── Estado actual de datos (2026-07-07) ───────────────────────────────────────
+--
+--   CO: 16 colaboradores (13 Fijo + 3 Integral)
+--   PE:  1 colaborador   (WILLY TELLO UGAS — G19, SueldoMensual S/19510)
+--   EC:  1 colaborador   (PAUL ENRIQUE CAJIAS VASCO — G18, SueldoMensual USD 5100)
+--
+-- ── Próximo paso ──────────────────────────────────────────────────────────────
+--
+--   Interfaz PowerApps consumiendo vw_Calculadora_Costos vía Power Automate.
+--   Ver docs/seguridad-powerapps.md para el plan de seguridad.
 -- ============================================================================
 
-USE [PeopleAnalytics];
-GO
-
--- Para ejecutar desde SSMS con sqlcmd mode activado:
--- :r 01_schema.sql
--- :r 02_tablas_parametros.sql
--- :r 03_tabla_colaboradores.sql
--- :r 04_tabla_resultados.sql
--- :r 05_datos_parametros.sql
--- :r 06_sp_CalcularCostos.sql
--- :r 07_vw_Calculadora_Costos.sql
--- (08_plantilla_carga.sql se ejecuta aparte con los datos reales)
-
--- ─────────────────────────────────────────────────────────────────────────────
--- ALTERNATIVA: pegar el contenido de cada archivo aquí en orden,
--- o ejecutarlos manualmente uno por uno en SSMS.
--- ─────────────────────────────────────────────────────────────────────────────
-
-PRINT '=== PeopleAnalytics — Instalación completa ===';
-PRINT 'Ejecutar en orden: 01 → 02 → 03 → 04 → 05 → 06 → 07';
-PRINT 'Luego: 08_plantilla_carga.sql con datos reales y EXEC sp_CalcularCostos';
+PRINT '=== PeopleAnalytics — ver comentarios de este archivo para el orden de ejecución ===';
 GO
