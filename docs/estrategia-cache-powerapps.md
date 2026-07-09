@@ -3,8 +3,8 @@
 **Sistema:** Evaluación de Grado Salarial (Hay Group) · Primax  
 **Pantalla principal:** Valorar  
 **Universo:** ~876 colaboradores · PE / EC / CO / UY  
-**Estado:** Fase 1 ✅ · Fase 1.5 ✅ · Fase 2 pendiente  
-**Última actualización:** 07/07/2026
+**Estado:** Fase 1 ✅ · Fase 1.5 ✅ · Fase 1.6 🔧 pendiente de aplicar (fix de desfase en búsqueda, ver más abajo) · Fase 2 pendiente  
+**Última actualización:** 09/07/2026
 
 ---
 
@@ -186,6 +186,57 @@ With(
 );;
 Set(varTotalRegistros; CountRows(colColaboradoresFiltrados))
 ```
+
+---
+
+## Fase 1.6 (pendiente) — Fix del desfase de búsqueda: Items reactivo en vez de botón+colección
+
+**Origen del hallazgo:** al construir la búsqueda de App Costos Estructurales (2026-07-09) se detectó que el patrón botón+colección (Componentes 2 y 3 de arriba) es la causa del desfase que se percibe en Valorar: `inputBusqueda.OnChange` → `Select(btnFiltroLocal)` → `btnFiltroLocal.OnSelect` → `ClearCollect(colColaboradoresFiltrados; Filter(...))` es una cadena de tres saltos (evento → botón sintético → reconstrucción completa de colección) antes de que la galería pueda volver a pintar. Cada salto le cuesta un ciclo de render; con ~876 filas y varios `ForAll`/`Filter` de por medio, esos ciclos se notan como texto que va por detrás de lo que el usuario ya escribió.
+
+**Fix:** eliminar el intermediario. Bindear `Items` de la galería directo a una fórmula `With(...)`+`Filter(...)` que declare `inputBusqueda.Text`, los dropdowns y el toggle como dependencias. Power Fx recalcula automáticamente esa fórmula en cada cambio de cualquiera de esas dependencias, sin pasar por evento ni por `ClearCollect` — es el mismo mecanismo (y la misma fórmula base) que ya corrigió el desfase en App Costos.
+
+**`Colaboradores.Items` (reemplaza Componentes 2 y 3 combinados)**
+```powerappsfl
+With(
+    {
+        fGerencia: If(IsBlank(drpGerencia.Selected) || drpGerencia.Selected.Value = "Seleccione Gerencia...";
+                    ""; Trim(Proper(drpGerencia.SelectedText.Value)));
+        fArea:     If(IsBlank(drpArea.Selected) || drpArea.Selected.Value = "Seleccione Área...";
+                    ""; Trim(Proper(drpArea.SelectedText.Value)));
+        fUO:       If(IsBlank(drpUO.Selected) || drpUO.Selected.Value = "Seleccione Unidad Organizativa...";
+                    ""; Trim(Proper(drpUO.SelectedText.Value)));
+        fPuesto:   If(IsBlank(drpPosicion.Selected) || drpPosicion.Selected.Value = "Seleccione Posición...";
+                    ""; Trim(Proper(drpPosicion.SelectedText.Value)));
+        textoBuscado: Lower(Trim(inputBusqueda.Text));
+        palabras:     Filter(Split(Lower(Trim(inputBusqueda.Text)); " "); !IsBlank(Value));
+        porPosicion:  DDCriterioBusqueda.Selected.Value = "Posición"
+    };
+    Filter(
+        colColaboradores;
+        (fGerencia = "" || Trim(Gerencia) = fGerencia)         &&
+        (fArea     = "" || Trim(Area)     = fArea)             &&
+        (fUO       = "" || Trim(UnidadOrg) = fUO)             &&
+        (fPuesto   = "" || Trim(Puesto)    = fPuesto)          &&
+        (!On_Off_PuestosValorados.Value || Estado = "Evaluado") &&
+        (
+            IsBlank(textoBuscado) ||
+            (porPosicion  && CountIf(palabras; Value in Lower(Puesto)) = CountRows(palabras)) ||
+            (!porPosicion && CountIf(palabras; Value in Lower(Nombre)) = CountRows(palabras))
+        )
+    )
+)
+```
+
+**Qué se elimina al aplicar este fix:**
+- `inputBusqueda.OnChange` — queda vacío o se borra; ya no dispara nada, la galería reacciona sola a `inputBusqueda.Text`.
+- `btnFiltroLocal` (botón invisible) y la colección `colColaboradoresFiltrados` — dejan de ser necesarios. Cualquier otro control que hoy lea `colColaboradoresFiltrados` (contadores DP's, `varTotalRegistros`, etc.) debe apuntar a `Colaboradores.AllItems` en su lugar (ver punto siguiente).
+- La línea `Select(btnFiltroLocal)` al final de `btnAplicarCambioPais.OnSelect` (Componente 2) y de `Refresh.OnSelect` (Componente 4) — ya no aplica, cambiar `colColaboradores` es suficiente para que `Items` se recalcule solo.
+
+**Trade-off a resolver — `varTotalRegistros` y los contadores DP's:** hoy se setean como efecto secundario dentro de `btnFiltroLocal.OnSelect` (`Set(varTotalRegistros; CountRows(colColaboradoresFiltrados))`). Una fórmula de `Items` no puede tener `Set()` (debe ser pura). Dos opciones:
+1. Reemplazar cada lugar que hoy muestra `varTotalRegistros` por `CountRows(Colaboradores.AllItems)` directo (recalculado en vivo, cero variables) — recomendado, más simple.
+2. Si se necesita el conteo en un sitio costoso de recalcular repetidamente, mantener un `Set(varTotalRegistros; ...)` disparado solo por `OnChange`/`OnSelect` de los controles de filtro (no por la galería), aceptando que ese número específico puede ir uno o dos caracteres "detrás" — pero la tabla en sí ya no tiene desfase.
+
+**No aplicado todavía** — queda pendiente de que el usuario lo pegue y valide en Valorar (misma dinámica que con Costos: cambiar la fórmula, probar, confirmar antes de borrar `btnFiltroLocal`/`colColaboradoresFiltrados` por si algo más los referencia).
 
 ---
 
@@ -433,39 +484,49 @@ Select(btnFiltroLocal)
 
 ### Capa 2 — `btnFiltroLocal.OnSelect` (Costos)
 
-> **Diferencia clave**: el primer filtro aplica la restricción de rol — `varRolCostos = "Usuario"` limita la galería a la gerencia del usuario logueado antes de aplicar cualquier otro filtro.
+> **Estado real de la app (2026-07-09)**: `App.OnStart` hoy solo hace un `ClearCollect(colDatosBase; ForAll(ParseJSON(GetColaboradoresCost.Run().resultado); {...}))` — una sola colección con los 3 países mezclados, sin la capa intermedia `colColaboradores` (país actual) descrita más arriba en este doc. Tampoco existen aún `drpGerencia`/`drpArea`/`drpPuesto`, login ni `varRolCostos`. La versión mínima que sí está cableada:
 
 ```powerappsfl
 With(
     {
-        fGerencia:    If(IsBlank(drpGerencia.Selected)
-                        || drpGerencia.Selected.Value = "Todas las gerencias";
-                        ""; Trim(drpGerencia.SelectedText.Value));
-        fArea:        If(IsBlank(drpArea.Selected)
-                        || drpArea.Selected.Value = "Todas las áreas";
-                        ""; Trim(drpArea.SelectedText.Value));
-        fPuesto:      If(IsBlank(drpPuesto.Selected)
-                        || drpPuesto.Selected.Value = "Todos los puestos";
-                        ""; Trim(drpPuesto.SelectedText.Value));
         textoBuscado: Lower(Trim(inputBusqueda.Text));
         palabras:     Filter(Split(Lower(Trim(inputBusqueda.Text)); " "); !IsBlank(Value))
     };
-    ClearCollect(colColaboradoresFiltrados;
-        Filter(colColaboradores;
-            // Restricción de rol: Usuario solo ve su propia gerencia
-            (varRolCostos <> "Usuario" || Trim(Gerencia) = varGerenciaUsuario) &&
-            // Filtros de dropdowns
-            (fGerencia = "" || Trim(Gerencia) = fGerencia) &&
-            (fArea     = "" || Trim(Area)     = fArea)     &&
-            (fPuesto   = "" || Trim(Puesto)   = fPuesto)   &&
-            // Búsqueda multipalabra por nombre (todas las palabras deben coincidir)
-            (IsBlank(textoBuscado) ||
-                CountIf(palabras; Value in Lower(NombreCompleto)) = CountRows(palabras))
+    ClearCollect(
+        colColaboradoresFiltrados;
+        Filter(
+            colDatosBase;
+            IsBlank(textoBuscado) ||
+            CountIf(palabras; Value in Lower(NombreCompleto)) = CountRows(palabras)
         )
     )
 );;
 Set(varTotalRegistros; CountRows(colColaboradoresFiltrados))
 ```
+
+**Implementación real elegida (más simple que el patrón botón+colección)**: en vez de `btnFiltroLocal` + `colColaboradoresFiltrados`, el filtro de búsqueda se puso directo en el `Items` de la galería `Colaboradores`, combinado con el filtro de país que ya existía:
+
+```powerappsfl
+With(
+    {
+        palabras: Filter(Split(Lower(Trim(inputBusqueda.Text)); " "); !IsBlank(Value))
+    };
+    Filter(
+        colDatosBase;
+        Pais = varPais &&
+        (
+            CountRows(palabras) = 0 ||
+            CountIf(palabras; Value in Lower(NombreCompleto)) = CountRows(palabras)
+        )
+    )
+)
+```
+Al vivir en `Items`, se recalcula solo cuando cambia `inputBusqueda.Text` o `varPais` — no requiere `OnChange` ni botón invisible. Nota: aquí sí quedó atado a `varPais` desde el principio (a diferencia de lo pedido antes) porque el `Items` original ya filtraba por país; quitarlo habría regresado a mostrar los 3 países mezclados, que no era el objetivo de este paso.
+
+Pendientes explícitos (a pedido del usuario, "por ahora que funcione ignorando X, si me lo piden más adelante lo agrego"):
+- **País**: la búsqueda ignora `varPais` (busca sobre los 3 países a la vez), aunque las banderas del header ya setean `varPais` en otro lado. Cuando se pida que la búsqueda respete el país seleccionado, agregar `Trim(Pais) = varPais &&` como primera condición del `Filter`.
+- **Rol**: sin `varRolCostos` todavía (no existe login). Cuando se construya, agregar `(varRolCostos <> "Usuario" || Trim(Gerencia) = varGerenciaUsuario) &&`.
+- **Dropdowns de Gerencia/Área/Puesto**: no existen controles aún; la sección "Patrón reutilizable" más arriba en este doc tiene la fórmula completa de referencia para cuando se agreguen.
 
 ### `inputBusqueda.OnChange` (igual que HAY)
 

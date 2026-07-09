@@ -9,6 +9,8 @@ export function AppProvider({ children }) {
 
   const actions = useMemo(
     () => ({
+      login: () => dispatch({ type: 'LOGIN' }),
+      logout: () => dispatch({ type: 'LOGOUT' }),
       go: (id) => dispatch({ type: 'GO_INDIVIDUAL', id }),
       goGerencia: (gerenciaCorpKey) => dispatch({ type: 'GO_GERENCIA', gerenciaCorpKey }),
       goArea: (gerenciaCorpKey, areaNombre) => dispatch({ type: 'GO_AREA', gerenciaCorpKey, areaNombre }),

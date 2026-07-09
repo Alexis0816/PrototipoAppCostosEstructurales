@@ -3,7 +3,7 @@ import { consolidar } from '../utils';
 
 export const initialState = {
   pais: 'CO', // país activo (clave del registro). Determina dataset y módulo de cálculo.
-  vista: 'lista', // 'lista' | 'detalle'
+  vista: 'login', // 'login' | 'lista' | 'detalle'
   vistaMaestra: 'colaboradores', // 'colaboradores' | 'gerencias'
   tipoVistaDetalle: 'individual', // 'individual' | 'gerencial' | 'area'
   actual: null,
@@ -116,6 +116,12 @@ export function appReducer(state, action) {
 
     case 'VOLVER':
       return { ...state, vista: 'lista', actual: null };
+
+    case 'LOGIN':
+      return { ...state, vista: 'lista' };
+
+    case 'LOGOUT':
+      return { ...initialState };
 
     case 'CAMBIAR_FILTRO_MAESTRO':
       return { ...state, vistaMaestra: action.tipo };

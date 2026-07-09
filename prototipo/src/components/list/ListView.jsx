@@ -26,7 +26,7 @@ const OPCIONES_VISTA = [
 ];
 
 export function ListView() {
-  const { data, cacheEdiciones, vistaMaestra, cambiarFiltroMaestro, pais, setPais, paisActual } = useAppContext();
+  const { data, cacheEdiciones, vistaMaestra, cambiarFiltroMaestro, pais, setPais, paisActual, logout } = useAppContext();
   const [busqueda, setBusqueda] = useState('');
   const [waveKey, setWaveKey] = useState(0);
 
@@ -60,9 +60,11 @@ export function ListView() {
   return (
     <div>
       <NavBar>
-        <div className="flex flex-wrap items-center gap-3 sm:gap-5 lg:gap-8">
-          <div className="flex flex-wrap items-center gap-3 sm:gap-5 lg:gap-8">
-            <div className="w-full sm:w-[260px] min-w-0 flex-shrink-0">
+        <div className="flex items-center gap-3 sm:gap-5">
+
+          {/* ── Grupo izquierdo ─────────────────────────── */}
+          <div className="flex flex-wrap items-center gap-3 sm:gap-5 lg:gap-6 flex-1 min-w-0">
+            <div className="w-full sm:w-[240px] min-w-0 flex-shrink-0">
               <h1 className="text-xl sm:text-2xl font-bold text-white truncate">
                 {vistaMaestra === 'colaboradores' ? 'Costos por Colaborador' : 'Costos por Gerencia'}
               </h1>
@@ -70,8 +72,9 @@ export function ListView() {
                 {pool.length} registros · {paisActual.nombre}
               </p>
             </div>
+
             {PAISES.length > 1 && (
-              <div className="w-full sm:w-auto flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-shrink-0">
                 {PAISES.map((p) => (
                   <button
                     key={p.codigo}
@@ -84,16 +87,13 @@ export function ListView() {
                         : 'opacity-45 hover:opacity-80 hover:scale-105'
                       }`}
                   >
-                    <img
-                      src={FLAG_URL[p.codigo]}
-                      alt={p.nombre}
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={FLAG_URL[p.codigo]} alt={p.nombre} className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
             )}
-            <div className="relative flex items-stretch h-[43px] bg-slate-900 p-1 rounded-lg border border-slate-700 w-full sm:w-[260px] overflow-hidden">
+
+            <div className="relative flex items-stretch h-[43px] bg-slate-900 p-1 rounded-lg border border-slate-700 w-full sm:w-[260px] flex-shrink-0 overflow-hidden">
               <div
                 className="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] transition-transform duration-[650ms] ease-[cubic-bezier(.34,1.56,.64,1)]"
                 style={{ transform: `translateX(${vistaMaestra === 'gerencias' ? '100%' : '0'})` }}
@@ -121,9 +121,30 @@ export function ListView() {
               ))}
             </div>
           </div>
-          <div className="w-full sm:w-[240px] flex-shrink-0 lg:pl-8 lg:border-l lg:border-navy-800">
-            <SearchInput value={busqueda} onChange={setBusqueda} placeholder="Buscar..." />
+
+          {/* ── Grupo derecho ───────────────────────────── */}
+          <div className="flex items-center gap-3 flex-shrink-0 ml-auto">
+            <div className="w-[220px]">
+              <SearchInput value={busqueda} onChange={setBusqueda} placeholder="Buscar..." />
+            </div>
+
+            <div className="h-8 w-px bg-navy-800 hidden lg:block" />
+
+            <button
+              type="button"
+              onClick={logout}
+              title="Cerrar sesión"
+              className="flex items-center gap-2 text-slate-400 hover:text-white border border-navy-800 hover:border-slate-600 bg-transparent hover:bg-navy-900/50 text-sm px-3.5 py-2 rounded-lg transition-all whitespace-nowrap"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16,17 21,12 16,7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              <span className="hidden sm:inline">Cerrar sesión</span>
+            </button>
           </div>
+
         </div>
       </NavBar>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">

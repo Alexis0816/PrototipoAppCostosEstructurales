@@ -150,6 +150,8 @@ GO
 
 ## Paso 7 — Control de roles dentro de la app (In-App RBAC)
 
+> **Estado de implementación (09/07/2026):** el bloque de sesión + asignación de rol ya está implementado en la app Costos (flow `ValidarCorreo` en `App.OnStart`, asignación de `varRolCostos` en `btnIngresar.OnSelect`, restricción de rol en el `Items` de la galería, y limpieza de variables en Cerrar Sesión). Por ahora **solo los 3 IDs de la whitelist tienen cuenta** — todos son `Administrador`. No existen aún cuentas reales con rol `Consultor` ni `Usuario`, así que sus limitaciones quedan implementadas pero **sin validar**. Para probarlas sin cuentas: usar el override `varCorreoActual` comentado en `App.OnStart` con el correo de un colaborador fuera de Compensaciones.
+
 **Por qué:** Los pasos 1–6 controlan *quién entra*. Este paso controla *qué puede hacer cada usuario dentro de la app*. Es la capa aprobada por el equipo (conversación con Rodo Arturo Vilcarromero Moscoso, julio 2026): mostrar datos de costos con normalidad, controlar visibilidad y acciones por rol asignado en tiempo de sesión.
 
 ### Variables de sesión
