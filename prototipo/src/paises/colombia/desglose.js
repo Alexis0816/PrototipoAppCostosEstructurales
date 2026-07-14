@@ -21,10 +21,16 @@ export function getSlicesComposicion(r) {
   ];
 }
 
-export function getLabelTipo() {
-  return { texto: 'Estructura Fija', variante: 'green' };
+export function getLabelTipo(persona) {
+  const esIntegral = persona.tipo === 'Integral';
+  return esIntegral
+    ? { texto: 'Salario Integral', variante: 'blue' }
+    : { texto: 'Salario Fijo', variante: 'green' };
 }
 
-export function getBadgeTipoCorto() {
-  return { texto: 'Fijo', variante: 'green' };
+export function getBadgeTipoCorto(persona) {
+  const esIntegral = persona.tipo === 'Integral';
+  return esIntegral
+    ? { texto: 'Integral', variante: 'blue' }
+    : { texto: 'Fijo', variante: 'green' };
 }

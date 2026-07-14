@@ -6,13 +6,11 @@ export const config = {
   camposSumables: ['sueldoMensual', 'medicinaPrepagadaAnio'],
   campoNomina: 'sueldoMensual',
   camposEditables: [
-    { campo: 'sueldoMensual',        label: 'Sueldo Mensual'       },
-    { campo: 'nSueldos',             label: 'N° Sueldos (Bono)',  tipo: 'decimal' },
-    { campo: 'medicinaPrepagadaAnio', label: 'Medicina Prepagada (Año)' },
+    { campo: 'sueldoMensual', label: 'Sueldo Mensual'      },
+    { campo: 'nSueldos',      label: 'N° Sueldos (Bono)',  tipo: 'decimal' },
   ],
   camposReadonly: [
-    { campo: 'bonoTarget',  label: 'Bono Target', source: 'r' },
-    { campo: 'bonoMensual', label: 'Bono Mensual', source: 'r' },
+    { campo: 'bonoTarget', label: 'Bono Target', source: 'r' },
   ],
   opcionesTipoSalario: null,
   periodosIndividual: [1, 12],

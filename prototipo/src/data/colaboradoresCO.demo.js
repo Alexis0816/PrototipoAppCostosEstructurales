@@ -6,9 +6,9 @@ export const colaboradores = [
     nombreCompleto: 'Laura Sofía Gómez Vargas',
     gerenciaCorp: 'Gerencia Corporativa', gerencia: 'Gerencia Comercial', area: 'Ventas',
     puesto: 'Gerente Comercial', grado: 'G17', gradoLabel: 'Gerente',
-    sueldoMensual: 15983600, nSueldos: 1.5,
+    tipo: 'Fijo', sueldoMensual: 15983600, nSueldos: 1.5,
     medicinaPrepagadaAnio: 15215659.20,
-    empresa: 'PRIMAX', ciudad: 'Bogotá D.C.', contrato: 'Término Indefinido',
+    empresa: 'PRIMAX', ciudad: 'Bogotá D.C.',
     avatarColor: 'linear-gradient(135deg,#8b5cf6,#6366f1)', avatarIniciales: 'LG',
   },
   {
@@ -16,9 +16,9 @@ export const colaboradores = [
     nombreCompleto: 'David Andrés Herrera Muñoz',
     gerenciaCorp: 'Gerencia Corporativa', gerencia: 'Gerencia Comercial', area: 'Soporte Comercial',
     puesto: 'Coordinador de Ventas', grado: 'G12', gradoLabel: 'Coordinador',
-    sueldoMensual: 4200000, nSueldos: 1.5,
+    tipo: 'Fijo', sueldoMensual: 4200000, nSueldos: 1.5,
     medicinaPrepagadaAnio: 3600000,
-    empresa: 'PRIMAX', ciudad: 'Medellín', contrato: 'Término Indefinido',
+    empresa: 'PRIMAX', ciudad: 'Medellín',
     avatarColor: 'linear-gradient(135deg,#10b981,#059669)', avatarIniciales: 'DH',
   },
 ];

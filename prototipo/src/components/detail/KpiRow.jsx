@@ -14,11 +14,11 @@ export function KpiRow({ r, periodo, moneda }) {
         className="rounded-xl border border-blue-500/20 p-5"
         style={{ background: 'linear-gradient(135deg, rgba(59,130,246,.1) 0%, rgba(6,182,212,.05) 100%)' }}
       >
-        <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Proyección {periodo}M</p>
-        <p className="font-mono text-[1.4rem] sm:text-[1.6rem] font-bold text-blue-400">{fmt(r.proyeccion, moneda, monedaOrigen)}</p>
+        <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Costo Anual</p>
+        <p className="font-mono text-[1.4rem] sm:text-[1.6rem] font-bold text-blue-400">{fmt(r.costoAnualML, moneda, monedaOrigen)}</p>
       </div>
       <div className="bg-navy-900 border border-navy-800 rounded-xl p-5">
-        <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Costo Mensual Total</p>
+        <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Costo Mensual</p>
         <p className="font-mono text-[1.4rem] sm:text-[1.6rem] font-bold text-slate-200">{fmt(r.total, moneda, monedaOrigen)}</p>
       </div>
       {!paisActual.ocultarCostoAnual && (
