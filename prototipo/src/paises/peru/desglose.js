@@ -1,6 +1,8 @@
 export function getFilasDesglose(r) {
+  // Bono CP Mensual (r.bonoCPMensual) se omite a propósito por ahora — no se muestra en el
+  // desglose, aunque el cálculo lo sigue produciendo. Si se vuelve a pedir, es una fila
+  // informativa (no cuenta para el total): { nombre: 'Bono CP Mensual', formula: '(BonoCPTarget + CargaBono) ÷ 12', valor: r.bonoCPMensual ?? 0, informativo: true }.
   return [
-    { nombre: 'Bono CP Mensual', formula: '(BonoCPTarget + CargaBono) ÷ 12', valor: r.bonoCPMensual ?? 0, informativo: true },
     { nombre: 'Gratificaciones', formula: 'Rem. Base × 18.17%', valor: r.gratificaciones },
     { nombre: 'CTS', formula: 'Rem. Base × 9.72%', valor: r.cts },
     { nombre: 'EsSalud', formula: 'Rem. Base × 9.00%', valor: r.esSalud },

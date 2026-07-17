@@ -8,7 +8,7 @@ export const colaboradores = [
     gerenciaCorp: 'SSMA', gerencia: 'SSMA', area: 'SEGURIDAD & MEDIO AMBIENTE GUAYAQUIL',
     puesto: 'GERENTE SSMA', grado: 'G18', gradoLabel: 'Gerente',
     tipo: 'Administrativo', sueldoMensual: 5100, seguro: 3824,
-    empresa: 'PRIMAX COMERCIAL DEL ECUADOR S.A.', ciudad: 'Guayaquil', contrato: 'Indefinido',
+    empresa: 'PRIMAX COMERCIAL DEL ECUADOR S.A.', ciudad: 'Guayaquil',
     avatarColor: 'linear-gradient(135deg,#8b5cf6,#6366f1)', avatarIniciales: 'FC',
   },
   {
@@ -17,7 +17,7 @@ export const colaboradores = [
     gerenciaCorp: 'Operaciones', gerencia: 'Gerencia de Operaciones', area: 'Mantenimiento',
     puesto: 'Supervisora de Mantenimiento', grado: 'G14', gradoLabel: 'Supervisor',
     tipo: 'Administrativo', sueldoMensual: 1500, seguro: 3600,
-    empresa: 'ATIMASA S.A.', ciudad: 'Guayaquil', contrato: 'Indefinido',
+    empresa: 'ATIMASA S.A.', ciudad: 'Guayaquil',
     avatarColor: 'linear-gradient(135deg,#10b981,#059669)', avatarIniciales: 'PM',
   },
 ];

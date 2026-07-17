@@ -2,8 +2,8 @@ import { useAppContext } from '../../context';
 import { BarraProporcional } from '../shared';
 import { fmt } from '../../utils';
 
-function FilaConcepto({ nombre, formula, valor, max, destacado = false, informativo = false, moneda, monedaOrigen }) {
-  const porcentaje = max > 0 ? (valor / max) * 100 : 0;
+function FilaConcepto({ nombre, formula, valor, total, destacado = false, informativo = false, moneda, monedaOrigen }) {
+  const porcentaje = total > 0 ? (valor / total) * 100 : 0;
   return (
     <div className={`flex items-center justify-between py-3 border-b border-navy-800 last:border-b-0 ${informativo ? 'opacity-50' : ''}`}>
       <div className="w-1/3 pr-2">
@@ -25,10 +25,6 @@ export function DesglosePrestacional({ persona, r, moneda }) {
   const monedaOrigen = paisActual.moneda;
   const { textos } = paisActual;
   const filas = paisActual.getFilasDesglose(r, persona);
-  // Las filas informativas (Vales, Bono CP Mensual) se muestran en gris pero no
-  // influyen en la escala de las barras ni en el total de cargas.
-  const filasReales = filas.filter((f) => !f.informativo);
-  const max = Math.max(...filasReales.map((f) => f.valor), 0) || 1;
   const subtitulo = paisActual.getSubtituloFormula ? paisActual.getSubtituloFormula(persona) : '';
 
   return (
@@ -52,7 +48,7 @@ export function DesglosePrestacional({ persona, r, moneda }) {
               valor={fila.valor}
               destacado={fila.destacado}
               informativo={fila.informativo}
-              max={max}
+              total={r.carga}
               moneda={moneda}
               monedaOrigen={monedaOrigen}
             />

@@ -11,12 +11,10 @@ export const config = {
     { campo: 'comisionesMensuales', label: 'Comisiones Mensuales' },
   ],
   camposReadonly: [
-    { campo: 'multiplicadorBono', label: 'N° Sueldos (Bono)',       source: 'r', formato: 'numero' },
+    { campo: 'multiplicadorBono', label: 'Cantidad de Sueldos Target (Anual)', source: 'r', formato: 'numero' },
     { campo: 'bonoCPTarget',      label: 'Bono CP Target (Anual)',  source: 'r' },
     { campo: 'bonoCPMensual',     label: 'Bono CP Mensual',        source: 'r' },
-    { campo: 'seguro',            label: 'Seguro Salud y Vida (Anual)', source: 'persona' },
   ],
-  ocultarCostoAnual: true,
   opcionesTipoSalario: null,
   periodosIndividual: [1, 12],
   periodosAgregado: [1, 12],

@@ -31,7 +31,7 @@ export function ListView() {
   const [waveKey, setWaveKey] = useState(0);
 
   const gerenciasAgrupadas = useMemo(
-    () => obtenerDatosAgrupadosGerencias(data, cacheEdiciones, paisActual.camposSumables),
+    () => obtenerDatosAgrupadosGerencias(data, cacheEdiciones, paisActual),
     [data, cacheEdiciones, paisActual],
   );
 

@@ -12,7 +12,7 @@ export const config = {
   // Asignación Familiar es fija (S/113, no editable); Bono CP Target se deriva del grado.
   camposReadonly: [
     { campo: 'asignacionFamiliar', label: 'Asignación Familiar', source: 'persona' },
-    { campo: 'multiplicadorBono', label: 'Cantidad Sueldos (Bono)', source: 'r', formato: 'numero' },
+    { campo: 'multiplicadorBono', label: 'Cantidad de Sueldos Target (Anual)', source: 'r', formato: 'numero' },
     { campo: 'bonoCPTarget', label: 'Bono CP Target (Anual)', source: 'r' },
   ],
   // Perú no tiene toggle Fijo/Integral: el `tipo` (Operario/Administrativo) es fijo por persona.

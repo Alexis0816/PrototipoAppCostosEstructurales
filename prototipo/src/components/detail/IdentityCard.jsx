@@ -88,7 +88,6 @@ export function IdentityCard({ persona, tipoVistaDetalle }) {
             : <Badge variant="blue">{persona.grado} — {persona.gradoLabel}</Badge>
           }
           <Badge variant={tipoBadge.variante}>{tipoBadge.texto}</Badge>
-          <Badge variant="gray">{persona.contrato || '-'}</Badge>
         </div>
       )}
     </div>

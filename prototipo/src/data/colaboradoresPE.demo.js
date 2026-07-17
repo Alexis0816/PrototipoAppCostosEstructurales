@@ -7,7 +7,7 @@ export const colaboradores = [
     gerenciaCorp: 'GERENCIA DE NEGOCIOS PERU', gerencia: 'Gerencia de Negocios Perú', area: 'Minería',
     puesto: 'Gerente Minería', grado: 'G19', gradoLabel: 'Gerente',
     tipo: 'Administrativo', sueldoBase: 19510, vales: 2000, comisionesMensuales: 0, asignacionFamiliar: 113,
-    empresa: 'CORPORACION PRIMAX S.A.', ciudad: 'Lima', contrato: 'Plazo Indeterminado',
+    empresa: 'CORPORACION PRIMAX S.A.', ciudad: 'Lima',
     avatarColor: 'linear-gradient(135deg,#8b5cf6,#6366f1)', avatarIniciales: 'AV',
   },
   {
@@ -16,7 +16,7 @@ export const colaboradores = [
     gerenciaCorp: 'Operaciones', gerencia: 'Gerencia de Operaciones', area: 'Mantenimiento',
     puesto: 'Operador de Estación', grado: 'G9', gradoLabel: 'Operador',
     tipo: 'Operario', sueldoBase: 1025, vales: 200, comisionesMensuales: 0, asignacionFamiliar: 113,
-    empresa: 'CORPORACION PRIMAX S.A.', ciudad: 'Arequipa', contrato: 'Plazo Indeterminado',
+    empresa: 'CORPORACION PRIMAX S.A.', ciudad: 'Arequipa',
     avatarColor: 'linear-gradient(135deg,#f97316,#ea580c)', avatarIniciales: 'MT',
   },
 ];
