@@ -36,6 +36,16 @@
 --   Usar 08_plantilla_carga.sql como referencia para nuevos colaboradores.
 --   Después de cada INSERT: EXEC PeopleAnalytics.sp_CalcularCostos;
 --
+-- ── FASE 6: Edición inline desde la app (2026-07-20, confirmada end-to-end 2026-07-21) ─
+--
+--   13_sp_ActualizarCampoColaborador.sql → SP de guardado inline: UPDATE de un
+--     campo whitelisteado (SueldoMensual/NSueldos/Vales/ComisionesMensuales)
+--     + EXEC sp_CalcularCostos @NumeroID en la misma transacción.
+--     Lo invoca el flow "UpdateCollaboratorCost" (trigger PowerApps V2).
+--     Confirmado funcionando en las 2 tarjetas editables de Parámetros Salariales
+--     (Sueldo, N° Sueldos/Vales/Comisiones) para CO/PE/EC.
+--     Ver docs/detalle-costo-powerapps.md → sección "Flow UpdateCollaboratorCost".
+--
 -- ── Estado actual de datos (2026-07-07) ───────────────────────────────────────
 --
 --   CO: 16 colaboradores (13 Fijo + 3 Integral)

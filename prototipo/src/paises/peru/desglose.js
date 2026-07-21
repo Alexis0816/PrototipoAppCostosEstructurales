@@ -3,11 +3,11 @@ export function getFilasDesglose(r) {
   // desglose, aunque el cálculo lo sigue produciendo. Si se vuelve a pedir, es una fila
   // informativa (no cuenta para el total): { nombre: 'Bono CP Mensual', formula: '(BonoCPTarget + CargaBono) ÷ 12', valor: r.bonoCPMensual ?? 0, informativo: true }.
   return [
-    { nombre: 'Gratificaciones', formula: 'Rem. Base × 18.17%', valor: r.gratificaciones },
-    { nombre: 'CTS', formula: 'Rem. Base × 9.72%', valor: r.cts },
-    { nombre: 'EsSalud', formula: 'Rem. Base × 9.00%', valor: r.esSalud },
-    { nombre: 'Seguro Vida Ley', formula: 'Rem. Base × 0.19%', valor: r.seguroVidaLey },
-    { nombre: 'Costo de Vales', formula: 'Vales × 1.00%', valor: r.costoDeVales ?? 0, destacado: true },
+    { nombre: 'Gratificaciones', formula: 'Rem. Base × 18.17%', valor: r.gratificaciones, valorAnual: r.gratificaciones * 12 },
+    { nombre: 'CTS', formula: 'Rem. Base × 9.72%', valor: r.cts, valorAnual: r.cts * 12 },
+    { nombre: 'EsSalud', formula: 'Rem. Base × 9.00%', valor: r.esSalud, valorAnual: r.esSalud * 12 },
+    { nombre: 'Seguro Vida Ley', formula: 'Rem. Base × 0.19%', valor: r.seguroVidaLey, valorAnual: r.seguroVidaLey * 12 },
+    { nombre: 'Costo de Vales', formula: 'Vales × 1.00%', valor: r.costoDeVales ?? 0, valorAnual: (r.costoDeVales ?? 0) * 12, destacado: true },
   ];
 }
 

@@ -35,14 +35,14 @@ export function DetailView() {
 
         {!esIndividual && <ColaboradoresIncluidos actual={persona} tipoVistaDetalle={tipoVistaDetalle} />}
         {esIndividual && (
-          <ParametrosSalariales persona={persona} base={actual} r={r} moneda={glob.moneda} />
+          <ParametrosSalariales persona={persona} base={actual} r={r} moneda={glob.moneda} periodo={glob.periodo} />
         )}
 
         <KpiRow r={r} periodo={glob.periodo} moneda={glob.moneda} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
           <div className="lg:col-span-2">
-            <DesglosePrestacional persona={persona} r={r} moneda={glob.moneda} />
+            <DesglosePrestacional persona={persona} r={r} moneda={glob.moneda} periodo={glob.periodo} />
           </div>
           <div className="lg:col-span-1">
             <ComposicionChart r={r} moneda={glob.moneda} />

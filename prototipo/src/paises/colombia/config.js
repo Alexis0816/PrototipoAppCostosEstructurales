@@ -10,7 +10,7 @@ export const config = {
     { campo: 'nSueldos',      label: 'N° Sueldos (Bono)',  tipo: 'decimal' },
   ],
   camposReadonly: [
-    { campo: 'bonoTarget', label: 'Bono Target', source: 'r' },
+    { campo: 'bonoTarget', label: 'Bono Target', source: 'r', periodoReactivo: 'anual' },
   ],
   opcionesTipoSalario: null,
   periodosIndividual: [1, 12],
@@ -18,7 +18,9 @@ export const config = {
   defaultsAgregado:   {},
   textos: {
     tituloDesglose:         'Desglose Prestacional Mensual',
+    tituloDesgloseAnual:    'Desglose Prestacional Anual',
     tituloTotalDesglose:    'Total Carga Prestacional Mensual',
+    tituloTotalDesgloseAnual: 'Total Carga Prestacional Anual',
     subtituloTotalDesglose: 'Factor consolidado aplicado según matriz prestacional legal',
     tituloComposicion:      'Composición Mensual',
     kpiCarga:               'Carga Prestacional/Mes',

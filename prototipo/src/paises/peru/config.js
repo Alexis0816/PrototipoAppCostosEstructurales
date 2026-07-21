@@ -11,9 +11,9 @@ export const config = {
   ],
   // Asignación Familiar es fija (S/113, no editable); Bono CP Target se deriva del grado.
   camposReadonly: [
-    { campo: 'asignacionFamiliar', label: 'Asignación Familiar', source: 'persona' },
+    { campo: 'asignacionFamiliar', label: 'Asignación Familiar', source: 'persona', periodoReactivo: 'mensual' },
     { campo: 'multiplicadorBono', label: 'Cantidad de Sueldos Target (Anual)', source: 'r', formato: 'numero' },
-    { campo: 'bonoCPTarget', label: 'Bono CP Target (Anual)', source: 'r' },
+    { campo: 'bonoCPTarget', label: 'Bono CP Target', source: 'r', periodoReactivo: 'anual' },
   ],
   // Perú no tiene toggle Fijo/Integral: el `tipo` (Operario/Administrativo) es fijo por persona.
   opcionesTipoSalario: null,
@@ -22,7 +22,9 @@ export const config = {
   defaultsAgregado: {},
   textos: {
     tituloDesglose: 'Desglose de Cargas Sociales Mensual',
+    tituloDesgloseAnual: 'Desglose de Cargas Sociales Anual',
     tituloTotalDesglose: 'Total Cargas Sociales Mensual',
+    tituloTotalDesgloseAnual: 'Total Cargas Sociales Anual',
     subtituloTotalDesglose: 'Gratificaciones + CTS + EsSalud + Seguro Vida Ley + Costo de Vales',
     tituloComposicion: 'Composición Mensual',
     kpiCarga: 'Cargas Sociales/Mes',

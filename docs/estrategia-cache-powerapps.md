@@ -543,7 +543,7 @@ Select(btnFiltroLocal)
 | Cambiar país (CO/PE/EC) | ❌ No | colColaboradores, catálogos, colColaboradoresFiltrados |
 | Toggle Colaboradores/Gerencias | ❌ No | Cambia `varVista` (solo visual) |
 | Filtros / búsqueda | ❌ No | colColaboradoresFiltrados |
-| Editar un parámetro + Recalcular | ✅ 1 llamada ActualizarYRecalcular | `colColaboradoresTodosPaises` + capas 1 y 2 (se refresca el registro afectado) |
+| Editar un parámetro + Recalcular | ✅ 1 llamada `UpdateCollaboratorCost` | `colColaboradoresTodosPaises` + capas 1 y 2 (se refresca el registro afectado) |
 
 ---
 

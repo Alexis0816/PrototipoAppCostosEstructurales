@@ -1,11 +1,11 @@
 export function getFilasDesglose(r) {
   return [
-    { nombre: 'Prima de Vacaciones',           formula: 'Sueldo ÷ 12',                          valor: r.primaVacacionesMensual },
-    { nombre: 'Prima de Navidad',              formula: '(Sueldo × 0.5) ÷ 12',                  valor: r.primaNavidadMensual    },
-    { nombre: 'Prima de Servicios',            formula: '(Sal.Anual + P.Vacaciones + Nav + Bono) ÷ 12', valor: r.primaServiciosMensual  },
-    { nombre: 'Cesantías',                     formula: '(Sal.Anual + P.Vacaciones + Nav + Bono) ÷ 12', valor: r.cesantiasMensual       },
-    { nombre: 'I. Cesantías',                  formula: 'Cesantías × 12% ÷ 12',                 valor: r.iCesantiasMensual      },
-    { nombre: 'Aportes y Obligaciones Primas', formula: 'Base × 31.936% ÷ 12',                  valor: r.aportesPrimasMensual, destacado: true },
+    { nombre: 'Prima de Vacaciones',           formula: 'Sueldo ÷ 12',                          valor: r.primaVacacionesMensual, valorAnual: r.primaVacaciones },
+    { nombre: 'Prima de Navidad',              formula: '(Sueldo × 0.5) ÷ 12',                  valor: r.primaNavidadMensual,    valorAnual: r.primaNavidad    },
+    { nombre: 'Prima de Servicios',            formula: '(Sal.Anual + P.Vacaciones + Nav + Bono) ÷ 12', valor: r.primaServiciosMensual, valorAnual: r.primaServicios },
+    { nombre: 'Cesantías',                     formula: '(Sal.Anual + P.Vacaciones + Nav + Bono) ÷ 12', valor: r.cesantiasMensual,      valorAnual: r.cesantias      },
+    { nombre: 'I. Cesantías',                  formula: 'Cesantías × 12% ÷ 12',                 valor: r.iCesantiasMensual,      valorAnual: r.iCesantias      },
+    { nombre: 'Aportes y Obligaciones Primas', formula: 'Base × 31.936% ÷ 12',                  valor: r.aportesPrimasMensual, valorAnual: r.aportesPrimas, destacado: true },
   ];
 }
 

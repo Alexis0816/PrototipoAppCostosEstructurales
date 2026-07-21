@@ -21,7 +21,9 @@ export const config = {
   defaultsAgregado: {},
   textos: {
     tituloDesglose:       'Cargas Laborales Mensuales',
+    tituloDesgloseAnual:  'Cargas Laborales Anuales',
     tituloTotalDesglose:  'Total Cargas Mensuales',
+    tituloTotalDesgloseAnual: 'Total Cargas Anuales',
     subtituloTotalDesglose: 'XIII + SBU + Fondo Reserva + Aporte Patronal + Vacaciones + Seguro',
     tituloComposicion:    'Composición Mensual',
     kpiCarga:             'Cargas Laborales/Mes',

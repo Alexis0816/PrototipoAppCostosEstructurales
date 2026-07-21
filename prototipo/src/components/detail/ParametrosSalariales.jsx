@@ -2,11 +2,12 @@ import { useAppContext } from '../../context';
 import { CampoEditable } from '../shared';
 import { fmt } from '../../utils';
 
-export function ParametrosSalariales({ persona, base, r, moneda }) {
+export function ParametrosSalariales({ persona, base, r, moneda, periodo }) {
   const { paisActual, confirmarEdicion } = useAppContext();
   const monedaOrigen = paisActual.moneda;
   const editables = paisActual.camposEditables || [];
   const readonly = paisActual.camposReadonly || [];
+  const esMensual = periodo === 1;
 
   // Construye el handler de confirmación de un campo editable. Si declara `rescale` de tipo
   // 'ratio', recalcula el campo dependiente por el ratio del registro BASE original (regla de
@@ -29,9 +30,18 @@ export function ParametrosSalariales({ persona, base, r, moneda }) {
 
   function valorReadonly(entry) {
     const fuente = entry.source === 'persona' ? persona : r;
-    const valor = fuente[entry.campo];
+    let valor = fuente[entry.campo];
     // `formato:'numero'` ⇒ no es un monto (ej. multiplicadorBono = cantidad de sueldos), no pasa por fmt().
-    return entry.formato === 'numero' ? String(valor) : fmt(valor, moneda, monedaOrigen);
+    if (entry.formato === 'numero') return String(valor);
+    // `periodoReactivo` ⇒ el campo tiene versión mensual y anual; togglea con el selector Período.
+    if (entry.periodoReactivo === 'anual')   valor = esMensual ? valor / 12 : valor;
+    if (entry.periodoReactivo === 'mensual') valor = esMensual ? valor : valor * 12;
+    return fmt(valor, moneda, monedaOrigen);
+  }
+
+  function labelReadonly(entry) {
+    if (!entry.periodoReactivo) return entry.label;
+    return `${entry.label} (${esMensual ? 'Mensual' : 'Anual'})`;
   }
 
   return (
@@ -55,7 +65,7 @@ export function ParametrosSalariales({ persona, base, r, moneda }) {
         ))}
         {readonly.map((entry) => (
           <div key={entry.campo} className="bg-navy-900 border border-navy-800 rounded-xl p-5">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">{entry.label}</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">{labelReadonly(entry)}</p>
             <div className="font-mono text-lg font-semibold rounded-lg px-3 py-2 bg-navy-800/15 border border-navy-800/50 text-slate-200 opacity-70">
               {valorReadonly(entry)}
             </div>
