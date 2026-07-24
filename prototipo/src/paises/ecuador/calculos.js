@@ -50,7 +50,7 @@ export function calc(c, periodo) {
   const pct        = sueldoMensual > 0 ? (carga / sueldoMensual) * 100 : 0;
 
   return {
-    sueldo: sueldoMensual,\n    comisionesMensuales: c.comisionesMensuales || 0,
+    sueldo: sueldoMensual,    comisionesMensuales: c.comisionesMensuales || 0,
     multiplicadorBono: multiplicadorBono(c.grado || 0),
     bonoCPTarget, bonoCPMensual,
     xiiiAnual, sbuAnual, fondoAnual, aporteAnual, vacacionesAnual, seguro,
