@@ -1,16 +1,16 @@
-import {
+﻿import {
   GRATIFICACIONES, ES_SALUD, SEGURO_VIDA_LEY,
   BONO_CP_FACTOR, TIPO_CAMBIO_PEN, TIPOS_SIN_BONO, MULTIPLICADOR_BONO,
 } from './constants.js';
 
-// Número de sueldos de bono según el grado. Acepta grado numérico o 'G18'.
+// NÃºmero de sueldos de bono segÃºn el grado. Acepta grado numÃ©rico o 'G18'.
 export function multiplicadorBono(grado) {
   const n = typeof grado === 'number' ? grado : parseInt(String(grado).replace(/\D/g, ''), 10);
   const regla = MULTIPLICADOR_BONO.find((r) => n >= r.min && n <= r.max);
   return regla ? regla.factor : 0;
 }
 
-// Bono Target de una persona: sueldoBase × multiplicador(grado), 0 si es operativo.
+// Bono Target de una persona: sueldoBase Ã— multiplicador(grado), 0 si es operativo.
 export function bonoCPTargetDe(persona) {
   if (!persona || TIPOS_SIN_BONO.includes(persona.tipo)) return 0;
   const sueldoBase = persona.sueldoBase || 0;
@@ -30,7 +30,7 @@ export function calc(c, periodo) {
   // Cada concepto se redondea al sol entero para que el desglose muestre enteros
   // y la suma de las filas coincida exactamente con el total mostrado.
   const gratificaciones   = Math.round(remuneracionBase * GRATIFICACIONES);
-  // CTS: remBase × 7/72 (DL 650). Se trunca al entero inferior — igual que Excel con INT().
+  // CTS: remBase Ã— 7/72 (DL 650). Se trunca al entero inferior â€” igual que Excel con INT().
   const cts               = Math.trunc(remuneracionBase * 7 / 72);
   const esSalud           = Math.round(remuneracionBase * ES_SALUD);
   const seguroVidaLey     = Math.round(remuneracionBase * SEGURO_VIDA_LEY);
@@ -40,8 +40,8 @@ export function calc(c, periodo) {
   const carga           = gratificaciones + cts + esSalud + seguroVidaLey + costoDeVales;
 
   // El total mensual para mostrar en KPI se calcula como Math.trunc del float exacto,
-  // igual que Excel muestra la celda con 0 decimales usando el valor interno de cada fórmula.
-  // Esto replica el comportamiento del Excel: el float interno da 28,919.6445 → trunc = 28,919.
+  // igual que Excel muestra la celda con 0 decimales usando el valor interno de cada fÃ³rmula.
+  // Esto replica el comportamiento del Excel: el float interno da 28,919.6445 â†’ trunc = 28,919.
   const cargaFloat           = remuneracionBase * GRATIFICACIONES
                              + remuneracionBase * 7 / 72
                              + remuneracionBase * ES_SALUD
@@ -54,15 +54,15 @@ export function calc(c, periodo) {
   const costoLaboralBonoCP = Math.round(bonoCPTarget * BONO_CP_FACTOR);
   const bonoCPMensual      = Math.round((bonoCPTarget + costoLaboralBonoCP) / 12);
 
-  // Proyección usa el float exacto (igual que Excel usa el valor de celda, no el display).
-  // (bonoCPMensual + costoTotalMensualFloat) × periodo → Math.trunc al final.
+  // ProyecciÃ³n usa el float exacto (igual que Excel usa el valor de celda, no el display).
+  // (bonoCPMensual + costoTotalMensualFloat) Ã— periodo â†’ Math.trunc al final.
   const proyeccion   = Math.trunc((bonoCPMensual + costoTotalMensualFloat) * periodo);
   const costoAnualML = Math.trunc((bonoCPMensual + costoTotalMensualFloat) * 12);
   const costoAnualUSD = Math.round(costoAnualML / TIPO_CAMBIO_PEN);
   const pct = sueldoBase > 0 ? (carga / sueldoBase) * 100 : 0;
 
   return {
-    sueldo: sueldoBase, vales, remuneracionBase, ingresosTotales, costoDeVales,
+    sueldo: sueldoBase, vales, comisionesMensuales, remuneracionBase, ingresosTotales, costoDeVales,
     gratificaciones, cts, esSalud, seguroVidaLey,
     multiplicadorBono: multiplicadorBono(c.grado || 0), bonoCPTarget, bonoCPMensual, costoLaboralBonoCP,
     carga, total: costoTotalMensual, pct, proyeccion, costoAnualML, costoAnualUSD,

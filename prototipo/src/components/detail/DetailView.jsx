@@ -1,4 +1,4 @@
-import { useAppContext } from '../../context';
+﻿import { useAppContext } from '../../context';
 import { useResolvedColaborador, useCalculo } from '../../hooks';
 import { NavBar } from '../layout/NavBar.jsx';
 import { DetailHeader } from './DetailHeader.jsx';
@@ -45,7 +45,7 @@ export function DetailView() {
             <DesglosePrestacional persona={persona} r={r} moneda={glob.moneda} periodo={glob.periodo} />
           </div>
           <div className="lg:col-span-1">
-            <ComposicionChart r={r} moneda={glob.moneda} />
+            <ComposicionChart r={r} moneda={glob.moneda} periodo={glob.periodo} />
           </div>
         </div>
       </div>

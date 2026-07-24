@@ -1,4 +1,4 @@
-import { SBU, APORTE_PATRONAL, VACACIONES_FACTOR, TIPOS_SIN_BONO, MULTIPLICADOR_BONO } from './constants.js';
+﻿import { SBU, APORTE_PATRONAL, VACACIONES_FACTOR, TIPOS_SIN_BONO, MULTIPLICADOR_BONO } from './constants.js';
 
 export function multiplicadorBono(grado) {
   const n = typeof grado === 'number' ? grado : parseInt(String(grado).replace(/\D/g, ''), 10);
@@ -13,15 +13,15 @@ export function bonoCPTargetDe(persona) {
 
 export function calc(c, periodo) {
   const sueldoMensual = c.sueldoMensual || 0;
-  const seguro        = c.seguro || 0;  // Seguro Vida y Salud — anual en USD, fijo por empleado
+  const seguro        = c.seguro || 0;  // Seguro Vida y Salud â€” anual en USD, fijo por empleado
 
   const bonoCPTarget  = c.bonoCPTargetOverride !== undefined ? c.bonoCPTargetOverride : bonoCPTargetDe(c);
   const salarioAnual  = sueldoMensual * 12;
-  const bonoCPMensual = Math.round(bonoCPTarget / 12); // entero para display y agregación
+  const bonoCPMensual = Math.round(bonoCPTarget / 12); // entero para display y agregaciÃ³n
 
-  // ── Componentes anuales (enteros exactos, igual que el Excel) ──
+  // â”€â”€ Componentes anuales (enteros exactos, igual que el Excel) â”€â”€
   const base           = bonoCPMensual + sueldoMensual;       // base compartida XIII y Fondo
-  const xiiiAnual      = base;                                 // (SalAnual + BonoTarget) / 12 × 1
+  const xiiiAnual      = base;                                 // (SalAnual + BonoTarget) / 12 Ã— 1
   const sbuAnual       = SBU;                                  // 482 fijo
   const fondoAnual     = base;                                 // igual que XIII
   const aporteAnual    = Math.round((bonoCPTarget + salarioAnual) * APORTE_PATRONAL);
@@ -32,8 +32,8 @@ export function calc(c, periodo) {
                       + aporteAnual + vacacionesAnual + seguro;
   const costoAnualUSD = costoAnualML; // Ecuador es USD nativo
 
-  // ── Provisiones mensuales como FLOATS ──
-  // fmt() (USD) muestra 2 decimales, así 5950/12 = 495.83, 482/12 = 40.17, etc.
+  // â”€â”€ Provisiones mensuales como FLOATS â”€â”€
+  // fmt() (USD) muestra 2 decimales, asÃ­ 5950/12 = 495.83, 482/12 = 40.17, etc.
   const xiiiMensual           = xiiiAnual / 12;
   const sbuMensual            = sbuAnual / 12;
   const fondoMensual          = fondoAnual / 12;
@@ -45,12 +45,12 @@ export function calc(c, periodo) {
                           + aportePatronalMensual + vacacionesMensual + seguroMensual;
   const costoTotalMensual = sueldoMensual + carga;
 
-  // Proyección basada en el costo anual exacto, prorrateado por periodo.
+  // ProyecciÃ³n basada en el costo anual exacto, prorrateado por periodo.
   const proyeccion = Math.round(costoAnualML * periodo / 12);
   const pct        = sueldoMensual > 0 ? (carga / sueldoMensual) * 100 : 0;
 
   return {
-    sueldo: sueldoMensual,
+    sueldo: sueldoMensual,\n    comisionesMensuales: c.comisionesMensuales || 0,
     multiplicadorBono: multiplicadorBono(c.grado || 0),
     bonoCPTarget, bonoCPMensual,
     xiiiAnual, sbuAnual, fondoAnual, aporteAnual, vacacionesAnual, seguro,

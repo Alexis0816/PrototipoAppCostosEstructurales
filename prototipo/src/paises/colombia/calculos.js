@@ -1,4 +1,4 @@
-import { RECARGO_PAR } from './constants.js';
+﻿import { RECARGO_PAR } from './constants.js';
 import { RATE_PER_USD } from '../../utils/fx.js';
 
 export function bonoTargetDe(c) {
@@ -11,12 +11,12 @@ export function calc(c, periodo) {
   const med = c.medicinaPrepagadaAnio || 0;
   const esIntegral = (c.tipo === 'Integral' || c.tipoSueldo === 'Integral');
 
-  // ── Componentes anuales ──────────────────────────────────────────────────
+  // â”€â”€ Componentes anuales â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const salarioAnual    = s * 12;
   // Integral: PrimaVac y PrimaNav = 0 (absorbidas en el sueldo integral)
   const primaVacaciones = esIntegral ? 0 : s * 1;
   const primaNavidad    = esIntegral ? 0 : s * 0.5;
-  // Para vistas agregadas (Gerencia/Área), el bono se inyecta ya sumado por persona.
+  // Para vistas agregadas (Gerencia/Ãrea), el bono se inyecta ya sumado por persona.
   const bonoTarget = c.bonoTargetOverride !== undefined
     ? c.bonoTargetOverride
     : ns * s;
@@ -25,7 +25,7 @@ export function calc(c, periodo) {
   // Base Integral = SalAnual + Bono  (sin primas, son parte del sueldo)
   const base = salarioAnual + primaVacaciones + primaNavidad + bonoTarget;
 
-  // Integral: PrimaServ, Cesantías, ICesantías = 0 (incluidas en el salario integral)
+  // Integral: PrimaServ, CesantÃ­as, ICesantÃ­as = 0 (incluidas en el salario integral)
   const primaServicios = esIntegral ? 0 : base / 12;
   const cesantias      = esIntegral ? 0 : base / 12;
   const iCesantias     = esIntegral ? 0 : cesantias * 0.12;
@@ -33,9 +33,9 @@ export function calc(c, periodo) {
   const parRate       = RECARGO_PAR;
   const aportesPrimas = base * parRate;
 
-  // ── Costo Anual ─────────────────────────────────────────────────────────
+  // â”€â”€ Costo Anual â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // Fijo:     SalAnual + PrimaVac + PrimaNav + PrimaServ + Ces + ICes + Med + Bono + Aportes
-  // Integral: SalAnual + Med + Bono + (SalAnual + Bono) × PAR
+  // Integral: SalAnual + Med + Bono + (SalAnual + Bono) Ã— PAR
   const costoAnualML =
     salarioAnual + primaVacaciones + primaNavidad + primaServicios
     + cesantias + iCesantias + med + bonoTarget + aportesPrimas;
@@ -43,7 +43,7 @@ export function calc(c, periodo) {
   const costoAnualUSD     = Math.round(costoAnualML / RATE_PER_USD.COP);
   const costoTotalMensual = costoAnualML / 12;
 
-  // ── Carga mensual (para KPI y % vs sueldo) ──────────────────────────────
+  // â”€â”€ Carga mensual (para KPI y % vs sueldo) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const cargaAnual =
     primaVacaciones + primaNavidad + primaServicios + cesantias + iCesantias + aportesPrimas;
   const carga = cargaAnual / 12;
@@ -55,10 +55,10 @@ export function calc(c, periodo) {
     sueldo: s, salarioAnual,
     primaVacaciones, primaNavidad,
     primaServicios, cesantias, iCesantias,
-    medicinaPrepagadaAnio: med,
+    medicinaPrepagadaAnio: med,\n    medicinaMensual: med / 12,
     nSueldos: ns, bonoTarget,
     aportesPrimas, parRate,
-    // Provisiones mensuales para el desglose (cada componente anual ÷ 12)
+    // Provisiones mensuales para el desglose (cada componente anual Ã· 12)
     primaVacacionesMensual: primaVacaciones / 12,
     primaNavidadMensual:    primaNavidad    / 12,
     primaServiciosMensual:  primaServicios  / 12,
