@@ -272,6 +272,7 @@ sueldoBase = S/ 19,520 · vales = S/ 2,000 · grado G18 (factor 2×):
 |---|---|---|---|
 | `sueldoMensual` | número | Sí | Sueldo mensual en USD |
 | `comisionesMensuales` | número | Sí | Comisiones mensuales en USD |
+| `utilidades` | número | Sí | Utilidades fijas por colaborador en USD (ej. 11587.13 para G18) |
 | `seguro` | número | No (dato) | Seguro Vida y Salud — valor anual fijo en USD |
 | `grado` | string | Sí (badge) | Ej. 'G18' — determina multiplicador de bono |
 | `tipo` | string | No | Todos los colaboradores reciben bono (no hay excluidos) |
@@ -311,6 +312,12 @@ aporteAnual        = round((bonoCPTarget + salarioAnual) × 12.15%)
 vacacionesAnual    = round((bonoCPTarget + salarioAnual) × 0.5 / 12)
 ```
 
+**Nuevos campos calculados (agregados 2026-07-27):**
+```
+ingresoMensual     = sueldoMensual + comisionesMensuales
+ingresoAnual       = (13 × sueldoMensual) + bonoCPTarget + utilidades + SBU
+```
+
 **Costo Anual:**
 ```
 costoAnual = salarioAnual + bonoCPTarget
@@ -345,6 +352,22 @@ proyeccion            = round(costoAnual × periodo / 12)
 | Vacaciones (15 días) | `(BonoCPTarget + Sal.Anual) × 0.5 / 12` |
 | Seguro (Vida y Salud) _(destacado)_ | `Valor anual / 12` |
 
+### 4.6 Parámetros Salariales en la UI (Ecuador)
+
+**Fila 1 (Editables + Readonly):**
+| Card | Campo | Tipo |
+|---|---|---|
+| Sueldo Mensual | `sueldoMensual` | Editable |
+| Comisiones | `comisionesMensuales` | Editable |
+| Bono CP Target Anual | `bonoCPTarget` | Readonly (label dinámico con multiplicador, ej. "2x") |
+
+**Fila 2 (Readonly calculados — agregados 2026-07-27):**
+| Card | Campo | Tipo |
+|---|---|---|
+| Ingreso Mensual | `ingresoMensual` | Readonly (Sueldo + Comisiones) |
+| Utilidades | `utilidades` | Editable (valor fijo por colaborador) |
+| Ingreso Anual | `ingresoAnual` | Readonly (13×Sueldo + Bono + Utilidades + SBU) |
+
 ---
 
 ## 5. Patrón de agregación (Gerencia / Área)
@@ -355,7 +378,7 @@ Cuando el usuario navega a una Gerencia o Área, el sistema construye un **colab
 |---|---|---|
 | CO | `sueldoMensual`, `medicinaPrepagadaAnio` | `bonoTarget` (depende de nSueldos × sueldo individual) |
 | PE | `sueldoBase`, `vales`, `comisionesMensuales`, `asignacionFamiliar` | `bonoCPTarget` (depende del grado individual) |
-| EC | `sueldoMensual`, `seguro`, `comisionesMensuales` | `bonoCPTarget` (depende del grado individual) |
+| EC | `sueldoMensual`, `seguro`, `comisionesMensuales`, `utilidades` | `bonoCPTarget` (depende del grado individual) |
 
 Para los campos no sumables, cada módulo expone `getCamposAgregados(resueltos)`:
 
@@ -413,6 +436,9 @@ El selector de moneda en la UI (COP / USD / PEN) pasa `monedaDestino` a `fmt()`.
 - [ ] **Bono CP "Máximo" (2× el Target):** se calcula solo el Target. El máximo (= Target × 2) está documentado en la tabla de multiplicadores pero no se muestra aún.
 
 ### Ecuador
+- [x] **Utilidades:** campo editable agregado (2026-07-27). Valor fijo por colaborador (ej. 11587.13 para G18). Se suma en agregados y entra en el cálculo de Ingreso Anual.
+- [x] **Ingreso Mensual:** campo calculado readonly (Sueldo + Comisiones) agregado a Parámetros Salariales (2026-07-27).
+- [x] **Ingreso Anual:** campo calculado readonly (13×Sueldo + Bono + Utilidades + SBU) agregado a Parámetros Salariales (2026-07-27).
 - [ ] **Seguro:** actualmente es un valor anual fijo en el dato del colaborador. Confirmar si tiene una fórmula de cálculo o si siempre es un valor pactado individualmente.
 - [ ] **Comisiones Mensuales:** campo editable en la UI, entra en `camposSumables`. Confirmar si afecta algún componente de carga (actualmente no entra en la base de Aporte Patronal ni Vacaciones).
 
@@ -465,7 +491,8 @@ CREATE TABLE ParametrosSalariales (
     -- Campos Ecuador
     SueldoMensualEC DECIMAL(18,2),
     Seguro          DECIMAL(18,2),
-    ComisionesMensualesEC DECIMAL(18,2)
+    ComisionesMensualesEC DECIMAL(18,2),
+    Utilidades      DECIMAL(18,2)
 );
 
 -- Tasas por país (permite actualizar sin redeploy)

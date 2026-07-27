@@ -14,6 +14,7 @@ export function bonoCPTargetDe(persona) {
 export function calc(c, periodo) {
   const sueldoMensual = c.sueldoMensual || 0;
   const seguro        = c.seguro || 0;  // Seguro Vida y Salud â€” anual en USD, fijo por empleado
+  const utilidades    = c.utilidades || 0;  // Utilidades fijas por colaborador (pendiente confirmar fÃ³rmula)
 
   const bonoCPTarget  = c.bonoCPTargetOverride !== undefined ? c.bonoCPTargetOverride : bonoCPTargetDe(c);
   const salarioAnual  = sueldoMensual * 12;
@@ -45,6 +46,10 @@ export function calc(c, periodo) {
                           + aportePatronalMensual + vacacionesMensual + seguroMensual;
   const costoTotalMensual = sueldoMensual + carga;
 
+  // â”€â”€ Ingresos (montos fijos por ahora, pendiente confirmar fÃ³rmula) â”€â”€
+  const ingresoMensual = sueldoMensual + (c.comisionesMensuales || 0);
+  const ingresoAnual   = (13 * sueldoMensual) + bonoCPTarget + utilidades + SBU;
+
   // ProyecciÃ³n basada en el costo anual exacto, prorrateado por periodo.
   const proyeccion = Math.round(costoAnualML * periodo / 12);
   const pct        = sueldoMensual > 0 ? (carga / sueldoMensual) * 100 : 0;
@@ -52,6 +57,8 @@ export function calc(c, periodo) {
   return {
     sueldo: sueldoMensual,    comisionesMensuales: c.comisionesMensuales || 0,
     multiplicadorBono: multiplicadorBono(c.grado || 0),
+    utilidades,
+    ingresoMensual, ingresoAnual,
     bonoCPTarget, bonoCPMensual,
     xiiiAnual, sbuAnual, fondoAnual, aporteAnual, vacacionesAnual, seguro,
     xiiiMensual, sbuMensual, fondoMensual, aportePatronalMensual, vacacionesMensual, seguroMensual,

@@ -39,7 +39,11 @@ export function ParametrosSalariales({ persona, base, r, moneda, periodo }) {
     return fmt(valor, moneda, monedaOrigen);
   }
 
-  function labelReadonly(entry) {
+  function labelReadonly(entry, persona, r) {
+    if (entry.labelFn) {
+      const fuente = entry.source === 'persona' ? persona : r;
+      return entry.labelFn(fuente);
+    }
     if (!entry.periodoReactivo) return entry.label;
     return `${entry.label} (${esMensual ? 'Mensual' : 'Anual'})`;
   }
@@ -65,7 +69,7 @@ export function ParametrosSalariales({ persona, base, r, moneda, periodo }) {
         ))}
         {readonly.map((entry) => (
           <div key={entry.campo} className="bg-navy-900 border border-navy-800 rounded-xl p-5">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">{labelReadonly(entry)}</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">{labelReadonly(entry, persona, r)}</p>
             <div className="font-mono text-lg font-semibold rounded-lg px-3 py-2 bg-navy-800/15 border border-navy-800/50 text-slate-200 opacity-70">
               {valorReadonly(entry)}
             </div>
