@@ -1,4 +1,5 @@
 .claude/
+.opencode/
 AGENTS.md
 # .gitignore
 graphify-out/
