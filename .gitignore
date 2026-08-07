@@ -1,2 +1,4 @@
 .claude/
 AGENTS.md
+# .gitignore
+graphify-out/
