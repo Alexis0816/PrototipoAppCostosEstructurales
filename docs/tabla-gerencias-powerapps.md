@@ -4,7 +4,7 @@
 **Pantalla:** Menu · vista "Gerencias" del toggle Colaboradores/Gerencias
 **Referencia de diseño:** prototipo React (`prototipo/src/components/list/TablaGerencias.jsx`, `GerenciaRow.jsx`, `AreaSubRow.jsx`)
 **Estado:** ✅ Implementado y validado en la app (09/07/2026) — acordeón de áreas desplegando/contrayendo correctamente · pendiente pantalla de detalle consolidado
-**Última actualización:** 09/07/2026
+**Última actualización:** 09/07/2026 (pendientes ampliados 09/08/2026)
 
 ---
 
@@ -218,6 +218,12 @@ Switch(varPais; "CO"; "Colombia"; "PE"; "Perú"; "EC"; "Ecuador")
 4. **`Trim()` al cargar `colDatosBase`** en `Pais, Empresa, NombreCompleto, GerenciaCorp, Gerencia, Area, Puesto` — sin esto, espacios colgantes de SQL crean grupos duplicados en `Distinct` y rompen los `=` de los filtros.
 
 ## Pendientes
+
+> **Nuevos pendientes (2026-08-09)** — cambios del prototipo (modo gerencial/área) aún no migrados a Power Apps:
+>
+> - **Dropdown de áreas con opción default "Seleccione un área"**: en el prototipo es una opción real dentro de la lista (seleccionarla limpia la selección en vez de ser solo texto placeholder del botón). Posicionamiento absoluto con z-index para no estirar el contenedor y `max-h` ~5 registros con scroll interno.
+> - **Botón "Ver Análisis del Área"** (antes "Ver Análisis Completo del Área →"): variante azul, tamaño pequeño, sin flecha — para no contrastar con el diseño. En Power Apps hoy el flujo de área entra por el ícono de ojo de la sub-fila "A".
+> - **`IdentityCard`/header redundante oculto en modos gerencial y área** del prototipo — aplica a la pantalla `DetalleCosto` consolidada cuando exista.
 
 - **Pantalla `DetalleGerencia`** (destino del ícono Costo en filas "G" y "A"): KPIs consolidados = `Sum()` de los campos calculados del grupo (`CostoTotalMensual`, `CostoAnualML`, `CostoAnualUSD`, `Carga`, `BonoCPTarget`...). **`PctCarga` no se suma** — se recalcula como ratio (`Sum(Carga) / Sum(base)`). No requiere ningún flow nuevo: todo sale de `colDatosBase`. El ícono ya deja lista la selección en `varGerenciaSel`/`varAreaSel`/`varTipoDetalle` ("gerencial"/"area"); solo falta descomentar el `Navigate` cuando exista la pantalla.
 - Clic en la fila completa como atajo de navegación (hoy solo el ícono navega), igual que el prototipo.

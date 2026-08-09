@@ -1,25 +1,12 @@
-import { useMemo, useState } from 'react';
 import { useAppContext } from '../../context';
-import { agruparPorArea } from '../../utils';
-import { DropdownAreas, FilaColaboradorIncluido, Boton } from '../shared';
+import { FilaColaboradorIncluido } from '../shared';
 
-export function AreasAcordeon({ colaboradores, gerenciaCorpKey }) {
-  const { go, goArea, glob } = useAppContext();
-  const [areaSeleccionada, setAreaSeleccionada] = useState('');
-
-  const grupos = useMemo(() => agruparPorArea(colaboradores), [colaboradores]);
+export function AreasAcordeon({ grupos, areaSeleccionada }) {
+  const { go, glob } = useAppContext();
   const grupo = grupos.find((g) => g.area === areaSeleccionada);
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-        <DropdownAreas areas={grupos} seleccionado={areaSeleccionada} onSeleccionar={setAreaSeleccionada} />
-        {grupo && (
-          <Boton variant="blue" size="sm" onClick={() => goArea(gerenciaCorpKey, grupo.area)}>
-            Ver Costo de Área
-          </Boton>
-        )}
-      </div>
       {grupo && (
         <div className="overflow-x-auto max-h-[420px] overflow-y-auto">
           <table className="w-full text-sm">

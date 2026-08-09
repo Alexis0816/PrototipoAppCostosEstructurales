@@ -3,8 +3,8 @@
 **App:** Estructura de Costos (Costos Estructurales) · Primax
 **Pantalla:** `DetalleCosto`
 **Referencia de diseño:** prototipo React (`prototipo/src/components/detail/*.jsx`)
-**Estado:** 🔧 En construcción — Identidad ✅ · Parámetros Salariales (CO y PE) ✅ · Desglose de Cargas ✅ · Período reactivo (Mensual/Anual): Desglose ✅ y Parámetros ✅ · **Edición inline + recálculo ✅ confirmado funcionando end-to-end (21/07)** en las 2 tarjetas editables (Sueldo, N° Sueldos/Vales/Comisiones) vía flow `UpdateCollaboratorCost` · **Formato numérico EE.UU. (`,` miles / `.` decimal) ✅** aplicado en las tarjetas editables y en el Desglose (filas 1-5) · 🔧 pendiente aplicar el mismo formato a la 6ª fila del Desglose, su footer y `ContainerKpis` (nombres de control sin confirmar) · Composición (dona) pendiente · `ContainerParEC` pendiente
-**Última actualización:** 2026-07-21
+**Estado:** 🔧 En construcción — Identidad ✅ · Parámetros Salariales (CO y PE) ✅ · Desglose de Cargas ✅ · Período reactivo (Mensual/Anual): Desglose ✅ y Parámetros ✅ · **Edición inline + recálculo ✅ confirmado funcionando end-to-end (21/07)** en las 2 tarjetas editables (Sueldo, N° Sueldos/Vales/Comisiones) vía flow `UpdateCollaboratorCost` · **Formato numérico EE.UU. (`,` miles / `.` decimal) ✅** aplicado en las tarjetas editables y en el Desglose (filas 1-5) · 🔧 pendiente aplicar el mismo formato a la 6ª fila del Desglose, su footer y `ContainerKpis` (nombres de control sin confirmar) · Composición (dona) pendiente · `ContainerParEC` pendiente · 🔧 **nuevos pendientes de navegación/header/layout (09/08)** — ver inicio de sección "Pendientes"
+**Última actualización:** 2026-08-09
 
 ---
 
@@ -800,6 +800,18 @@ If(
 4. **El control HTML no dispara `OnSelect`** — cualquier toggle visual hecho en HTML necesita botones nativos transparentes superpuestos para la interactividad.
 
 ## Pendientes
+
+> **Nuevos pendientes (2026-08-09)** — cambios recientes del prototipo aún no migrados a Power Apps:
+>
+> - **Botón "Atrás" con historial entre niveles de detalle** (Gerencia → Área → Colaborador y viceversa). El prototipo usa una pila `historialNav` en el reducer: cada navegación dentro de detalle apila `{ tipoVistaDetalle, actual }` y `ATRAS` restaura el último o cae a lista. En Power Apps hoy solo existe el flujo individual y la selección de Gerencia/Área con `Set` a `varGerenciaSel`/`varAreaSel`/`varTipoDetalle`.
+> - **Botón "Atrás" visible solo si hay historial** (`historialNav.length > 0`): si el usuario está a un paso de la lista, el botón se oculta porque "Volver a Lista" ya lo cubre.
+> - **Posición del botón "Atrás"**: al lado derecho del título de la vista (no en la fila de botones de acción), color naranja suave (mismo patrón `bg-orange-500/15`, border, `text-orange-400` que los otros botones del prototipo).
+> - **Título de vista consolidada**: "Análisis de Costo Gerencial" (ya no "Costo Consolidado").
+> - **Etiqueta de salida dinámica según `vistaMaestra`**: "Volver a Gerencias" cuando entras desde la tabla de Gerencias, "Volver a Colaboradores" cuando entras desde Colaboradores.
+> - **Ocultar header redundante en modos gerencial y área**: `IdentityCard` solo se renderiza en individual (el nombre ya está en el header).
+> - **Dropdown de áreas**: opción default "Seleccione un área" dentro de la lista (seleccionarla limpia la selección), posicionamiento absoluto con z-index (no estira el contenedor) y `max-h` ~5 registros con scroll interno.
+> - **Botón de Área**: "Ver Análisis del Área" (antes "Ver Análisis Completo del Área →"), variante azul y tamaño pequeño para no contrastar.
+> - **Layout de Composición**: doña más grande y centrada; la leyenda ocupa el espacio restante centrada verticalmente; ambas columnas (Desglose + Composición) estiran a la misma altura (`h-full`) en la grilla.
 
 - **Bug de scroll — botones Moneda/Período se desalinean del HTML al scrollear.** En investigación (ver conversación 16/07): los botones transparentes (`LeftMensual`, `RightAnual`, `LeftMoneyLocal`, `RightUSD`) están como hijos directos de la pantalla `DetalleCosto`, **fuera** del contenedor que scrollea (`MainDetalle`) — por eso al hacer scroll el HTML visual se mueve con el contenido pero los botones se quedan fijos en su posición original de pantalla. Fix: reparentar los 4 botones **dentro** del mismo contenedor inmediato que envuelve cada control HTML (`TipoMoneda` para `LeftMoneyLocal`/`RightUSD`, `Container8` para `LeftMensual`/`RightAnual`), y usar coordenadas relativas al nuevo padre (`Parent.Width`/`Parent.Height`) en vez de píxeles de pantalla — así quedan pegados al HTML sin importar cuánto se haya scrolleado.
 - **Composición Mensual (dona)**: `colSlices` ya está armada en `OnVisible`; falta la UI (control Imagen con SVG por fórmula + galería leyenda) — patrón ya usado en el círculo del login.
