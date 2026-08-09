@@ -7,6 +7,7 @@ const VARIANTES = {
   blue: 'bg-blue-500/15 border border-blue-500/30 text-blue-400',
   purple: 'bg-violet-500/15 border border-violet-500/30 text-violet-400',
   cyan: 'bg-cyan-500/15 border border-cyan-500/30 text-cyan-400',
+  orange: 'bg-orange-500/15 border border-orange-500/30 text-orange-400',
 };
 
 const TAMANOS = {

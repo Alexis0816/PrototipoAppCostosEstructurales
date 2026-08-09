@@ -35,13 +35,14 @@ export function ComposicionChart({ r, moneda, periodo = 'mensual' }) {
   let acumulado = 0;
   const segmentos = bloques.map((b) => { const porcentaje = total ? b.valor / total : 0; const x = { ...b, porcentaje, acumulado }; acumulado += porcentaje; return x; });
 
-  return <div className="bg-navy-900 border border-navy-800 rounded-xl p-6 h-full flex flex-col justify-between">
-    <div><h3 className="text-lg font-bold text-white mb-6">Composición {factor === 12 ? 'Anual' : 'Mensual'}</h3>
-      <div className="relative h-40 w-40 sm:h-44 sm:w-44 mx-auto mb-6"><svg viewBox="0 0 100 100" className="w-full h-full -rotate-90" role="img" aria-label="Composición de compensación">
+  return <div className="bg-navy-900 border border-navy-800 rounded-xl p-6 h-full flex flex-col">
+    <div className="flex flex-col items-center text-center">
+      <h3 className="text-lg font-bold text-white mb-6">Composición {factor === 12 ? 'Anual' : 'Mensual'}</h3>
+      <div className="relative h-48 w-48 sm:h-52 sm:w-52"><svg viewBox="0 0 100 100" className="w-full h-full -rotate-90" role="img" aria-label="Composición de compensación">
         <circle cx="50" cy="50" r={radio} fill="none" stroke="#1e3a5f" strokeWidth="16" />
         {segmentos.map((s) => <circle key={s.key} cx="50" cy="50" r={radio} fill="none" stroke={s.color} strokeWidth="16" strokeDasharray={`${s.porcentaje * circ} ${circ}`} strokeDashoffset={-s.acumulado * circ} />)}
       </svg></div>
     </div>
-    <div className="space-y-3 border-t border-navy-800 pt-4">{segmentos.map((s) => <div key={s.key} className="flex items-center gap-2 text-sm text-slate-400"><div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: s.color }} /><span className="flex-1">{s.label}</span><span className="font-mono font-semibold text-white">{fmt(s.valor, moneda, moneda)}</span><span className="text-xs text-slate-500">({(s.porcentaje * 100).toFixed(0)}%)</span></div>)}</div>
+    <div className="flex-1 flex flex-col justify-center space-y-3 border-t border-navy-800 pt-4 mt-6">{segmentos.map((s) => <div key={s.key} className="flex items-center gap-2 text-sm text-slate-400"><div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: s.color }} /><span className="flex-1 text-left">{s.label}</span><span className="font-mono font-semibold text-white">{fmt(s.valor, moneda, moneda)}</span><span className="text-xs text-slate-500">({(s.porcentaje * 100).toFixed(0)}%)</span></div>)}</div>
   </div>;
 }

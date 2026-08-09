@@ -8,6 +8,7 @@ export const initialState = {
   tipoVistaDetalle: 'individual', // 'individual' | 'gerencial' | 'area'
   actual: null,
   navId: 0, // se incrementa en cada navegación a detalle, para forzar el reset de estado local (ej. dropdown de áreas) aunque se reingrese a la misma gerencia/área
+  historialNav: [], // pila de navegación (detalle→detalle) para el botón "Atrás"
   glob: { moneda: 'COP', periodo: 1 },
   cacheEdiciones: {},
 };
@@ -15,6 +16,14 @@ export const initialState = {
 // Si el período actual no está permitido para vistas agregadas del país, cae al primero permitido.
 function clampPeriodo(periodo, periodosPermitidos) {
   return periodosPermitidos.includes(periodo) ? periodo : periodosPermitidos[0];
+}
+
+// Registra el snapshot del estado previo al navegar dentro del detalle (para el botón "Atrás").
+// Solo se registra cuando ya se está dentro de la vista de detalle (lista no se apila).
+function apilarHistorial(state) {
+  return state.vista === 'detalle'
+    ? [...state.historialNav, { tipoVistaDetalle: state.tipoVistaDetalle, actual: state.actual }]
+    : state.historialNav;
 }
 
 // Construye el registro sintético común para Gerencia/Área a partir de los totales sumados.
@@ -37,7 +46,7 @@ export function appReducer(state, action) {
         ? action.id
         : modPais.datos.find((c) => c.numeroId === action.id);
       if (!base) return state;
-      return { ...state, vista: 'detalle', tipoVistaDetalle: 'individual', actual: base, navId: state.navId + 1 };
+      return { ...state, vista: 'detalle', tipoVistaDetalle: 'individual', actual: base, navId: state.navId + 1, historialNav: apilarHistorial(state) };
     }
 
     case 'GO_GERENCIA': {
@@ -65,6 +74,7 @@ export function appReducer(state, action) {
         tipoVistaDetalle: 'gerencial',
         actual,
         navId: state.navId + 1,
+        historialNav: apilarHistorial(state),
         glob: { ...state.glob, periodo: clampPeriodo(state.glob.periodo, modPais.periodosAgregado) },
       };
     }
@@ -96,6 +106,7 @@ export function appReducer(state, action) {
         tipoVistaDetalle: 'area',
         actual,
         navId: state.navId + 1,
+        historialNav: apilarHistorial(state),
         glob: { ...state.glob, periodo: clampPeriodo(state.glob.periodo, modPais.periodosAgregado) },
       };
     }
@@ -110,12 +121,30 @@ export function appReducer(state, action) {
         pais: action.pais,
         vista: 'lista',
         actual: null,
+        historialNav: [],
         glob: { ...state.glob, moneda: monedaPais },
       };
     }
 
     case 'VOLVER':
-      return { ...state, vista: 'lista', actual: null };
+      return { ...state, vista: 'lista', actual: null, historialNav: [] };
+
+    case 'ATRAS': {
+      // Retrocede un nivel en la pila: si hay historial restaura el último snapshot;
+      // si no, cae a la lista.
+      if (state.historialNav.length === 0) {
+        return { ...state, vista: 'lista', actual: null };
+      }
+      const previo = state.historialNav[state.historialNav.length - 1];
+      return {
+        ...state,
+        vista: 'detalle',
+        tipoVistaDetalle: previo.tipoVistaDetalle,
+        actual: previo.actual,
+        navId: state.navId + 1,
+        historialNav: state.historialNav.slice(0, -1),
+      };
+    }
 
     case 'LOGIN':
       return { ...state, vista: 'lista' };

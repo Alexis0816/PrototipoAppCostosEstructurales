@@ -30,7 +30,7 @@ export function DetailView() {
           esIndividual={esIndividual}
           numeroId={persona.numeroId}
         />
-        <IdentityCard persona={persona} tipoVistaDetalle={tipoVistaDetalle} />
+        {esIndividual && <IdentityCard persona={persona} tipoVistaDetalle={tipoVistaDetalle} />}
         <SelectoresControl esIndividual={esIndividual} />
 
         {!esIndividual && <ColaboradoresIncluidos actual={persona} tipoVistaDetalle={tipoVistaDetalle} />}
@@ -40,7 +40,7 @@ export function DetailView() {
 
         <KpiRow r={r} periodo={glob.periodo} moneda={glob.moneda} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <DesglosePrestacional persona={persona} r={r} moneda={glob.moneda} periodo={glob.periodo} />
           </div>

@@ -15,8 +15,8 @@ export function AreasAcordeon({ colaboradores, gerenciaCorpKey }) {
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <DropdownAreas areas={grupos} seleccionado={areaSeleccionada} onSeleccionar={setAreaSeleccionada} />
         {grupo && (
-          <Boton variant="cyan" onClick={() => goArea(gerenciaCorpKey, grupo.area)}>
-            Ver Análisis Completo del Área →
+          <Boton variant="blue" size="sm" onClick={() => goArea(gerenciaCorpKey, grupo.area)}>
+            Ver Costo de Área
           </Boton>
         )}
       </div>

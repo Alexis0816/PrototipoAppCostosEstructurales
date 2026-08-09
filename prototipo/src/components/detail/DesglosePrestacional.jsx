@@ -5,7 +5,7 @@ import { fmt } from '../../utils';
 function FilaConcepto({ nombre, formula, valor, total, destacado = false, informativo = false, moneda, monedaOrigen }) {
   const porcentaje = total > 0 ? (valor / total) * 100 : 0;
   return (
-    <div className={`flex items-center justify-between py-3 border-b border-navy-800 last:border-b-0 ${informativo ? 'opacity-50' : ''}`}>
+    <div className={`flex items-center justify-between py-2 border-b border-navy-800 last:border-b-0 ${informativo ? 'opacity-50' : ''}`}>
       <div className="w-1/3 pr-2">
         <p className={`text-sm font-medium truncate ${informativo ? 'text-slate-400 italic' : 'text-slate-200'}`} title={nombre}>{nombre}</p>
         <p className="text-xs text-slate-500 mt-0.5">{formula}</p>
@@ -36,7 +36,7 @@ export function DesglosePrestacional({ persona, r, moneda, periodo }) {
           <h3 className="text-lg font-bold text-white">{esMensual ? textos.tituloDesglose : textos.tituloDesgloseAnual}</h3>
           {subtitulo && <span className="text-xs text-slate-500">{subtitulo}</span>}
         </div>
-        <div className="flex items-center justify-between text-xs text-slate-500 uppercase tracking-wider mb-3 border-b border-navy-800 pb-2">
+        <div className="flex items-center justify-between text-xs text-slate-500 uppercase tracking-wider mb-2 border-b border-navy-800 pb-2">
           <span className="w-1/3">Concepto</span>
           <span className="w-1/3 text-center">Proporción</span>
           <span className="w-1/3 text-right">{esMensual ? 'Valor Mensual' : 'Valor Anual'}</span>
@@ -57,7 +57,7 @@ export function DesglosePrestacional({ persona, r, moneda, periodo }) {
           ))}
         </div>
       </div>
-      <div className="bg-blue-500/[0.08] rounded-lg p-4 mt-6">
+      <div className="bg-blue-500/[0.08] rounded-lg p-3 mt-5">
         <div className="flex items-center justify-between">
           <div>
             <p className="font-bold text-base text-slate-100">{esMensual ? textos.tituloTotalDesglose : textos.tituloTotalDesgloseAnual}</p>

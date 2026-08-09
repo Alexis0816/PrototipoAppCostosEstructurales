@@ -15,6 +15,7 @@ export function AppProvider({ children }) {
       goGerencia: (gerenciaCorpKey) => dispatch({ type: 'GO_GERENCIA', gerenciaCorpKey }),
       goArea: (gerenciaCorpKey, areaNombre) => dispatch({ type: 'GO_AREA', gerenciaCorpKey, areaNombre }),
       volver: () => dispatch({ type: 'VOLVER' }),
+      atras: () => dispatch({ type: 'ATRAS' }),
       cambiarFiltroMaestro: (tipo) => dispatch({ type: 'CAMBIAR_FILTRO_MAESTRO', tipo }),
       setPais: (pais) => dispatch({ type: 'SET_PAIS', pais }),
       setMoneda: (moneda) => dispatch({ type: 'SET_MONEDA', moneda }),
