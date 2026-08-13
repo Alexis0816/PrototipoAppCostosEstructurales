@@ -3,8 +3,8 @@
 **App:** Estructura de Costos (Costos Estructurales) · Primax
 **Pantalla:** Menu · vista "Gerencias" del toggle Colaboradores/Gerencias
 **Referencia de diseño:** prototipo React (`prototipo/src/components/list/TablaGerencias.jsx`, `GerenciaRow.jsx`, `AreaSubRow.jsx`)
-**Estado:** ✅ Implementado y validado en la app (09/07/2026) — acordeón de áreas desplegando/contrayendo correctamente · pendiente pantalla de detalle consolidado
-**Última actualización:** 09/07/2026 (pendientes ampliados 09/08/2026)
+**Estado:** ✅ Implementado y validado en la app (09/07/2026) — acordeón de áreas desplegando/contrayendo correctamente · ✅ **Pantalla de detalle consolidado `DetalleCostoGerenArea` implementada (12/08/2026)** — vista Gerencia/Área con consolidación vía `Sum()`, navegación con botones "Atrás", dropdown de áreas, contador dinámico, galería de colaboradores con búsqueda
+**Última actualización:** 12/08/2026
 
 ---
 
@@ -219,13 +219,13 @@ Switch(varPais; "CO"; "Colombia"; "PE"; "Perú"; "EC"; "Ecuador")
 
 ## Pendientes
 
-> **Nuevos pendientes (2026-08-09)** — cambios del prototipo (modo gerencial/área) aún no migrados a Power Apps:
+> **Pendientes actualizados (2026-08-12)** — después de implementar `DetalleCostoGerenArea`:
 >
-> - **Dropdown de áreas con opción default "Seleccione un área"**: en el prototipo es una opción real dentro de la lista (seleccionarla limpia la selección en vez de ser solo texto placeholder del botón). Posicionamiento absoluto con z-index para no estirar el contenedor y `max-h` ~5 registros con scroll interno.
-> - **Botón "Ver Análisis del Área"** (antes "Ver Análisis Completo del Área →"): variante azul, tamaño pequeño, sin flecha — para no contrastar con el diseño. En Power Apps hoy el flujo de área entra por el ícono de ojo de la sub-fila "A".
-> - **`IdentityCard`/header redundante oculto en modos gerencial y área** del prototipo — aplica a la pantalla `DetalleCosto` consolidada cuando exista.
+> - ~~**Dropdown de áreas con opción default "Seleccione un área"**~~ ✅ Implementado en `drpAreas` con `colAreasDropdown` (opción real dentro de la lista, no solo placeholder).
+> - ~~**Botón "Ver Análisis del Área"**~~ ✅ Implementado como `BtnVerCostoArea` (variante azul, tamaño pequeño).
+> - ~~**`IdentityCard`/header redundante oculto en modos gerencial y área**~~ ✅ `IdentityCard` solo se renderiza en `DetalleCostoColaborador`.
 
-- **Pantalla `DetalleGerencia`** (destino del ícono Costo en filas "G" y "A"): KPIs consolidados = `Sum()` de los campos calculados del grupo (`CostoTotalMensual`, `CostoAnualML`, `CostoAnualUSD`, `Carga`, `BonoCPTarget`...). **`PctCarga` no se suma** — se recalcula como ratio (`Sum(Carga) / Sum(base)`). No requiere ningún flow nuevo: todo sale de `colDatosBase`. El ícono ya deja lista la selección en `varGerenciaSel`/`varAreaSel`/`varTipoDetalle` ("gerencial"/"area"); solo falta descomentar el `Navigate` cuando exista la pantalla.
+- **Pantalla `DetalleCostoGerenArea`** ✅ **IMPLEMENTADA (12/08/2026)**: KPIs consolidados = `Sum()` de los campos calculados del grupo (`CostoTotalMensual`, `CostoAnualML`, `CostoAnualUSD`, `Carga`, `BonoCPTarget`...). **`PctCarga` no se suma** — se recalcula como ratio (`Sum(Carga) / Sum(base)`). No requiere ningún flow nuevo: todo sale de `colDatosBase`. Navegación con botones "Atrás" separados (`BtnAtrasGerenArea`, `BtnAtrasColaborador`), sin `colHistorialNav`.
 - Clic en la fila completa como atajo de navegación (hoy solo el ícono navega), igual que el prototipo.
 - La búsqueda de gerencias hoy ignora el rol (`varRolCostos`) — cuando se activen las limitaciones de `Usuario`, añadir la misma condición de rol que la galería de colaboradores.
 

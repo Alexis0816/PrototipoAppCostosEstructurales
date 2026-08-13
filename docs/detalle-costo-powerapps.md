@@ -1,18 +1,36 @@
 # Vista de Detalle — Costeo del Colaborador / Análisis Consolidado
 
 **App:** Estructura de Costos (Costos Estructurales) · Primax
-**Pantalla:** `DetalleCosto`
+**Pantallas:** `DetalleCostoColaborador` (individual) · `DetalleCostoGerenArea` (gerencial/área)
 **Referencia de diseño:** prototipo React (`prototipo/src/components/detail/*.jsx`)
-**Estado:** 🔧 En construcción — Identidad ✅ · Parámetros Salariales (CO y PE) ✅ · Desglose de Cargas ✅ · Período reactivo (Mensual/Anual): Desglose ✅ y Parámetros ✅ · **Edición inline + recálculo ✅ confirmado funcionando end-to-end (21/07)** en las 2 tarjetas editables (Sueldo, N° Sueldos/Vales/Comisiones) vía flow `UpdateCollaboratorCost` · **Formato numérico EE.UU. (`,` miles / `.` decimal) ✅** aplicado en las tarjetas editables y en el Desglose (filas 1-5) · 🔧 pendiente aplicar el mismo formato a la 6ª fila del Desglose, su footer y `ContainerKpis` (nombres de control sin confirmar) · Composición (dona) pendiente · `ContainerParEC` pendiente · 🔧 **nuevos pendientes de navegación/header/layout (09/08)** — ver inicio de sección "Pendientes"
-**Última actualización:** 2026-08-09
+**Estado:** 🔧 En construcción — Identidad ✅ · Parámetros Salariales (CO y PE) ✅ · Desglose de Cargas ✅ · Período reactivo (Mensual/Anual): Desglose ✅ y Parámetros ✅ · **Edición inline + recálculo ✅ confirmado funcionando end-to-end (21/07)** en las 2 tarjetas editables (Sueldo, N° Sueldos/Vales/Comisiones) vía flow `UpdateCollaboratorCost` · **Formato numérico EE.UU. (`,` miles / `.` decimal) ✅** aplicado en las tarjetas editables y en el Desglose (filas 1-5) · 🔧 pendiente aplicar el mismo formato a la 6ª fila del Desglose, su footer y `ContainerKpis` (nombres de control sin confirmar) · Composición (dona) pendiente · `ContainerParEC` pendiente · ✅ **Vista consolidada Gerencia/Área implementada en `DetalleCostoGerenArea` (12/08)** — consolidación vía `Sum()` sobre `colDatosBase`, navegación con historial, dropdown de áreas, contador dinámico, galería de colaboradores con búsqueda
+**Última actualización:** 2026-08-12
 
 ---
 
-## Principio de diseño: una sola pantalla, un registro normalizado
+## Principio de diseño: dos pantallas separadas (Opción B)
 
-Igual que el prototipo (`DetailView.jsx` recibe siempre un "registro" con la misma forma, sea colaborador individual o consolidado sintético de Gerencia/Área — ver `appReducer.js`), `DetalleCosto` es **una sola pantalla para los 3 modos** (`individual` / `gerencial` / `area`). La clave es `varDetalle`: un registro construido en `OnVisible` que **normaliza** los tres casos a la misma forma. Ningún control de la pantalla debe leer `varColabSel`, `varGerenciaSel` ni `varAreaSel` directamente — todos leen `varDetalle` y `varTipoDetalle`. Si un control lee `varColabSel` a secas, se "congela" con el último colaborador individual visitado en cuanto entras por Gerencias (bug real que ya nos pasó y corregimos).
+A diferencia del prototipo React (una sola pantalla `DetailView.jsx` para los 3 modos), en Power Apps se optó por **dos pantallas separadas** para mayor claridad y mantenibilidad:
 
-## `DetalleCosto.OnVisible` — completo
+1. **`DetalleCostoColaborador`**: Ficha individual con edición inline (Sueldo, Vales, Comisiones, Grado)
+2. **`DetalleCostoGerenArea`**: Vista consolidada de Gerencia/Área (solo lectura, con dropdown de áreas, contador dinámico, galería de colaboradores)
+
+La clave en ambas es `varDetalle`: un registro construido en `OnVisible` que **normaliza** los casos a la misma forma. Ningún control debe leer `varColabSel`, `varGerenciaSel` ni `varAreaSel` directamente — todos leen `varDetalle` y `varTipoDetalle`.
+
+### Navegación con historial (Opción B: sin `colHistorialNav`)
+
+En lugar de una pila de navegación, se usan **dos botones "Atrás" separados**:
+
+- **`BtnAtrasGerenArea`** (en `DetalleCostoGerenArea`): Visible cuando `varTipoDetalle = "area"`. Al hacer clic, restaura `varTipoDetalle = "gerencial"` y `varAreaSel = ""`.
+- **`BtnAtrasColaborador`** (en `DetalleCostoColaborador`): Visible cuando `varVista = "gerencias"`. Al hacer clic, navega a `DetalleCostoGerenArea`.
+
+Para preservar el estado al navegar Área → Colaborador → Área, se usan variables de respaldo:
+- `varTipoDetalleAntes`: guarda el modo anterior (`"area"` o `"gerencial"`)
+- `varAreaSelAntes`: guarda el área seleccionada antes de entrar al colaborador
+
+Al regresar desde `DetalleCostoColaborador`, se restauran estas variables para que `BtnAtrasGerenArea` vuelva a ser visible.
+
+## `DetalleCostoColaborador.OnVisible` — completo
 
 Orden importante: `locCampoEditando` (variable de contexto) debe declararse **primero** — moverla al inicio corrigió un error real de "tipos de variable de contexto incompatibles" que salía cuando quedaba después de bloques largos.
 
@@ -801,14 +819,26 @@ If(
 
 ## Pendientes
 
-> **Nuevos pendientes (2026-08-09)** — cambios recientes del prototipo aún no migrados a Power Apps:
+> **Pendientes actualizados (2026-08-12)** — después de implementar `DetalleCostoGerenArea`:
 >
-> - **Botón "Atrás" con historial entre niveles de detalle** (Gerencia → Área → Colaborador y viceversa). El prototipo usa una pila `historialNav` en el reducer: cada navegación dentro de detalle apila `{ tipoVistaDetalle, actual }` y `ATRAS` restaura el último o cae a lista. En Power Apps hoy solo existe el flujo individual y la selección de Gerencia/Área con `Set` a `varGerenciaSel`/`varAreaSel`/`varTipoDetalle`.
-> - **Botón "Atrás" visible solo si hay historial** (`historialNav.length > 0`): si el usuario está a un paso de la lista, el botón se oculta porque "Volver a Lista" ya lo cubre.
-> - **Posición del botón "Atrás"**: al lado derecho del título de la vista (no en la fila de botones de acción), color naranja suave (mismo patrón `bg-orange-500/15`, border, `text-orange-400` que los otros botones del prototipo).
-> - **Título de vista consolidada**: "Análisis de Costo Gerencial" (ya no "Costo Consolidado").
-> - **Etiqueta de salida dinámica según `vistaMaestra`**: "Volver a Gerencias" cuando entras desde la tabla de Gerencias, "Volver a Colaboradores" cuando entras desde Colaboradores.
-> - **Ocultar header redundante en modos gerencial y área**: `IdentityCard` solo se renderiza en individual (el nombre ya está en el header).
+> - ~~**Botón "Atrás" con historial entre niveles de detalle**~~ ✅ Implementado con Opción B (dos botones separados `BtnAtrasGerenArea` y `BtnAtrasColaborador`, sin `colHistorialNav`).
+> - ~~**Botón "Atrás" visible solo si hay historial**~~ ✅ `BtnAtrasGerenArea.Visible = varTipoDetalle = "area"`, `BtnAtrasColaborador.Visible = varVista = "gerencias"`.
+> - ~~**Posición del botón "Atrás"**~~ ✅ Al lado derecho del título de la vista.
+> - ~~**Título de vista consolidada**~~ ✅ "ANÁLISIS COSTO GERENCIAL" / "ANÁLISIS DE COSTO POR ÁREA" dinámico.
+> - ~~**Etiqueta de salida dinámica**~~ ✅ `BtnVolver.Text = "Volver a Gerencias"`.
+> - ~~**Ocultar header redundante en modos gerencial y área**~~ ✅ `IdentityCard` solo se renderiza en `DetalleCostoColaborador`.
+> - ~~**Dropdown de áreas con opción default "Seleccione un área..."**~~ ✅ Implementado en `drpAreas` con `colAreasDropdown`.
+> - ~~**Botón "Ver Costo de Área"**~~ ✅ `BtnVerCostoArea` visible solo en modo gerencial con área seleccionada.
+> - ~~**Contador dinámico de colaboradores**~~ ✅ Muestra cantidad del área o gerencia según corresponda.
+> - ~~**Galería de colaboradores con altura dinámica**~~ ✅ `GaleriaColaboradores.Height` con fórmula `Min(Max(1; CountRows(...)) * TemplateSize; 240)`.
+> - ~~**Barra de búsqueda en modo Área**~~ ✅ `TxtBusquedaColab` visible solo en modo área.
+
+- **Composición Mensual (dona)**: `colSlices` ya está armada en `OnVisible`; falta la UI (control Imagen con SVG por fórmula + galería leyenda) — patrón ya usado en el círculo del login.
+- **`ContainerParEC`**: las 3 cards de Ecuador (Sueldo Mensual*, Comisiones*, Seguro / Bono CP Target) sin construir todavía.
+- **Formato numérico EE.UU. (`,` miles / `.` decimal) — falta aplicar a 5 controles sin nombre confirmado (21/07)**: la regla (agregar `"en-US"` como 3er argumento de `Text(...)`, ver sección "Parámetros Salariales" → Patrón MONTO) ya está aplicada y confirmada en `CantidadSueldo`, `CantidadEdit` y las 5 filas del Desglose (`ValueGratif/CTS/EsSalud/SeguroVidaLey/CostoVales`). Falta aplicarla en: el `Value` de la 6ª fila del Desglose, el valor del footer del Desglose, y los 3 valores de `ContainerKpis` (Costo Anual/Carga por Mes/% Carga) — estos 5 nunca se confirmaron con nombre real de control, hace falta pasar los nombres reales (o una captura del árbol) para dejar las fórmulas exactas.
+- **`ContainerKpis` período-reactivo**: el tile "Costo Anual" sigue fijo aunque Parámetros Salariales y Desglose de Cargas ya togglean con `varPeriod` (20/07, ver sección dedicada) — falta aplicar el mismo patrón (Costo Mensual  Costo Anual) al tile 1, igual que ya hace el prototipo (`KpiRow.jsx`).
+- **Tarjetas readonly período-reactivas** (Bono Target CO, Bono CP Target PE, Asignación Familiar PE — ver sección "Período reactivo" y plan `soft-twirling-anchor`): fórmulas propuestas pero nunca confirmadas contra la app real; falta captura de árbol + fórmula actual antes de tocarlas.
+- **Rol/permiso en los íconos de edición**: confirmar que `Edit`/`EditSueldo`.`Visible` de ambas tarjetas realmente incluye `&& varRolCostos = "Administrador"` (el patrón genérico lo pedía, no se verificó explícitamente contra Studio en ninguna de las 2 tarjetas ya construidas).
 > - **Dropdown de áreas**: opción default "Seleccione un área" dentro de la lista (seleccionarla limpia la selección), posicionamiento absoluto con z-index (no estira el contenedor) y `max-h` ~5 registros con scroll interno.
 > - **Botón de Área**: "Ver Análisis del Área" (antes "Ver Análisis Completo del Área →"), variante azul y tamaño pequeño para no contrastar.
 > - **Layout de Composición**: doña más grande y centrada; la leyenda ocupa el espacio restante centrada verticalmente; ambas columnas (Desglose + Composición) estiran a la misma altura (`h-full`) en la grilla.
