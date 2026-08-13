@@ -64,8 +64,8 @@ export function ListView() {
 
           {/* ── Grupo izquierdo ─────────────────────────── */}
           <div className="flex flex-wrap items-center gap-3 sm:gap-5 lg:gap-6 flex-1 min-w-0">
-            <div className="w-full sm:w-[240px] min-w-0 flex-shrink-0">
-              <h1 className="text-xl sm:text-2xl font-bold text-white truncate">
+            <div className="w-full sm:w-[320px] min-w-0 flex-shrink-0">
+              <h1 className="text-xl sm:text-2xl font-bold text-white whitespace-nowrap">
                 {vistaMaestra === 'colaboradores' ? 'Costos por Colaborador' : 'Costos por Gerencia'}
               </h1>
               <p className="text-sm text-slate-400 mt-1 truncate">

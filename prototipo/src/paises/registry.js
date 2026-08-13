@@ -1,12 +1,12 @@
-import { colombia } from './colombia/index.js';
 import { peru } from './peru/index.js';
 import { ecuador } from './ecuador/index.js';
+import { colombia } from './colombia/index.js';
 
 // Registro central de países. Agregar un país = una entrada aquí + su módulo + su data file.
 export const PAISES = {
-  CO: colombia,
   PE: peru,
   EC: ecuador,
+  CO: colombia,
 };
 
 export function getPais(codigo) {
