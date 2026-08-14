@@ -54,21 +54,22 @@ export function ParametrosSalariales({ persona, base, r, moneda, periodo }) {
         <h3 className="text-lg font-bold text-white">Parámetros Salariales</h3>
         <span className="text-xs text-slate-500">Pasa el cursor y haz clic en el lápiz para editar</span>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="flex flex-wrap justify-center gap-4">
         {editables.map((entry) => (
-          <CampoEditable
-            key={entry.campo}
-            label={entry.label}
-            valorFormateado={
-              entry.tipo === 'grado'   ? String(persona[entry.campo] ?? '') :
-              entry.tipo === 'decimal' ? String(persona[entry.campo] ?? 0) :
-              fmt(persona[entry.campo] ?? 0, moneda, monedaOrigen)
-            }
-            onConfirm={makeConfirm(entry)}
-          />
+          <div key={entry.campo} className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)]">
+            <CampoEditable
+              label={entry.label}
+              valorFormateado={
+                entry.tipo === 'grado'   ? String(persona[entry.campo] ?? '') :
+                entry.tipo === 'decimal' ? String(persona[entry.campo] ?? 0) :
+                fmt(persona[entry.campo] ?? 0, moneda, monedaOrigen)
+              }
+              onConfirm={makeConfirm(entry)}
+            />
+          </div>
         ))}
         {readonly.map((entry) => (
-          <div key={entry.campo} className="bg-navy-900 border border-navy-800 rounded-xl p-5">
+          <div key={entry.campo} className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)] bg-navy-900 border border-navy-800 rounded-xl p-5">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">{labelReadonly(entry, persona, r)}</p>
             <div className="font-mono text-lg font-semibold rounded-lg px-3 py-2 bg-navy-800/15 border border-navy-800/50 text-slate-200 opacity-70">
               {valorReadonly(entry)}
