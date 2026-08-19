@@ -6,11 +6,21 @@ export const config = {
   camposSumables: ['sueldoMensual', 'medicinaPrepagadaAnio'],
   campoNomina: 'sueldoMensual',
   camposEditables: [
-    { campo: 'sueldoMensual', label: 'Sueldo Mensual'      },
-    { campo: 'nSueldos',      label: 'N° Sueldos (Bono)',  tipo: 'decimal' },
+    { campo: 'sueldoMensual', label: 'Sueldo Mensual' },
   ],
   camposReadonly: [
-    { campo: 'bonoTarget', label: 'Bono Target', source: 'r', periodoReactivo: 'anual' },
+    {
+      campo: 'bonoTarget',
+      label: 'Bono CP Target',
+      source: 'r',
+      periodoReactivo: 'anual',
+      labelFn: (r, esMensual) => `Bono CP Target (${esMensual ? 'Mensual' : 'Anual'}) (${r.nSueldos}x)`,
+    },
+    {
+      campo: 'ingresoMensual',
+      label: 'Ingreso (Mensual)',
+      source: 'r',
+    },
   ],
   opcionesTipoSalario: null,
   periodosIndividual: [1, 12],

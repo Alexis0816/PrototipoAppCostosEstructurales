@@ -1,15 +1,20 @@
 import { getPais } from '../paises/registry.js';
 import { consolidar } from '../utils';
 
+const PAIS_INICIAL = 'PE';
+// La moneda de visualización arranca en la nativa del país inicial (PEN para PE),
+// para que al entrar a un país los valores ya aparezcan en su moneda local.
+const MONEDA_INICIAL = getPais(PAIS_INICIAL).moneda;
+
 export const initialState = {
-  pais: 'PE', // país activo (clave del registro). Determina dataset y módulo de cálculo.
+  pais: PAIS_INICIAL, // país activo (clave del registro). Determina dataset y módulo de cálculo.
   vista: 'login', // 'login' | 'lista' | 'detalle'
   vistaMaestra: 'colaboradores', // 'colaboradores' | 'gerencias'
   tipoVistaDetalle: 'individual', // 'individual' | 'gerencial' | 'area'
   actual: null,
   navId: 0, // se incrementa en cada navegación a detalle, para forzar el reset de estado local (ej. dropdown de áreas) aunque se reingrese a la misma gerencia/área
   historialNav: [], // pila de navegación (detalle→detalle) para el botón "Atrás"
-  glob: { moneda: 'COP', periodo: 1 },
+  glob: { moneda: MONEDA_INICIAL, periodo: 1 },
   cacheEdiciones: {},
 };
 

@@ -47,8 +47,9 @@ export function calc(c, periodo) {
   const costoTotalMensual = sueldoMensual + carga;
 
   // â”€â”€ Ingresos (montos fijos por ahora, pendiente confirmar fÃ³rmula) â”€â”€
+  // Ingreso Anual = Ingreso Mensual × 14 + Bono Target + Utilidades (regla general definida 19/08)
   const ingresoMensual = sueldoMensual + (c.comisionesMensuales || 0);
-  const ingresoAnual   = (13 * sueldoMensual) + bonoCPTarget + utilidades + SBU;
+  const ingresoAnual   = ingresoMensual * 14 + bonoCPTarget + utilidades;
 
   // ProyecciÃ³n basada en el costo anual exacto, prorrateado por periodo.
   const proyeccion = Math.round(costoAnualML * periodo / 12);

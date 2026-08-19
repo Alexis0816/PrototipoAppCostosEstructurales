@@ -34,6 +34,11 @@ export function ParametrosSalariales({ persona, base, r, moneda, periodo }) {
     // `formato:'numero'` ⇒ no es un monto (ej. multiplicadorBono = cantidad de sueldos), no pasa por fmt().
     if (entry.formato === 'numero') return String(valor);
     // `periodoReactivo` ⇒ el campo tiene versión mensual y anual; togglea con el selector Período.
+    // 'toggle' ⇒ hay dos campos hermanos `${campo}Mensual` / `${campo}Anual` en el resultado.
+    if (entry.periodoReactivo === 'toggle') {
+      valor = fuente[`${entry.campo}${esMensual ? 'Mensual' : 'Anual'}`];
+      return fmt(valor ?? 0, moneda, monedaOrigen);
+    }
     if (entry.periodoReactivo === 'anual')   valor = esMensual ? valor / 12 : valor;
     if (entry.periodoReactivo === 'mensual') valor = esMensual ? valor : valor * 12;
     return fmt(valor, moneda, monedaOrigen);
@@ -42,7 +47,7 @@ export function ParametrosSalariales({ persona, base, r, moneda, periodo }) {
   function labelReadonly(entry, persona, r) {
     if (entry.labelFn) {
       const fuente = entry.source === 'persona' ? persona : r;
-      return entry.labelFn(fuente);
+      return entry.labelFn(fuente, esMensual);
     }
     if (!entry.periodoReactivo) return entry.label;
     return `${entry.label} (${esMensual ? 'Mensual' : 'Anual'})`;

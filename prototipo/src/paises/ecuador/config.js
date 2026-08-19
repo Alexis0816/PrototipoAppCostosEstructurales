@@ -14,21 +14,17 @@ export const config = {
   camposReadonly: [
     {
       campo: 'bonoCPTarget',
-      label: 'Bono CP Target Anual',
+      label: 'Bono CP Target',
       source: 'r',
-      labelFn: (r) => `Bono CP Target Anual (${r.multiplicadorBono}x)`,
+      periodoReactivo: 'anual',
+      labelFn: (r, esMensual) => `Bono CP Target (${esMensual ? 'Mensual' : 'Anual'}) (${r.multiplicadorBono}x)`,
     },
     {
-      campo: 'ingresoMensual',
-      label: 'Ingreso Mensual',
+      campo: 'ingreso',
+      label: 'Ingreso',
       source: 'r',
-      labelFn: (r) => `Ingreso Mensual (Sueldo ${r.sueldo} + Comisiones ${r.comisionesMensuales})`,
-    },
-    {
-      campo: 'ingresoAnual',
-      label: 'Ingreso Anual',
-      source: 'r',
-      labelFn: (r) => `Ingreso Anual (13×Sueldo + Bono + Utilidades + SBU)`,
+      periodoReactivo: 'toggle',
+      labelFn: (r, esMensual) => `Ingreso (${esMensual ? 'Mensual' : 'Anual'})`,
     },
   ],
   opcionesTipoSalario: null,

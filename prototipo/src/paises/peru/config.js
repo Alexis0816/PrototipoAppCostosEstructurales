@@ -2,18 +2,31 @@ export const config = {
   codigo: 'PE',
   nombre: 'Perú',
   moneda: 'PEN',
-  camposSumables: ['sueldoBase', 'vales', 'comisionesMensuales', 'asignacionFamiliar'],
+  camposSumables: ['sueldoBase', 'vales', 'comisionesMensuales', 'utilidades'],
   campoNomina: 'sueldoBase',
   gradoEditable: true,
   camposEditables: [
     { campo: 'sueldoBase', label: 'Sueldo Básico Mensual' },
     { campo: 'vales', label: 'Vales' },
+    { campo: 'comisionesMensuales', label: 'Comisiones Mensuales' },
+    { campo: 'utilidades', label: 'Utilidades' },
   ],
-  // Asignación Familiar es fija (S/113, no editable); Bono CP Target se deriva del grado.
+  // Bono CP Target se deriva del grado. Ingreso = Mensual (sueldo+vales+comis) / Anual (bono+utilidades).
   camposReadonly: [
-    { campo: 'asignacionFamiliar', label: 'Asignación Familiar', source: 'persona', periodoReactivo: 'mensual' },
-    { campo: 'multiplicadorBono', label: 'Cantidad de Sueldos Target (Anual)', source: 'r', formato: 'numero' },
-    { campo: 'bonoCPTarget', label: 'Bono CP Target', source: 'r', periodoReactivo: 'anual' },
+    {
+      campo: 'bonoCPTarget',
+      label: 'Bono CP Target',
+      source: 'r',
+      periodoReactivo: 'anual',
+      labelFn: (r, esMensual) => `Bono CP Target (${esMensual ? 'Mensual' : 'Anual'}) (${r.multiplicadorBono}x)`,
+    },
+    {
+      campo: 'ingreso',
+      label: 'Ingreso',
+      source: 'r',
+      periodoReactivo: 'toggle',
+      labelFn: (r, esMensual) => `Ingreso (${esMensual ? 'Mensual' : 'Anual'})`,
+    },
   ],
   // Perú no tiene toggle Fijo/Integral: el `tipo` (Operario/Administrativo) es fijo por persona.
   opcionesTipoSalario: null,

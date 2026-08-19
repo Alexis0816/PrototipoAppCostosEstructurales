@@ -57,6 +57,7 @@ export function calc(c, periodo) {
     primaServicios, cesantias, iCesantias,
     medicinaPrepagadaAnio: med ,    medicinaMensual: med / 12,
     nSueldos: ns, bonoTarget,
+    ingresoMensual: s,
     aportesPrimas, parRate,
     // Provisiones mensuales para el desglose (cada componente anual Ã· 12)
     primaVacacionesMensual: primaVacaciones / 12,

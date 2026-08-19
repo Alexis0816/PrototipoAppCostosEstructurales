@@ -61,10 +61,16 @@ export function calc(c, periodo) {
   const costoAnualUSD = Math.round(costoAnualML / TIPO_CAMBIO_PEN);
   const pct = sueldoBase > 0 ? (carga / sueldoBase) * 100 : 0;
 
+  // ── Ingresos (nuevos campos 19/08) ──────────────────────────────────────────
+  // Ingreso Anual = Ingreso Mensual × 14 + Bono Target + Utilidades (14 = 12 meses + 2 gratificaciones)
+  const ingresoMensual = sueldoBase + vales + comisionesMensuales;
+  const ingresoAnual   = ingresoMensual * 14 + bonoCPTarget + (c.utilidades || 0);
+
   return {
     sueldo: sueldoBase, vales, comisionesMensuales, remuneracionBase, ingresosTotales, costoDeVales,
     gratificaciones, cts, esSalud, seguroVidaLey,
     multiplicadorBono: multiplicadorBono(c.grado || 0), bonoCPTarget, bonoCPMensual, costoLaboralBonoCP,
     carga, total: costoTotalMensual, pct, proyeccion, costoAnualML, costoAnualUSD,
+    ingresoMensual, ingresoAnual,
   };
 }
