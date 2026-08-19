@@ -29,6 +29,9 @@ export function DetailView() {
           nombre={persona.nombreCompleto}
           esIndividual={esIndividual}
           numeroId={persona.numeroId}
+          r={r}
+          periodo={glob.periodo}
+          moneda={glob.moneda}
         />
         {esIndividual && <IdentityCard persona={persona} tipoVistaDetalle={tipoVistaDetalle} />}
         <SelectoresControl esIndividual={esIndividual} />
@@ -38,7 +41,7 @@ export function DetailView() {
           <ParametrosSalariales persona={persona} base={actual} r={r} moneda={glob.moneda} periodo={glob.periodo} />
         )}
 
-        <KpiRow r={r} periodo={glob.periodo} moneda={glob.moneda} />
+        {esIndividual && <KpiRow r={r} periodo={glob.periodo} moneda={glob.moneda} />}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
