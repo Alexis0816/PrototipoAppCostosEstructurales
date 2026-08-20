@@ -135,6 +135,36 @@ varTipoDetalle = "individual"
 
 **Gotcha de layout resuelto**: al ocultar `PuestoGerencia`, el label `ColabName` quedaba pegado arriba en vez de centrarse. Fix en dos pasos: (1) `InfoColab.Alto automático: Activado` para que el contenedor se encoja cuando su hijo se oculta; (2) en el contenedor padre (`MainTag`), usar la propiedad nativa de alineación del auto-layout (`Alinear elementos` si es horizontal / `Justificar contenido` si es vertical) en `Centro` — **no** una fórmula manual de `Y`, porque si el padre también es auto-layout (altura calculada de sus hijos), leer `Parent.Height` desde el hijo crea una referencia circular.
 
+## Vista consolidada Gerencia/Área — pendiente: poblar `varDetalle` con `Utilidades` + 6 Ingresos (20/08)
+
+**Síntoma:** la pantalla `DetalleCostoGerenArea` tiene tarjetas readonly (Bono CP Target, Ingreso, Utilidades), desglose, dona y etiqueta de costo, pero sus valores no corresponden al grupo (gerencia o área) — quedan en blanco/0 o muestran otra cosa.
+
+**Causa raíz:** `btnRecargarGerenArea.OnSelect` (invocado por `DetalleCostoGerenArea.OnVisible`) consolida `varDetalle` con `Patch(First(grupo); { ... Sum(grupo; ...) ... })`, pero **el `Patch` no incluye los campos nuevos** de la migración de parámetros salariales:
+
+- `Utilidades` — falta en el bloque "Entradas sumadas".
+- `CO_IngresoMensual`, `CO_IngresoAnual`, `PE_IngresoMensual`, `PE_IngresoAnual`, `EC_IngresoMensual`, `EC_IngresoAnual` — no existe un bloque "Ingresos sumados".
+
+Todas las etiquetas/tarjetas de la pantalla consolidada leen `varDetalle.<Campo>`; al poblar el registro se corrigen todas a la vez (no hay que tocar cada etiqueta).
+
+**Fix (2 adiciones al bloque `Patch` de `btnRecargarGerenArea.OnSelect`):**
+
+```powerappsfl
+// 1) En "Entradas sumadas" (junto a Seguro):
+Utilidades:            Sum(grupo; Utilidades);
+
+// 2) Bloque nuevo "Ingresos sumados" (tras "Totales sumados"):
+CO_IngresoMensual:     Sum(grupo; CO_IngresoMensual);
+CO_IngresoAnual:       Sum(grupo; CO_IngresoAnual);
+PE_IngresoMensual:     Sum(grupo; PE_IngresoMensual);
+PE_IngresoAnual:       Sum(grupo; PE_IngresoAnual);
+EC_IngresoMensual:     Sum(grupo; EC_IngresoMensual);
+EC_IngresoAnual:       Sum(grupo; EC_IngresoAnual);
+```
+
+**Prerrequisito de datos:** `colDatosBase` debe traer `Utilidades` + los 6 ingresos — el ParseJSON de `App.OnStart` debe exponerlos (mismo cambio ya planificado para la vista individual). Si la vista consolidada se usa como punto de entrada sin refrescar `colDatosBase`, los `Sum()` devuelven `Blank`/0.
+
+**Nota:** el `OnVisible` de `DetalleCostoGerenArea` usa `Set(varPeriodo; 1)` (legado numérico) — el toggle real es `varPeriod` (string `"mensual"`/`"anual"`). Si las tarjetas de esta pantalla leen `varPeriod` para togglear Mensual/Anual, `varPeriodo` sobra ahí. La etiqueta de costo debe ser `If(varPeriod = "mensual"; varDetalle.CostoTotalMensual; varDetalle.CostoAnualML)` con patrón MONTO.
+
 ### Pill "Grado" — 3ra tarjeta editable (🔧 en implementación, estructura confirmada 21/07)
 
 Grado vive en `MainTag > GradeTipoSalario > GradeEdit` (junto a `InfoColab`, dentro del header de Identidad). Árbol real confirmado por captura (21/07):
@@ -852,3 +882,4 @@ If(
 - **Tarjetas readonly período-reactivas** (Bono Target CO, Bono CP Target PE, Asignación Familiar PE — ver sección "Período reactivo" y plan `soft-twirling-anchor`): fórmulas propuestas pero nunca confirmadas contra la app real; falta captura de árbol + fórmula actual antes de tocarlas.
 - **Rol/permiso en los íconos de edición**: confirmar que `Edit`/`EditSueldo`.`Visible` de ambas tarjetas realmente incluye `&& varRolCostos = "Administrador"` (el patrón genérico lo pedía, no se verificó explícitamente contra Studio en ninguna de las 2 tarjetas ya construidas).
 - Vista consolidada (gerencial/área) — construida en el modelo de datos (`varDetalle` ya soporta ambos modos) pero sin probar visualmente todavía con un colaborador real de cada modo.
+- **Vista consolidada — etiquetas con `Sum()` de `Utilidades` + 6 Ingresos (20/08)**: `btnRecargarGerenArea.OnSelect` no puebla `varDetalle.Utilidades` ni `varDetalle.{CO,PE,EC}_Ingreso{Mensual,Anual}` → las tarjetas readonly (Bono/Ingreso/Utilidades), desglose y etiqueta de costo de `DetalleCostoGerenArea` no muestran los valores del grupo. Fix y prerrequisito `colDatosBase` en la sección dedicada "Vista consolidada Gerencia/Área — pendiente".
