@@ -46,6 +46,20 @@
 --     (Sueldo, N° Sueldos/Vales/Comisiones) para CO/PE/EC.
 --     Ver docs/detalle-costo-powerapps.md → sección "Flow UpdateCollaboratorCost".
 --
+-- ── FASE 7: Parámetros Salariales — Utilidades e Ingresos (2026-08-19) ─────────
+--
+--   14_agregar_utilidades_ingresos.sql → ColaboradoresCostos.Utilidades
+--     (editable, escrito a mano) + 5 columnas de Ingreso en Resultados_Calculo.
+--   15_update_sp_CalcularCostos.sql   → recalcula los Ingresos por país:
+--       PE/EC: ingresoMensual*14 + bonoCPTarget + utilidades | CO: = sueldoMensual
+--   16_update_vw_Calculadora_Costos.sql → expone Utilidades + Ingresos a la vista.
+--   17_update_sp_ActualizarCampoColaborador.sql → whitelist + UPDATE + result set
+--     con 'Utilidades' y los nuevos Ingresos.
+--
+--   Orden: 14 → 15 → 16 → 17, luego EXEC PeopleAnalytics.sp_CalcularCostos;
+--   Después: correr una vez los flows GetColaboradoresCost y UpdateCollaboratorCost
+--   para refrescar el esquema (ver docs/migracion-parametros-salariales-2026-08-19.md).
+--
 -- ── Estado actual de datos (2026-07-07) ───────────────────────────────────────
 --
 --   CO: 16 colaboradores (13 Fijo + 3 Integral)

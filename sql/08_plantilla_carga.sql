@@ -49,17 +49,18 @@ INSERT INTO PeopleAnalytics.ColaboradoresCostos (
     NSueldos,               -- [INFORMATIVO] factor bono según Grado
     Vales,                  -- [SETEADO] mensual en PEN (0 si no aplica)
     ComisionesMensuales,    -- [SETEADO] mensual en PEN (0 si no aplica)
-    AsignacionFamiliar      -- [FIJO] S/113 por persona
+    AsignacionFamiliar,     -- [FIJO] S/113 por persona
+    Utilidades              -- [SETEADO] anual en PEN (escrito a mano; 0 si no aplica)
 ) VALUES
 ('PE001', 'PE', 'PEN', 'CORPORACION PRIMAX S.A.', 'Nombre Apellido',
  'GERENCIA', 'GERENCIA', 'ÁREA', 'GERENTE',
  19, 'Administrativo',
- 19510, 2.0, 2000, 0, 113),
+ 19510, 2.0, 2000, 0, 113, 52545),
 
 ('PE002', 'PE', 'PEN', 'CORPORACION PRIMAX S.A.', 'Nombre Apellido',
  'GERENCIA', 'GERENCIA', 'ÁREA', 'OPERADOR',
  9, 'Operario',
- 2500, 0.0, 0, 0, 113);
+ 2500, 0.0, 0, 0, 113, 0);
 */
 
 -- ── ECUADOR ───────────────────────────────────────────────────────────────────
@@ -75,12 +76,13 @@ INSERT INTO PeopleAnalytics.ColaboradoresCostos (
     Grado, Tipo,
     SueldoMensual,          -- [SETEADO] mensual en USD
     NSueldos,               -- [INFORMATIVO] factor bono según Grado
-    Seguro                  -- [FIJO] monto anual USD Seguro Salud y Vida
+    Seguro,                 -- [FIJO] monto anual USD Seguro Salud y Vida
+    Utilidades              -- [SETEADO] anual en USD (escrito a mano; 0 si no aplica)
 ) VALUES
 ('EC001', 'EC', 'USD', 'PRIMAX COMERCIAL DEL ECUADOR S.A.', 'Nombre Apellido',
  'GERENCIA', 'GERENCIA', 'ÁREA', 'GERENTE',
  18, 'Administrativo',
- 5100, 2.0, 3824);
+ 5100, 2.0, 3824, 0);
 */
 
 -- ── Recalcular costos después de cada carga ───────────────────────────────────

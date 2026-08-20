@@ -58,6 +58,7 @@ export function calc(c, periodo) {
     medicinaPrepagadaAnio: med ,    medicinaMensual: med / 12,
     nSueldos: ns, bonoTarget,
     ingresoMensual: s,
+    ingresoAnual: salarioAnual + bonoTarget,
     aportesPrimas, parRate,
     // Provisiones mensuales para el desglose (cada componente anual Ã· 12)
     primaVacacionesMensual: primaVacaciones / 12,

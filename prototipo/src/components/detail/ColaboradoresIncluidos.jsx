@@ -24,15 +24,15 @@ export function ColaboradoresIncluidos({ actual, tipoVistaDetalle }) {
         {esGerencial && (
           <DropdownAreas areas={grupos} seleccionado={areaSeleccionada} onSeleccionar={setAreaSeleccionada} />
         )}
-        <div className="flex flex-col items-center gap-3 sm:ml-auto">
-          <span className="text-sm font-semibold text-slate-200 bg-navy-800 px-3 py-1 rounded-lg">
-            {cantidad} {cantidad === 1 ? 'colaborador' : 'colaboradores'}
-          </span>
+        <div className="flex items-center gap-3 sm:ml-auto">
           {grupo && (
             <Boton variant="blue" size="sm" onClick={() => goArea(actual.gerenciaCorp, grupo.area)}>
               Ver Costo de Área
             </Boton>
           )}
+          <span className="text-sm font-semibold text-slate-200 bg-navy-800 px-3 py-1 rounded-lg">
+            {cantidad} {cantidad === 1 ? 'colaborador' : 'colaboradores'}
+          </span>
         </div>
       </div>
       {esGerencial ? (

@@ -30,7 +30,7 @@ Se unifican tarjetas redundantes, se eliminan campos innecesarios y se agregan 2
 | 1 | **Comisiones Mensuales** | **Editable (NUEVO)** | `comisionesMensuales` |
 | 2 | Bono CP Target (Mensual/Anual) | Readonly (⇄) | `bonoCPTarget` con multiplicador |
 | 2 | **Utilidades** | **Editable (NUEVO)** | `utilidades` (seteado, fórmula pendiente) |
-| 2 | **Ingreso (Mensual/Anual)** | **Readonly (⇄) (NUEVO)** | Mensual: `sueldoBase + vales + comisionesMensuales` / Anual: `ingresoMensual × 14 + bonoCPTarget + utilidades` |
+| 2 | **Ingreso (Mensual/Anual)** | **Readonly (⇄) (NUEVO)** | Mensual: `sueldoBase + vales + comisionesMensuales` / Anual: `sueldoBase × 14 + bonoCPTarget + utilidades` |
 | 3 | Costo Anual | KPI | `CostoAnualML` |
 | 3 | Cargas vs. Sueldo Mensual | KPI | `PctCarga` |
 
@@ -67,7 +67,7 @@ Se unifican tarjetas redundantes, se eliminan campos innecesarios y se agregan 2
 | 1 | Comisiones | Editable | `comisionesMensuales` |
 | 1 | Bono CP Target (Mensual/Anual) | Readonly (⇄) | `bonoCPTarget` con multiplicador |
 | 2 | Utilidades | Editable | `utilidades` |
-| 2 | **Ingreso (Mensual/Anual)** | **Readonly (⇄) (FUSIONADO)** | Mensual: `sueldoMensual + comisionesMensuales` / Anual: `ingresoMensual × 14 + bonoCPTarget + utilidades` |
+| 2 | **Ingreso (Mensual/Anual)** | **Readonly (⇄) (FUSIONADO)** | Mensual: `sueldoMensual + comisionesMensuales` / Anual: `sueldoMensual × 14 + bonoCPTarget + utilidades` |
 | 3 | Costo Mensual | KPI | `CostoTotalMensual` |
 | 3 | Cargas vs. Sueldo Mensual | KPI | `PctCarga` |
 
@@ -100,11 +100,11 @@ Se unifican tarjetas redundantes, se eliminan campos innecesarios y se agregan 2
 | 1 | **Bono CP Target (Mensual/Anual) (1.5x)** | **Readonly (⇄) (FUSIONADO)** | `bonoTarget` con multiplicador en label |
 | 2 | Costo Mensual | KPI | `CostoTotalMensual` |
 | 2 | Cargas vs. Sueldo Mensual | KPI | `PctCarga` |
-| 2 | **Ingreso (Mensual)** | **Readonly (NUEVO)** | `sueldoMensual` |
+| 2 | **Ingreso (Mensual/Anual)** | **Readonly (⇄) (NUEVO)** | Mensual: `sueldoMensual` / Anual: `sueldoMensual × 12 + bonoCPTarget` |
 
 **Cambios clave:**
 - 🔄 Fusionado: `N° Sueldos` se integra al label de Bono CP Target como `(1.5x)` (igual que Perú/Ecuador).
-- ✅ Agregado: `Ingreso (Mensual)` como readonly (fórmula: `sueldoMensual`, ya que Colombia no tiene vales/comisiones).
+- ✅ Agregado: `Ingreso` como readonly con toggle Mensual/Anual (mensual = `sueldoMensual`, ya que Colombia no tiene vales/comisiones; anual = `sueldoMensual × 12 + bonoCPTarget`).
 - 🔄 Layout: de 3-3 (con hueco) → **2-3** (encuadrado).
 
 ---
@@ -133,13 +133,15 @@ Se unifican tarjetas redundantes, se eliminan campos innecesarios y se agregan 2
 | EC | `bonoCPTarget` | Bono CP Target (Mensual/Anual) (Nx) | `sueldoMensual × multiplicadorBono(grado)` | `BonoCPTarget` |
 | PE | `ingreso` | Ingreso (Mensual/Anual) | **Mensual:** `sueldoBase + vales + comisionesMensuales` / **Anual:** `ingresoMensual × 14 + bonoCPTarget + utilidades` | **`PE_IngresoMensual` / `PE_IngresoAnual` (NUEVAS)** |
 | EC | `ingreso` | Ingreso (Mensual/Anual) | **Mensual:** `sueldoMensual + comisionesMensuales` / **Anual:** `ingresoMensual × 14 + bonoCPTarget + utilidades` | **`EC_IngresoMensual` / `EC_IngresoAnual` (NUEVAS)** |
-| CO | `ingreso` | Ingreso (Mensual) | `sueldoMensual` | **`CO_IngresoMensual` (NUEVA)** |
+| CO | `ingreso` | Ingreso (Mensual/Anual) | **Mensual:** `sueldoMensual` / **Anual:** `ingresoMensual × 12 + bonoCPTarget` | **`CO_IngresoMensual` / `CO_IngresoAnual` (NUEVAS)** |
 
 ---
 
 ## 5. IMPACTO EN SQL SERVER
 
-### Nuevas columnas en `ColaboradoresCostos`
+### Nueva columna en `ColaboradoresCostos`
+
+`Utilidades` es un **input editable** (escrito a mano), no un cálculo, así que vive en la tabla de entradas y la vista la expone directo desde ahí (no se duplica en Resultados):
 
 ```sql
 ALTER TABLE PeopleAnalytics.ColaboradoresCostos
@@ -148,32 +150,35 @@ ADD Utilidades DECIMAL(18,2) NULL DEFAULT 0;  -- PE y EC (editable)
 
 ### Nuevas columnas en `Resultados_Calculo`
 
+Solo los **cálculos** de ingreso (no se duplica `Utilidades`):
+
 ```sql
 ALTER TABLE PeopleAnalytics.Resultados_Calculo
-ADD PE_Utilidades       DECIMAL(18,2) NULL,
-    PE_IngresoMensual   DECIMAL(18,2) NULL,
+ADD PE_IngresoMensual   DECIMAL(18,2) NULL,
     PE_IngresoAnual     DECIMAL(18,2) NULL,
     EC_IngresoMensual   DECIMAL(18,2) NULL,
     EC_IngresoAnual     DECIMAL(18,2) NULL,
-    CO_IngresoMensual   DECIMAL(18,2) NULL;
+    CO_IngresoMensual   DECIMAL(18,2) NULL,
+    CO_IngresoAnual     DECIMAL(18,2) NULL;
 ```
 
 ### Cambios en `sp_CalcularCostos`
 
-- **CTE `CalcPE`**: agregar `b.Utilidades`, `b.SM + b.Vales + b.Coms AS PE_IngresoMensual`, `(b.SM + b.Vales + b.Coms) * 12 + PE_BonoCPTarget + b.Utilidades AS PE_IngresoAnual`.
-- **CTE `CalcEC`**: agregar `ef.EC_BonoCPTarget + b.Utilidades + ... AS EC_IngresoAnual` (fórmula: `ingresoMensual × 14 + bonoCPTarget + utilidades`).
-- **CTE `CalcCO`**: agregar `co.SM AS CO_IngresoMensual`.
-- **`Union_Resultados`**: agregar columnas nuevas en los 3 SELECTs con NULLs en los países que no aplican.
-- **`MERGE`**: agregar `T.PE_Utilidades = S.PE_Utilidades`, etc. en UPDATE SET y en INSERT.
+- **CTE `Base`**: agregar `ISNULL(c.Utilidades, 0) AS Utilidades`.
+- **CTE `CalcPE`**: agregar `b.Utilidades AS PE_Utilidades`; en `CalcPEAnual` calcular `PE_IngresoMensual = SM + Vales + Coms` y `PE_IngresoAnual = (SM + Vales + Coms) * 14 + PE_BonoCPTarget + PE_Utilidades`.
+- **CTE `CalcEC`**: agregar `b.Utilidades AS EC_Utilidades` y `b.Coms AS EC_Coms`; en `CalcECCarga` calcular `EC_IngresoMensual = SM + Coms` y `EC_IngresoAnual = (SM + Coms) * 14 + EC_BonoCPTarget + EC_Utilidades`.
+- **CTE `CalcCO`**: agregar en `CalcCOFinal` `CO_IngresoMensual = SM` y `CO_IngresoAnual = CO_SalAnual + CO_BonoTarget` (sueldo×12 + bono anual).
+- **`Union_Resultados`**: agregar 6 columnas nuevas en los 3 SELECTs (mismo orden: `CO_IngresoMensual, CO_IngresoAnual, PE_IngresoMensual, PE_IngresoAnual, EC_IngresoMensual, EC_IngresoAnual`) con NULLs en los países que no aplican.
+- **`MERGE`**: agregar `T.CO_IngresoMensual`, `T.CO_IngresoAnual`, `T.PE_IngresoMensual`, `T.PE_IngresoAnual`, `T.EC_IngresoMensual`, `T.EC_IngresoAnual` en UPDATE SET, column list e INSERT.
 
 ### Cambios en `vw_Calculadora_Costos`
 
 Agregar al SELECT:
 ```sql
 c.Utilidades,
-r.PE_Utilidades, r.PE_IngresoMensual, r.PE_IngresoAnual,
+r.CO_IngresoMensual, r.CO_IngresoAnual,
+r.PE_IngresoMensual, r.PE_IngresoAnual,
 r.EC_IngresoMensual, r.EC_IngresoAnual,
-r.CO_IngresoMensual,
 ```
 
 ### Cambios en `sp_ActualizarCampoColaborador`
@@ -216,11 +221,12 @@ r.CO_IngresoMensual,
 Agregar al `ForAll(ParseJSON(...))`:
 ```powerappsfl
 Utilidades: Value(ThisRecord.Utilidades),
+CO_IngresoMensual: Value(ThisRecord.CO_IngresoMensual),
+CO_IngresoAnual: Value(ThisRecord.CO_IngresoAnual),
 PE_IngresoMensual: Value(ThisRecord.PE_IngresoMensual),
 PE_IngresoAnual: Value(ThisRecord.PE_IngresoAnual),
 EC_IngresoMensual: Value(ThisRecord.EC_IngresoMensual),
 EC_IngresoAnual: Value(ThisRecord.EC_IngresoAnual),
-CO_IngresoMensual: Value(ThisRecord.CO_IngresoMensual),
 ```
 
 ### `DetalleCostoColaborador`
@@ -229,18 +235,19 @@ CO_IngresoMensual: Value(ThisRecord.CO_IngresoMensual),
 |---|---|---|---|
 | **Perú** | `CardComisiones` (editable), `CardUtilidades` (editable), `CardIngreso` (readonly ⇄) | `CardAsignacionFamiliar` | `CardIngresoMensual` + `CardIngresoAnual` → `CardIngreso` |
 | **Ecuador** | `CardIngreso` (readonly ⇄, fusionado) | `CardIngresoMensual`, `CardIngresoAnual` (separadas) | `CardIngresoMensual` + `CardIngresoAnual` → `CardIngreso` |
-| **Colombia** | `CardIngreso` (readonly), `CardBonoCPTarget` (con multiplicador en label) | `CardNSueldos` (separada) | `CardNSueldos` → integrado en label de `CardBonoCPTarget` |
+| **Colombia** | `CardIngreso` (readonly ⇄), `CardBonoCPTarget` (con multiplicador en label) | `CardNSueldos` (separada) | `CardNSueldos` → integrado en label de `CardBonoCPTarget` |
 
 ### `DetalleCostoGerenArea`
 
 Agregar `Sum()` de nuevos campos en la consolidación:
 ```powerappsfl
 Utilidades: Sum(Filter(colDatosBase; Pais = varPais && ...); Utilidades),
+CO_IngresoMensual: Sum(Filter(colDatosBase; Pais = varPais && ...); CO_IngresoMensual),
+CO_IngresoAnual: Sum(Filter(colDatosBase; Pais = varPais && ...); CO_IngresoAnual),
 PE_IngresoMensual: Sum(Filter(colDatosBase; Pais = varPais && ...); PE_IngresoMensual),
 PE_IngresoAnual: Sum(Filter(colDatosBase; Pais = varPais && ...); PE_IngresoAnual),
 EC_IngresoMensual: Sum(Filter(colDatosBase; Pais = varPais && ...); EC_IngresoMensual),
 EC_IngresoAnual: Sum(Filter(colDatosBase; Pais = varPais && ...); EC_IngresoAnual),
-CO_IngresoMensual: Sum(Filter(colDatosBase; Pais = varPais && ...); CO_IngresoMensual),
 ```
 
 ---
@@ -261,11 +268,13 @@ CO_IngresoMensual: Sum(Filter(colDatosBase; Pais = varPais && ...); CO_IngresoMe
 |---|---|---|---|
 | **PE** | Ingreso | `sueldoBase + vales + comisionesMensuales` | `ingresoMensual × 14 + bonoCPTarget + utilidades` |
 | **EC** | Ingreso | `sueldoMensual + comisionesMensuales` | `ingresoMensual × 14 + bonoCPTarget + utilidades` |
-| **CO** | Ingreso | `sueldoMensual` | N/A (solo mensual) |
+| **CO** | Ingreso | `sueldoMensual` | `ingresoMensual × 12 + bonoCPTarget` |
 | **PE** | Utilidades | Seteado manual | Seteado manual |
 | **EC** | Utilidades | Seteado manual | Seteado manual |
 
-> **Regla general Ingreso Anual (19/08):** `Ingreso Anual = Ingreso Mensual × 14 + Bono Target + Utilidades`. El ×14 = 12 meses + 2 gratificaciones (julio y diciembre en Perú). Se aplica igual en Ecuador por regla general.
+> **Regla general Ingreso Anual (19/08):** PE y EC → `Ingreso Anual = Ingreso Mensual × 14 + Bono Target + Utilidades` (×14 = 12 meses + 2 gratificaciones, julio y diciembre en Perú; se aplica igual en Ecuador por regla general). **Colombia** no tiene gratificaciones/vales/comisiones ni utilidades, así que `Ingreso Anual = Ingreso Mensual × 12 + Bono CP Target (anual)`.
+>
+> ⚠️ **Corrección (20/08):** el ×14 (o ×12 en CO) aplica sobre el **Ingreso Mensual completo** (`sueldo + vales + comisiones`), NO solo sobre el sueldo base. Se revierte la corrección anterior que multiplicaba únicamente el `Sueldo Mensual`; los vales/comisiones SÍ se anualizan al estar dentro del `Ingreso Mensual`. En Ecuador no hay vales, solo `Sueldo Mensual + Comisiones` para el mensual.
 
 ---
 

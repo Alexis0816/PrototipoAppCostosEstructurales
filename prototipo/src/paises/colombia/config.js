@@ -17,9 +17,11 @@ export const config = {
       labelFn: (r, esMensual) => `Bono CP Target (${esMensual ? 'Mensual' : 'Anual'}) (${r.nSueldos}x)`,
     },
     {
-      campo: 'ingresoMensual',
-      label: 'Ingreso (Mensual)',
+      campo: 'ingreso',
+      label: 'Ingreso',
       source: 'r',
+      periodoReactivo: 'toggle',
+      labelFn: (r, esMensual) => `Ingreso (${esMensual ? 'Mensual' : 'Anual'})`,
     },
   ],
   opcionesTipoSalario: null,
